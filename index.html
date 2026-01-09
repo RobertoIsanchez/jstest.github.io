@@ -9,974 +9,221 @@
     @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap');
 
     :root {
-      --mint: #c8f4f4;
-      --mint-dark: #a8e6e6;
-      --coral: #ff6b6b;
-      --salmon: #ffa07a;
-      --yellow: #f7dc6f;
-      --lavender: #e8d4f0;
-      --peach: #ffd4b8;
-      --navy: #1a1a2e;
-      --gray: #6b7280;
-      --white: #ffffff;
+      --mint:#c8f4f4;--mint-dark:#a8e6e6;--coral:#ff6b6b;
+      --salmon:#ffa07a;--yellow:#f7dc6f;--lavender:#e8d4f0;
+      --peach:#ffd4b8;--navy:#1a1a2e;--gray:#6b7280;--white:#fff;
     }
 
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
+    *{margin:0;padding:0;box-sizing:border-box}
+    html,body{height:100%;font-family:Poppins,system-ui;color:var(--navy)}
+    body{
+      background:linear-gradient(180deg,#fff 0%,#fff 280px,var(--mint) 280px);
+      overflow-x:hidden;
     }
 
-    html, body { 
-      height: 100%; 
-      font-family: 'Poppins', system-ui, -apple-system, sans-serif;
-      overflow-x: hidden;
-      color: var(--navy);
+    .header{text-align:center;padding:60px 24px 80px}
+    .header h1{font-size:clamp(48px,10vw,72px);font-weight:800}
+    .header h2{font-size:28px;color:var(--coral)}
+    .header p{font-size:14px;color:var(--gray);max-width:420px;margin:auto}
+
+    .container{max-width:1000px;margin:auto;padding:24px}
+    .card{
+      border-radius:24px;overflow:hidden;background:#fff;
+      box-shadow:0 20px 60px rgba(0,0,0,.08);
+      margin-bottom:48px;
     }
 
-    /* Fondo principal mint con formas decorativas */
-    body {
-      background: linear-gradient(180deg, var(--white) 0%, var(--white) 280px, var(--mint) 280px, var(--mint) 100%);
-      min-height: 100vh;
-      position: relative;
+    .card-header{
+      padding:20px 24px;display:flex;justify-content:space-between;
+      border-bottom:1px solid rgba(0,0,0,.05)
     }
+    .title{font-size:16px;font-weight:600}
+    .subtitle{font-size:12px;color:var(--gray)}
+    .hint{font-size:12px;background:var(--mint);padding:6px 14px;border-radius:20px}
 
-    /* Formas geométricas decorativas */
-    .shape {
-      position: absolute;
-      pointer-events: none;
-      z-index: 0;
+    .viewer-area{position:relative;background:linear-gradient(135deg,#fef9f3,#f0fafa)}
+    .viewer{width:100%;height:520px;cursor:zoom-in}
+    iframe.viewer{border:0}
+
+    .ui{
+      position:absolute;left:20px;bottom:20px;display:flex;gap:10px;
+      background:#fff;padding:12px 16px;border-radius:16px;
+      box-shadow:0 8px 24px rgba(0,0,0,.1)
     }
-
-    .shape-wave {
-      top: 80px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 50px;
-      height: 30px;
+    button,select{
+      background:var(--mint);border:none;border-radius:10px;
+      padding:8px 14px;font-size:13px;font-family:inherit;cursor:pointer
     }
+    button:hover{background:var(--coral);color:#fff}
 
-    .shape-wave svg {
-      fill: var(--yellow);
+    .overlay{
+      position:fixed;inset:0;background:rgba(200,244,244,.95);
+      backdrop-filter:blur(20px);display:none;z-index:9999
     }
-
-    .shape-triangle {
-      right: 35%;
-      top: 220px;
-      width: 0;
-      height: 0;
-      border-left: 12px solid transparent;
-      border-right: 12px solid transparent;
-      border-bottom: 20px solid var(--coral);
+    .overlay.open{display:block}
+    .modal{
+      position:absolute;inset:24px;border-radius:24px;
+      background:#fff;display:grid;grid-template-rows:auto 1fr
     }
-
-    .shape-circle {
-      right: 80px;
-      top: 140px;
-      width: 80px;
-      height: 80px;
-      border: 8px solid var(--lavender);
-      border-radius: 50%;
-      border-right-color: transparent;
-      transform: rotate(-30deg);
+    .modal-header{
+      padding:16px 24px;display:flex;justify-content:space-between;
+      border-bottom:1px solid rgba(0,0,0,.05)
     }
+    .close{background:var(--mint);border-radius:12px;padding:8px 16px}
 
-    .shape-line {
-      left: 60px;
-      top: 300px;
-      width: 60px;
-      height: 4px;
-      background: linear-gradient(90deg, var(--coral), var(--salmon));
-      border-radius: 2px;
-    }
+    .viewer-full{width:100%;height:100%;cursor:zoom-out}
+    iframe.viewer-full{border:0}
 
-    .shape-dots {
-      right: 120px;
-      bottom: 100px;
-      display: grid;
-      grid-template-columns: repeat(3, 8px);
-      gap: 6px;
-    }
-
-    .shape-dots span {
-      width: 8px;
-      height: 8px;
-      background: var(--coral);
-      border-radius: 50%;
-      opacity: 0.6;
-    }
-
-    /* Header / Hero Section */
-    .header {
-      text-align: center;
-      padding: 60px 24px 80px;
-      position: relative;
-      z-index: 1;
-    }
-
-    .header h1 {
-      font-size: clamp(48px, 10vw, 72px);
-      font-weight: 800;
-      color: var(--navy);
-      margin-bottom: 8px;
-      letter-spacing: -1px;
-    }
-
-    .header h2 {
-      font-size: clamp(20px, 4vw, 28px);
-      font-weight: 600;
-      color: var(--coral);
-      margin-bottom: 16px;
-    }
-
-    .header p {
-      font-size: 14px;
-      color: var(--gray);
-      max-width: 400px;
-      margin: 0 auto;
-      line-height: 1.6;
-    }
-
-    /* Filtros de categoría */
-    .filters {
-      display: flex;
-      justify-content: center;
-      gap: 32px;
-      padding: 24px;
-      position: relative;
-      z-index: 1;
-    }
-
-    .filter-btn {
-      background: none;
-      border: none;
-      font-family: inherit;
-      font-size: 14px;
-      color: var(--gray);
-      cursor: pointer;
-      padding: 8px 4px;
-      position: relative;
-      transition: color 0.3s ease;
-    }
-
-    .filter-btn:hover,
-    .filter-btn.active {
-      color: var(--navy);
-    }
-
-    .filter-btn.active::after {
-      content: '';
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      height: 2px;
-      background: var(--navy);
-    }
-
-    /* Contenedor principal */
-    .container {
-      max-width: 1000px;
-      margin: 0 auto;
-      padding: 24px;
-      position: relative;
-      z-index: 1;
-    }
-
-    /* Card con estilo pastel y sombras suaves */
-    .card {
-      border-radius: 24px;
-      overflow: hidden;
-      background: var(--white);
-      box-shadow: 
-        0 20px 60px rgba(0, 0, 0, 0.08),
-        0 8px 24px rgba(0, 0, 0, 0.04);
-      position: relative;
-      transition: transform 0.4s ease, box-shadow 0.4s ease;
-    }
-
-    .card:hover {
-      transform: translateY(-8px);
-      box-shadow: 
-        0 32px 80px rgba(0, 0, 0, 0.12),
-        0 16px 32px rgba(0, 0, 0, 0.06);
-    }
-
-    /* Acento de color en la card */
-    .card::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      height: 6px;
-      background: linear-gradient(90deg, var(--coral), var(--salmon), var(--yellow));
-    }
-
-    .card-header {
-      padding: 20px 24px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      background: var(--white);
-      border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-    }
-
-    .card-header-left {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-
-    .card-icon {
-      width: 40px;
-      height: 40px;
-      background: linear-gradient(135deg, var(--lavender), var(--peach));
-      border-radius: 12px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 18px;
-    }
-
-    .title { 
-      font-size: 16px; 
-      font-weight: 600;
-      color: var(--navy);
-    }
-
-    .subtitle {
-      font-size: 12px;
-      color: var(--gray);
-      margin-top: 2px;
-    }
-
-    .hint { 
-      font-size: 12px; 
-      color: var(--gray);
-      background: var(--mint);
-      padding: 6px 12px;
-      border-radius: 20px;
-      transition: background 0.3s ease;
-    }
-
-    .hint:hover {
-      background: var(--mint-dark);
-    }
-
-    /* Área del visor con fondo pastel */
-    .viewer-area { 
-      position: relative;
-      background: linear-gradient(135deg, #fef9f3 0%, #f0fafa 50%, #fdf2f8 100%);
-    }
-
-    .viewer {
-      width: 100%;
-      height: 520px;
-      display: block;
-      cursor: zoom-in;
-      --poster-color: transparent;
-    }
-
-    /* UI de controles con estilo moderno */
-    .ui {
-      position: absolute;
-      left: 20px;
-      bottom: 20px;
-      display: flex;
-      gap: 10px;
-      align-items: center;
-      padding: 12px 16px;
-      border-radius: 16px;
-      background: var(--white);
-      border: 1px solid rgba(0, 0, 0, 0.08);
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
-    }
-
-    button, select {
-      border-radius: 10px;
-      border: 2px solid transparent;
-      background: var(--mint);
-      color: var(--navy);
-      padding: 10px 16px;
-      outline: none;
-      font-size: 13px;
-      font-weight: 500;
-      font-family: inherit;
-      transition: all 0.2s ease;
-    }
-
-    button { 
-      cursor: pointer;
-    }
-
-    button:hover:not(:disabled) {
-      background: var(--coral);
-      color: var(--white);
-      transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba(255, 107, 107, 0.3);
-    }
-
-    button:active:not(:disabled) {
-      transform: translateY(0);
-    }
-
-    select {
-      cursor: pointer;
-    }
-
-    select:hover:not(:disabled) {
-      border-color: var(--coral);
-    }
-
-    button:disabled, select:disabled { 
-      opacity: 0.4; 
-      cursor: not-allowed; 
-    }
-
-    /* Modal/Overlay con estilo limpio */
-    .overlay {
-      position: fixed;
-      inset: 0;
-      background: rgba(200, 244, 244, 0.95);
-      backdrop-filter: blur(20px);
-      display: none;
-      z-index: 9999;
-    }
-
-    .overlay.open { 
-      display: block;
-      animation: fadeIn 0.3s ease;
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; }
-      to { opacity: 1; }
-    }
-
-    .modal {
-      position: absolute;
-      inset: 24px;
-      border-radius: 24px;
-      overflow: hidden;
-      background: var(--white);
-      box-shadow: 
-        0 40px 100px rgba(0, 0, 0, 0.15),
-        0 20px 50px rgba(0, 0, 0, 0.1);
-      display: grid;
-      grid-template-rows: auto 1fr;
-      animation: slideUp 0.4s ease;
-    }
-
-    @keyframes slideUp {
-      from { 
-        opacity: 0;
-        transform: translateY(30px) scale(0.96);
-      }
-      to { 
-        opacity: 1;
-        transform: translateY(0) scale(1);
-      }
-    }
-
-    .modal-header {
-      padding: 16px 24px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      background: var(--white);
-      border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-    }
-
-    .modal-title { 
-      font-size: 15px; 
-      font-weight: 600;
-      color: var(--navy);
-    }
-
-    .close { 
-      cursor: pointer; 
-      border-radius: 12px; 
-      padding: 10px 20px;
-      background: var(--mint);
-    }
-
-    .close:hover {
-      background: var(--coral);
-      color: var(--white);
-    }
-
-    .viewer-full {
-      width: 100%;
-      height: 100%;
-      display: block;
-      cursor: zoom-out;
-      background: linear-gradient(135deg, #fef9f3 0%, #f0fafa 50%, #fdf2f8 100%);
-    }
-
-    /* Footer */
-    .footer {
-      text-align: center;
-      padding: 48px 24px;
-      color: var(--gray);
-      font-size: 13px;
-      position: relative;
-      z-index: 1;
-    }
-
-    .footer a {
-      color: var(--coral);
-      text-decoration: none;
-      font-weight: 500;
-    }
-
-    @media (max-width: 720px) {
-      .viewer { height: 380px; }
-      .modal { inset: 12px; border-radius: 20px; }
-      .ui { left: 12px; bottom: 12px; padding: 10px 12px; flex-wrap: wrap; }
-      .card { border-radius: 20px; }
-      .card-header { padding: 16px 20px; }
-      button, select { padding: 8px 12px; font-size: 12px; }
-      .filters { gap: 16px; flex-wrap: wrap; }
-      .shape-circle { display: none; }
-      .header { padding: 40px 24px 60px; }
+    @media(max-width:720px){
+      .viewer{height:380px}.modal{inset:12px}
     }
   </style>
+
+  <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
 </head>
 <body>
-  <!-- Formas decorativas -->
-  <div class="shape shape-wave">
-    <svg viewBox="0 0 50 30" xmlns="http://www.w3.org/2000/svg">
-      <path d="M0 15 Q 12.5 0, 25 15 T 50 15 M0 22 Q 12.5 7, 25 22 T 50 22 M0 29 Q 12.5 14, 25 29 T 50 29" stroke="#f7dc6f" stroke-width="3" fill="none"/>
-    </svg>
-  </div>
-  <div class="shape shape-triangle"></div>
-  <div class="shape shape-circle"></div>
-  <div class="shape shape-line"></div>
-  <div class="shape shape-dots">
-    <span></span><span></span><span></span>
-    <span></span><span></span><span></span>
-  </div>
 
-  <!-- Header -->
-  <header class="header">
-    <h1>Hello,</h1>
-    <h2>I'm a 3D Designer!</h2>
-    <p>Passionate about creating immersive 3D experiences, motion graphics, and interactive design.</p>
-  </header>
+<header class="header">
+  <h1>Hello,</h1>
+  <h2>I'm a 3D Designer</h2>
+  <p>Comparación de visualización entre modelos locales y Sketchfab</p>
+</header>
 
-  <!-- Filtros -->
-  <nav class="filters">
-    <button class="filter-btn active">All</button>
-    <button class="filter-btn">Characters</button>
-    <button class="filter-btn">Environments</button>
-    <button class="filter-btn">Products</button>
-    <button class="filter-btn">Animation</button>
-  </nav>
+<div class="container">
 
-  <!-- Card principal -->
-  <div class="container">
-    <div class="card">
-      <div class="card-header">
-        <div class="card-header-left">
-          <div class="card-icon">🦉</div>
-          <div>
-            <div class="title">3D Model Viewer</div>
-            <div class="subtitle">Interactive preview</div>
-          </div>
-        </div>
-        <div class="hint">Click to expand</div>
+  <!-- ================= LOCAL MODEL ================= -->
+  <div class="card">
+    <div class="card-header">
+      <div>
+        <div class="title">Local 3D Model</div>
+        <div class="subtitle">model-viewer + HDRI</div>
       </div>
+      <div class="hint">Click to expand</div>
+    </div>
 
-      <div class="viewer-area">
-        <canvas id="mvCard" class="viewer"></canvas>
+    <div class="viewer-area">
+      <model-viewer id="mvCard"
+        class="viewer"
+        src="owl.glb"
+        camera-controls
+        auto-rotate
+        exposure="1.1"
+        environment-image="ForestSmall.hdr"
+        loading="eager"
+        reveal="auto">
+      </model-viewer>
 
-        <div class="ui">
-          <button id="texBtn" title="Toggle texturas">Textures</button>
-          <button id="wireBtn" title="Wireframe overlay">Wire</button>
-          <button id="wireOnlyBtn" title="Solo wireframe">Wire Only</button>
-
-          <button id="playBtn">Play</button>
-          <button id="pauseBtn">Pause</button>
-          <select id="animSel"></select>
-        </div>
+      <div class="ui">
+        <button id="playBtn">Play</button>
+        <button id="pauseBtn">Pause</button>
+        <select id="animSel"></select>
       </div>
     </div>
   </div>
 
-  <!-- Footer -->
-  <footer class="footer">
-    <p>Made with love by <a href="#">Your Name</a> | 2025</p>
-  </footer>
-
-  <!-- Modal Fullscreen -->
-  <div id="overlay" class="overlay" aria-hidden="true">
-    <div class="modal">
-      <div class="modal-header">
-        <div class="modal-title">Full Preview</div>
-        <button id="closeBtn" class="close">Close (Esc)</button>
+  <!-- ================= SKETCHFAB ================= -->
+  <div class="card">
+    <div class="card-header">
+      <div>
+        <div class="title">Sketchfab Model</div>
+        <div class="subtitle">External viewer</div>
       </div>
+      <div class="hint">Click to expand</div>
+    </div>
 
-      <canvas id="mvFull" class="viewer-full"></canvas>
+    <div class="viewer-area">
+      <iframe id="sfCard" class="viewer"
+        allow="autoplay; fullscreen; xr-spatial-tracking"
+        allowfullscreen></iframe>
     </div>
   </div>
 
-  
-  <script type="module">
-    import * as THREE from "https://unpkg.com/three@0.160.0/build/three.module.js";
-    import { OrbitControls } from "https://unpkg.com/three@0.160.0/examples/jsm/controls/OrbitControls.js";
-    import { GLTFLoader } from "https://unpkg.com/three@0.160.0/examples/jsm/loaders/GLTFLoader.js";
-    import { RGBELoader } from "https://unpkg.com/three@0.160.0/examples/jsm/loaders/RGBELoader.js";
-
-    // ==============================
-    // Config (usa tus mismos nombres)
-    // ==============================
-    const MODEL_URL = "./owl.glb";          // .glb o .gltf
-    const HDR_URL   = "./ForestSmall.hdr";  // HDRI equirectangular
-
-    // DOM
-    const canvasCard = document.getElementById("mvCard");
-    const canvasFull = document.getElementById("mvFull");
-
-    const overlay = document.getElementById("overlay");
-    const closeBtn = document.getElementById("closeBtn");
-
-    const texBtn = document.getElementById("texBtn");
-    const wireBtn = document.getElementById("wireBtn");
-    const wireOnlyBtn = document.getElementById("wireOnlyBtn");
-
-    const playBtn = document.getElementById("playBtn");
-    const pauseBtn = document.getElementById("pauseBtn");
-    const animSel = document.getElementById("animSel");
-
-    // Estado
-    const state = {
-      modelCard: null,
-      modelFull: null,
-      mixerCard: null,
-      actions: new Map(),
-      activeClipName: "",
-      clips: [],
-      texturesOn: true,
-      wireOverlayOn: true,
-      wireOnlyOn: false,
-      savedMaps: new Map(),    // material.uuid -> maps
-      wireLines: [],           // lineSegments (overlay)
-      envTex: null
-    };
-
-    // Helpers
-    function makeViewer(canvas) {
-      const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
-      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-      renderer.outputColorSpace = THREE.SRGBColorSpace;
-      renderer.toneMapping = THREE.ACESFilmicToneMapping;
-      renderer.toneMappingExposure = 1.1;
-
-      const scene = new THREE.Scene();
-
-      const camera = new THREE.PerspectiveCamera(45, 2, 0.1, 2000);
-      camera.position.set(0.8, 0.6, 1.6);
-
-      const controls = new OrbitControls(camera, renderer.domElement);
-      controls.enableDamping = true;
-
-      // Apoyo (la iluminación real viene del HDR)
-      scene.add(new THREE.HemisphereLight(0xffffff, 0x222222, 0.35));
-      const dir = new THREE.DirectionalLight(0xffffff, 0.55);
-      dir.position.set(3, 5, 2);
-      scene.add(dir);
-
-      function resize() {
-        const w = canvas.clientWidth;
-        const h = canvas.clientHeight;
-        if (canvas.width !== w || canvas.height !== h) {
-          renderer.setSize(w, h, false);
-          camera.aspect = w / h;
-          camera.updateProjectionMatrix();
-        }
-      }
-
-      return { renderer, scene, camera, controls, resize };
-    }
-
-    const viewerCard = makeViewer(canvasCard);
-    const viewerFull = makeViewer(canvasFull);
-
-    async function loadEnvironment(scene) {
-      if (state.envTex) {
-        scene.environment = state.envTex;
-        return;
-      }
-      const tex = await new RGBELoader().loadAsync(HDR_URL);
-      tex.mapping = THREE.EquirectangularReflectionMapping;
-      state.envTex = tex;
-      scene.environment = tex;
-      scene.background = null; // si quieres ver el HDRI: scene.background = tex
-    }
-
-    function centerAndFrame(model, camera, controls) {
-      const box = new THREE.Box3().setFromObject(model);
-      const size = box.getSize(new THREE.Vector3());
-      const center = box.getCenter(new THREE.Vector3());
-
-      model.position.sub(center);
-
-      const maxDim = Math.max(size.x, size.y, size.z);
-      const fov = camera.fov * Math.PI / 180;
-      let cameraZ = (maxDim / 2) / Math.tan(fov / 2);
-      cameraZ *= 1.6;
-
-      camera.position.set(0, maxDim * 0.25, cameraZ);
-      camera.near = maxDim / 100;
-      camera.far = maxDim * 100;
-      camera.updateProjectionMatrix();
-
-      controls.target.set(0, 0, 0);
-      controls.update();
-    }
-
-    function cacheMaps(model) {
-      model.traverse((obj) => {
-        if (!obj.isMesh) return;
-        const mat = obj.material;
-        if (!mat) return;
-        if (!state.savedMaps.has(mat.uuid)) {
-          state.savedMaps.set(mat.uuid, {
-            map: mat.map || null,
-            normalMap: mat.normalMap || null,
-            roughnessMap: mat.roughnessMap || null,
-            metalnessMap: mat.metalnessMap || null,
-            emissiveMap: mat.emissiveMap || null,
-            aoMap: mat.aoMap || null
-          });
-        }
-      });
-    }
-
-    function setTexturesEnabled(model, enabled) {
-      model.traverse((obj) => {
-        if (!obj.isMesh) return;
-        const mat = obj.material;
-        if (!mat) return;
-        const saved = state.savedMaps.get(mat.uuid);
-        if (!saved) return;
-
-        if (enabled) {
-          mat.map = saved.map;
-          mat.normalMap = saved.normalMap;
-          mat.roughnessMap = saved.roughnessMap;
-          mat.metalnessMap = saved.metalnessMap;
-          mat.emissiveMap = saved.emissiveMap;
-          mat.aoMap = saved.aoMap;
-        } else {
-          mat.map = null;
-          mat.normalMap = null;
-          mat.roughnessMap = null;
-          mat.metalnessMap = null;
-          mat.emissiveMap = null;
-          mat.aoMap = null;
-        }
-        mat.needsUpdate = true;
-      });
-    }
-
-    function clearWireOverlay(scene) {
-      for (const line of state.wireLines) {
-        if (line.parent) line.parent.remove(line);
-      }
-      state.wireLines.length = 0;
-    }
-
-    function buildWireOverlay(scene, model) {
-      clearWireOverlay(scene);
-
-      model.traverse((obj) => {
-        if (!obj.isMesh || !obj.geometry) return;
-
-        const geo = new THREE.WireframeGeometry(obj.geometry);
-        const mat = new THREE.LineBasicMaterial({
-          color: 0x111111,
-          transparent: true,
-          opacity: 0.6,
-          depthTest: false
-        });
-
-        const wire = new THREE.LineSegments(geo, mat);
-        wire.position.copy(obj.position);
-        wire.rotation.copy(obj.rotation);
-        wire.scale.copy(obj.scale);
-        wire.renderOrder = 999;
-
-        obj.parent.add(wire);
-        state.wireLines.push(wire);
-      });
-    }
-
-    function setWireMode(model, scene, { overlay, only }) {
-      // overlay: shading + líneas
-      // only: material wireframe (sin overlay)
-      if (!model) return;
-
-      if (only) {
-        clearWireOverlay(scene);
-        model.traverse((obj) => {
-          if (!obj.isMesh) return;
-          const m = obj.material;
-          if (!m) return;
-          // wireframe puro
-          m.wireframe = true;
-          m.needsUpdate = true;
-        });
-        return;
-      }
-
-      // no-only: apaga wireframe en material base
-      model.traverse((obj) => {
-        if (!obj.isMesh) return;
-        const m = obj.material;
-        if (!m) return;
-        m.wireframe = false;
-        m.needsUpdate = true;
-      });
-
-      if (overlay) buildWireOverlay(scene, model);
-      else clearWireOverlay(scene);
-    }
-
-    function setupAnimationUI(clips) {
-      animSel.innerHTML = "";
-
-      if (!clips.length) {
-        const opt = document.createElement("option");
-        opt.textContent = "No animations";
-        opt.value = "";
-        animSel.appendChild(opt);
-        animSel.disabled = true;
-        playBtn.disabled = true;
-        pauseBtn.disabled = true;
-        return;
-      }
-
-      animSel.disabled = false;
-      playBtn.disabled = false;
-      pauseBtn.disabled = false;
-
-      for (const clip of clips) {
-        const opt = document.createElement("option");
-        opt.value = clip.name;
-        opt.textContent = clip.name || "Clip";
-        animSel.appendChild(opt);
-      }
-    }
-
-    function playClip(name) {
-      if (!state.mixerCard || !state.clips.length) return;
-
-      const clip = state.clips.find(c => c.name === name) || state.clips[0];
-      state.activeClipName = clip.name;
-
-      // fade entre clips
-      for (const [n, action] of state.actions) {
-        if (n === clip.name) continue;
-        action.fadeOut(0.15);
-      }
-
-      let action = state.actions.get(clip.name);
-      if (!action) {
-        action = state.mixerCard.clipAction(clip);
-        state.actions.set(clip.name, action);
-      }
-
-      action.reset().fadeIn(0.15).play();
-      state.mixerCard.timeScale = 1;
-    }
-
-    function pauseAnimations() {
-      if (!state.mixerCard) return;
-      state.mixerCard.timeScale = 0;
-    }
-
-    function updateButtonLabels() {
-      texBtn.textContent = state.texturesOn ? "Textures: ON" : "Textures: OFF";
-      wireBtn.textContent = state.wireOverlayOn ? "Wire: ON" : "Wire: OFF";
-      wireOnlyBtn.textContent = state.wireOnlyOn ? "Wire Only: ON" : "Wire Only: OFF";
-    }
-
-    async function init() {
-      await loadEnvironment(viewerCard.scene);
-      await loadEnvironment(viewerFull.scene);
-
-      const gltf = await new GLTFLoader().loadAsync(MODEL_URL);
-
-      // Card model
-      state.modelCard = gltf.scene;
-      viewerCard.scene.add(state.modelCard);
-      cacheMaps(state.modelCard);
-      centerAndFrame(state.modelCard, viewerCard.camera, viewerCard.controls);
-
-      // Full model (clon)
-      state.modelFull = gltf.scene.clone(true);
-      viewerFull.scene.add(state.modelFull);
-      centerAndFrame(state.modelFull, viewerFull.camera, viewerFull.controls);
-
-      // Animaciones
-      state.clips = gltf.animations || [];
-      setupAnimationUI(state.clips);
-
-      if (state.clips.length) {
-        state.mixerCard = new THREE.AnimationMixer(state.modelCard);
-        // default
-        animSel.value = state.clips[0].name;
-        playClip(state.clips[0].name);
-      }
-
-      // Defaults "tipo Sketchfab"
-      state.texturesOn = true;
-      state.wireOverlayOn = true;
-      state.wireOnlyOn = false;
-
-      setTexturesEnabled(state.modelCard, true);
-      setWireMode(state.modelCard, viewerCard.scene, { overlay: true, only: false });
-
-      updateButtonLabels();
-
-      // UI events
-      texBtn.addEventListener("click", () => {
-        state.texturesOn = !state.texturesOn;
-        setTexturesEnabled(state.modelCard, state.texturesOn);
-        // en wire-only normalmente no se ven texturas, pero dejamos el toggle por si regresas
-        updateButtonLabels();
-      });
-
-      wireBtn.addEventListener("click", () => {
-        state.wireOverlayOn = !state.wireOverlayOn;
-        if (state.wireOnlyOn) {
-          // si estás en wire only, wire overlay no aplica
-          updateButtonLabels();
-          return;
-        }
-        setWireMode(state.modelCard, viewerCard.scene, { overlay: state.wireOverlayOn, only: false });
-        updateButtonLabels();
-      });
-
-      wireOnlyBtn.addEventListener("click", () => {
-        state.wireOnlyOn = !state.wireOnlyOn;
-
-        if (state.wireOnlyOn) {
-          // wire only: apaga overlay y texturas (para look limpio)
-          state.wireOverlayOn = false;
-          setTexturesEnabled(state.modelCard, false);
-          setWireMode(state.modelCard, viewerCard.scene, { overlay: false, only: true });
-        } else {
-          // vuelve a shading + overlay (si estaba ON)
-          setWireMode(state.modelCard, viewerCard.scene, { overlay: state.wireOverlayOn, only: false });
-          setTexturesEnabled(state.modelCard, state.texturesOn);
-        }
-        updateButtonLabels();
-      });
-
-      playBtn.addEventListener("click", () => {
-        if (!state.clips.length) return;
-        playClip(animSel.value);
-      });
-
-      pauseBtn.addEventListener("click", () => pauseAnimations());
-
-      animSel.addEventListener("change", () => {
-        if (!state.clips.length) return;
-        playClip(animSel.value);
-      });
-
-      // Overlay open/close (canvas)
-      canvasCard.addEventListener("click", () => openOverlay());
-      canvasFull.addEventListener("click", () => closeOverlay());
-
-      closeBtn.addEventListener("click", () => closeOverlay());
-      overlay.addEventListener("click", (e) => {
-        if (e.target === overlay) closeOverlay();
-      });
-
-      window.addEventListener("keydown", (e) => {
-        if (e.key === "Escape" && overlay.classList.contains("open")) closeOverlay();
-      });
-
-      // Loop
-      const clock = new THREE.Clock();
-      function tick() {
-        requestAnimationFrame(tick);
-
-        viewerCard.resize();
-        viewerFull.resize();
-
-        const dt = clock.getDelta();
-        if (state.mixerCard && state.mixerCard.timeScale !== 0) {
-          state.mixerCard.update(dt);
-        }
-
-        viewerCard.controls.update();
-        viewerFull.controls.update();
-
-        viewerCard.renderer.render(viewerCard.scene, viewerCard.camera);
-        viewerFull.renderer.render(viewerFull.scene, viewerFull.camera);
-      }
-      tick();
-    }
-
-    function syncCameraFromCardToFull() {
-      // Copia cámara + target para que el fullscreen abra con la misma vista
-      viewerFull.controls.target.copy(viewerCard.controls.target);
-      viewerFull.camera.position.copy(viewerCard.camera.position);
-      viewerFull.camera.quaternion.copy(viewerCard.camera.quaternion);
-      viewerFull.camera.updateProjectionMatrix();
-      viewerFull.controls.update();
-    }
-
-    function syncCameraFromFullToCard() {
-      // Al cerrar, devuelve la cámara modificada en fullscreen a la card
-      viewerCard.controls.target.copy(viewerFull.controls.target);
-      viewerCard.camera.position.copy(viewerFull.camera.position);
-      viewerCard.camera.quaternion.copy(viewerFull.camera.quaternion);
-      viewerCard.camera.updateProjectionMatrix();
-      viewerCard.controls.update();
-    }
-
-
-    function openOverlay() {
-      overlay.classList.add("open");
-      overlay.setAttribute("aria-hidden", "false");
-      // asegura resize/controls con layout visible
-      requestAnimationFrame(() => {
-        viewerFull.resize();
-        syncCameraFromCardToFull();
-      });
-    }
-
-    function closeOverlay() {
-      syncCameraFromFullToCard();
-      overlay.classList.remove("open");
-      overlay.setAttribute("aria-hidden", "true");
-      requestAnimationFrame(() => {
-        viewerCard.resize();
-        viewerCard.controls.update();
-      });
-    }
-
-    // Filter buttons (tu lógica original)
-    document.querySelectorAll('.filter-btn').forEach(btn => {
-      btn.addEventListener('click', () => {
-        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-      });
+</div>
+
+<!-- ============== OVERLAY LOCAL ============== -->
+<div id="overlayLocal" class="overlay">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="title">Local Fullscreen</div>
+      <button class="close" id="closeLocal">Close</button>
+    </div>
+    <model-viewer id="mvFull"
+      class="viewer-full"
+      src="owl.glb"
+      camera-controls
+      environment-image="ForestSmall.hdr"
+      loading="eager"
+      reveal="auto"></model-viewer>
+  </div>
+</div>
+
+<!-- ============== OVERLAY SKETCHFAB ============== -->
+<div id="overlaySf" class="overlay">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="title">Sketchfab Fullscreen</div>
+      <button class="close" id="closeSf">Close</button>
+    </div>
+    <iframe id="sfFull" class="viewer-full"
+      allow="autoplay; fullscreen; xr-spatial-tracking"
+      allowfullscreen></iframe>
+  </div>
+</div>
+
+<script type="module">
+  /* LOCAL MODEL */
+  const mvCard = document.getElementById("mvCard");
+  const mvFull = document.getElementById("mvFull");
+  const overlayLocal = document.getElementById("overlayLocal");
+
+  mvCard.onclick = () => overlayLocal.classList.add("open");
+  document.getElementById("closeLocal").onclick =
+    () => overlayLocal.classList.remove("open");
+
+  mvCard.addEventListener("load", () => {
+    const anims = mvCard.availableAnimations || [];
+    const sel = animSel;
+    sel.innerHTML = "";
+    if (!anims.length) return;
+    anims.forEach(a=>{
+      const o=document.createElement("option");
+      o.value=o.textContent=a;sel.appendChild(o);
     });
+    mvCard.animationName=anims[0];
+    mvFull.animationName=anims[0];
+    mvCard.play();
+  });
 
-    init().catch((err) => {
-      console.error("Error inicializando Three.js viewer:", err);
-      alert("Error cargando el modelo/HDRI. Revisa rutas y consola.");
-    });
-  </script>
+  playBtn.onclick=()=>{mvCard.play();mvFull.play();}
+  pauseBtn.onclick=()=>{mvCard.pause();mvFull.pause();}
+  animSel.onchange=()=>{
+    mvCard.animationName=animSel.value;
+    mvFull.animationName=animSel.value;
+    mvCard.play();
+  };
+
+  /* SKETCHFAB */
+  const UID="3a137761afb24332a22062c377d48eec";
+  const sfURL=u=>`https://sketchfab.com/models/${u}/embed?autostart=1&autospin=0.2`;
+  sfCard.src=sfURL(UID);
+
+  sfCard.onclick=()=>{
+    overlaySf.classList.add("open");
+    sfFull.src=sfURL(UID);
+  };
+  closeSf.onclick=()=>{
+    overlaySf.classList.remove("open");
+    sfFull.src="about:blank";
+  };
+
+  window.addEventListener("keydown",e=>{
+    if(e.key==="Escape"){
+      overlayLocal.classList.remove("open");
+      overlaySf.classList.remove("open");
+      sfFull.src="about:blank";
+    }
+  });
+</script>
 
 </body>
 </html>
