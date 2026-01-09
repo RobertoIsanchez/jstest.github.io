@@ -925,17 +925,37 @@
       tick();
     }
 
+    function syncCameraFromCardToFull() {
+      // Copia cámara + target para que el fullscreen abra con la misma vista
+      viewerFull.controls.target.copy(viewerCard.controls.target);
+      viewerFull.camera.position.copy(viewerCard.camera.position);
+      viewerFull.camera.quaternion.copy(viewerCard.camera.quaternion);
+      viewerFull.camera.updateProjectionMatrix();
+      viewerFull.controls.update();
+    }
+
+    function syncCameraFromFullToCard() {
+      // Al cerrar, devuelve la cámara modificada en fullscreen a la card
+      viewerCard.controls.target.copy(viewerFull.controls.target);
+      viewerCard.camera.position.copy(viewerFull.camera.position);
+      viewerCard.camera.quaternion.copy(viewerFull.camera.quaternion);
+      viewerCard.camera.updateProjectionMatrix();
+      viewerCard.controls.update();
+    }
+
+
     function openOverlay() {
       overlay.classList.add("open");
       overlay.setAttribute("aria-hidden", "false");
       // asegura resize/controls con layout visible
       requestAnimationFrame(() => {
         viewerFull.resize();
-        viewerFull.controls.update();
+        syncCameraFromCardToFull();
       });
     }
 
     function closeOverlay() {
+      syncCameraFromFullToCard();
       overlay.classList.remove("open");
       overlay.setAttribute("aria-hidden", "true");
       requestAnimationFrame(() => {
