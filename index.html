@@ -3,301 +3,175 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Viewer en Card + Fullscreen (gltf/glb)</title>
+  <title>Sketchfab Card Viewer</title>
 
   <style>
-    :root { color-scheme: dark; }
-    html, body { margin:0; height:100%; background:#0b0b0b; font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial; }
-
-    .wrap { min-height: 100%; display: grid; place-items: center; padding: 24px; }
-
-    .card {
-      width: min(980px, 100%);
-      border-radius: 18px;
-      overflow: hidden;
-      background: rgba(255,255,255,0.04);
-      border: 1px solid rgba(255,255,255,0.08);
-      box-shadow: 0 20px 60px rgba(0,0,0,0.45);
-    }
-    .card-header {
-      padding: 14px 16px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-    }
-    .title { font-size: 14px; opacity: 0.9; }
-    .hint { font-size: 12px; opacity: 0.6; }
-
-    .viewer-area { position: relative; }
-    .viewer {
-      width: 100%;
-      height: 520px;
-      display: block;
-      background: radial-gradient(1200px 600px at 50% 40%, rgba(255,255,255,0.06), transparent 60%);
-      cursor: zoom-in;
+    html,body{
+      margin:0;
+      height:100%;
+      background:#0b0b0b;
+      font-family:system-ui, -apple-system, Segoe UI, Roboto, Arial;
     }
 
-    .ui {
-      position: absolute;
-      left: 12px;
-      bottom: 12px;
-      display: flex;
-      gap: 8px;
-      align-items: center;
-      padding: 10px;
-      border-radius: 14px;
-      background: rgba(0,0,0,.45);
-      border: 1px solid rgba(255,255,255,.10);
-      backdrop-filter: blur(8px);
-    }
-    button, select {
-      border-radius: 10px;
-      border: 1px solid rgba(255,255,255,.15);
-      background: rgba(255,255,255,.08);
-      color: white;
-      padding: 8px 10px;
-      outline: none;
-      font-size: 13px;
-    }
-    button { cursor: pointer; }
-    button:disabled, select:disabled { opacity: 0.5; cursor: not-allowed; }
-
-    .overlay {
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,0.78);
-      backdrop-filter: blur(6px);
-      display: none;
-      z-index: 9999;
-    }
-    .overlay.open { display: block; }
-
-    .modal {
-      position: absolute;
-      inset: 24px;
-      border-radius: 18px;
-      overflow: hidden;
-      background: rgba(255,255,255,0.04);
-      border: 1px solid rgba(255,255,255,0.10);
-      box-shadow: 0 24px 80px rgba(0,0,0,0.65);
-      display: grid;
-      grid-template-rows: auto 1fr;
+    .wrap{
+      min-height:100%;
+      display:grid;
+      place-items:center;
+      padding:24px;
     }
 
-    .modal-header {
-      padding: 12px 12px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      background: rgba(0,0,0,0.25);
+    .card{
+      width:min(980px,100%);
+      border-radius:18px;
+      overflow:hidden;
+      background:rgba(255,255,255,0.04);
+      border:1px solid rgba(255,255,255,0.08);
+      box-shadow:0 20px 60px rgba(0,0,0,0.45);
     }
 
-    .modal-title { font-size: 13px; opacity: 0.9; }
-    .close { cursor: pointer; border-radius: 12px; padding: 8px 10px; }
-
-    .viewer-full {
-      width: 100%;
-      height: 100%;
-      display: block;
-      background: radial-gradient(1400px 800px at 50% 40%, rgba(255,255,255,0.07), transparent 60%);
-      cursor: zoom-out;
+    .card-header{
+      padding:14px 16px;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
     }
 
-    @media (max-width: 720px) {
-      .viewer { height: 380px; }
-      .modal { inset: 12px; }
-      .ui { left: 10px; bottom: 10px; }
+    .title{ font-size:14px; opacity:.9; }
+    .hint{ font-size:12px; opacity:.6; }
+
+    iframe{
+      width:100%;
+      height:520px;
+      border:0;
+      display:block;
+      background:#111;
+      cursor:zoom-in;
+    }
+
+    /* Fullscreen overlay */
+    .overlay{
+      position:fixed;
+      inset:0;
+      background:rgba(0,0,0,.8);
+      backdrop-filter:blur(6px);
+      display:none;
+      z-index:9999;
+    }
+    .overlay.open{ display:block; }
+
+    .modal{
+      position:absolute;
+      inset:24px;
+      border-radius:18px;
+      overflow:hidden;
+      background:#111;
+      display:grid;
+      grid-template-rows:auto 1fr;
+    }
+
+    .modal-header{
+      padding:12px 16px;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      background:rgba(0,0,0,.35);
+    }
+
+    .close{
+      cursor:pointer;
+      padding:8px 12px;
+      border-radius:10px;
+      border:1px solid rgba(255,255,255,.15);
+      background:rgba(255,255,255,.08);
+      color:#fff;
+      font-size:13px;
+    }
+
+    .iframe-full{
+      width:100%;
+      height:100%;
+      border:0;
+      cursor:zoom-out;
+    }
+
+    @media(max-width:720px){
+      iframe{ height:380px; }
+      .modal{ inset:12px; }
     }
   </style>
-
-  <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
 </head>
 <body>
-  <div class="wrap">
-    <div class="card">
-      <div class="card-header">
-        <div class="title">Modelo 3D</div>
-        <div class="hint">Click para ampliar</div>
-      </div>
 
-      <div class="viewer-area">
-        <!-- Viewer en Card -->
-        <model-viewer id="mvCard"
-          class="viewer"
-          src="owl.glb"
-          alt="Modelo 3D"
-          camera-controls
-          touch-action="pan-y"
-          auto-rotate
-          rotation-per-second="12deg"
-          exposure="1.1"
-          shadow-intensity="1"
-          environment-image="ForestSmall.hdr"
-          skybox-image=""
-          interaction-prompt="none"
-          loading="eager"
-          reveal="auto"
-        ></model-viewer>
-
-        <!-- UI (animaciones) -->
-        <div class="ui">
-          <button id="playBtn">Play</button>
-          <button id="pauseBtn">Pause</button>
-          <select id="animSel"></select>
-        </div>
-      </div>
+<div class="wrap">
+  <div class="card">
+    <div class="card-header">
+      <div class="title">Tomahawk Launcher</div>
+      <div class="hint">Click para ampliar</div>
     </div>
+
+    <!-- Card -->
+    <iframe
+      id="sfCard"
+      allow="autoplay; fullscreen; xr-spatial-tracking"
+      allowfullscreen
+      title="Sketchfab Viewer">
+    </iframe>
   </div>
+</div>
 
-  <!-- Overlay Fullscreen -->
-  <div id="overlay" class="overlay" aria-hidden="true">
-    <div class="modal">
-      <div class="modal-header">
-        <div class="modal-title">Vista ampliada</div>
-        <button id="closeBtn" class="close">Cerrar (Esc)</button>
-      </div>
-
-      <!-- Viewer en Fullscreen -->
-      <model-viewer id="mvFull"
-        class="viewer-full"
-        src="owl.glb"  
-        alt="Modelo 3D en fullscreen"
-        camera-controls
-        touch-action="pan-y"
-        exposure="1.1"
-        shadow-intensity="1"
-        environment-image="ForestSmall.hdr"
-        skybox-image=""
-        interaction-prompt="none"
-        loading="eager"
-        reveal="auto"
-      ></model-viewer>
+<!-- Fullscreen -->
+<div id="overlay" class="overlay">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="title">Vista ampliada</div>
+      <button id="closeBtn" class="close">Cerrar (Esc)</button>
     </div>
+
+    <iframe
+      id="sfFull"
+      class="iframe-full"
+      allow="autoplay; fullscreen; xr-spatial-tracking"
+      allowfullscreen
+      title="Sketchfab Viewer Fullscreen">
+    </iframe>
   </div>
+</div>
 
-  <script type="module">
-    const mvCard = document.getElementById("mvCard");
-    const mvFull = document.getElementById("mvFull");
+<script>
+  const UID = "3a137761afb24332a22062c377d48eec";
 
-    const overlay = document.getElementById("overlay");
-    const closeBtn = document.getElementById("closeBtn");
+  function embedUrl(uid){
+    return `https://sketchfab.com/models/${uid}/embed?autostart=1&autospin=0.2&controls=1`;
+  }
 
-    const playBtn = document.getElementById("playBtn");
-    const pauseBtn = document.getElementById("pauseBtn");
-    const animSel = document.getElementById("animSel");
+  const sfCard = document.getElementById("sfCard");
+  const sfFull = document.getElementById("sfFull");
+  const overlay = document.getElementById("overlay");
+  const closeBtn = document.getElementById("closeBtn");
 
-    function syncState(from, to) {
-      // Copia estado de cámara (strings tipo "30deg 75deg 2.5m")
-      if (from.cameraOrbit) to.cameraOrbit = from.cameraOrbit;
-      if (from.cameraTarget) to.cameraTarget = from.cameraTarget;
-      if (from.fieldOfView) to.fieldOfView = from.fieldOfView;
+  // Carga inicial (card)
+  sfCard.src = embedUrl(UID);
 
-      // Animación
-      to.animationName = from.animationName || "";
-      if (!from.paused) to.play(); else to.pause();
+  function openFullscreen(){
+    overlay.classList.add("open");
+    sfFull.src = embedUrl(UID);
+  }
+
+  function closeFullscreen(){
+    overlay.classList.remove("open");
+    sfFull.src = "about:blank";
+  }
+
+  sfCard.addEventListener("click", openFullscreen);
+  sfFull.addEventListener("click", closeFullscreen);
+  closeBtn.addEventListener("click", closeFullscreen);
+
+  window.addEventListener("keydown", e=>{
+    if(e.key==="Escape" && overlay.classList.contains("open")){
+      closeFullscreen();
     }
+  });
+</script>
 
-    function openOverlay() {
-      overlay.classList.add("open");
-      overlay.setAttribute("aria-hidden", "false");
-
-      // Sincroniza estado actual
-      syncState(mvCard, mvFull);
-
-      // CLAVE: esperar a que el overlay ya tenga tamaño visible
-      requestAnimationFrame(() => {
-        // Recalcula encuadre/render cuando el canvas ya existe con dimensiones reales
-        if (typeof mvFull.updateFraming === "function") mvFull.updateFraming();
-
-        // Re-sincroniza cámara después del framing si quieres mantener el mismo ángulo
-        // (si prefieres que el framing mande, comenta la línea de abajo)
-        syncState(mvCard, mvFull);
-      });
-    }
-
-    function closeOverlay() {
-      // (opcional) sincroniza de regreso
-      syncState(mvFull, mvCard);
-      overlay.classList.remove("open");
-      overlay.setAttribute("aria-hidden", "true");
-
-      // A veces ayuda re-encuadrar al volver a card (por si cambió el layout)
-      requestAnimationFrame(() => {
-        if (typeof mvCard.updateFraming === "function") mvCard.updateFraming();
-      });
-    }
-
-    // Click en card abre fullscreen
-    mvCard.addEventListener("click", () => openOverlay());
-
-    // Click en el viewer fullscreen cierra (si lo quieres)
-    mvFull.addEventListener("click", () => closeOverlay());
-
-    closeBtn.addEventListener("click", () => closeOverlay());
-    overlay.addEventListener("click", (e) => {
-      if (e.target === overlay) closeOverlay(); // click fuera del modal
-    });
-
-    window.addEventListener("keydown", (e) => {
-      if (e.key === "Escape" && overlay.classList.contains("open")) closeOverlay();
-    });
-
-    // --- Animaciones (si existen) ---
-    function setupAnimations() {
-      const anims = mvCard.availableAnimations || [];
-      animSel.innerHTML = "";
-
-      if (anims.length === 0) {
-        const opt = document.createElement("option");
-        opt.textContent = "Sin animaciones";
-        opt.value = "";
-        animSel.appendChild(opt);
-        animSel.disabled = true;
-        playBtn.disabled = true;
-        pauseBtn.disabled = true;
-        return;
-      }
-
-      animSel.disabled = false;
-      playBtn.disabled = false;
-      pauseBtn.disabled = false;
-
-      for (const name of anims) {
-        const opt = document.createElement("option");
-        opt.value = name;
-        opt.textContent = name;
-        animSel.appendChild(opt);
-      }
-
-      // Selecciona primera animación y reproduce
-      mvCard.animationName = anims[0];
-      mvFull.animationName = anims[0];
-      animSel.value = anims[0];
-      mvCard.play();
-    }
-
-    mvCard.addEventListener("load", () => setupAnimations());
-
-    animSel.addEventListener("change", () => {
-      const name = animSel.value;
-      if (!name) return;
-      mvCard.animationName = name;
-      mvFull.animationName = name;
-      mvCard.play();
-      if (overlay.classList.contains("open")) mvFull.play();
-    });
-
-    playBtn.addEventListener("click", () => {
-      mvCard.play();
-      if (overlay.classList.contains("open")) mvFull.play();
-    });
-
-    pauseBtn.addEventListener("click", () => {
-      mvCard.pause();
-      if (overlay.classList.contains("open")) mvFull.pause();
-    });
-  </script>
 </body>
 </html>
