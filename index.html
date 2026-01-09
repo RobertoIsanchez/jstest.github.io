@@ -3,16 +3,14 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Viewer en Card + Fullscreen</title>
+  <title>Viewer en Card + Fullscreen (gltf/glb)</title>
 
   <style>
     :root { color-scheme: dark; }
     html, body { margin:0; height:100%; background:#0b0b0b; font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial; }
 
-    /* Layout */
     .wrap { min-height: 100%; display: grid; place-items: center; padding: 24px; }
 
-    /* Card */
     .card {
       width: min(980px, 100%);
       border-radius: 18px;
@@ -40,7 +38,6 @@
       cursor: zoom-in;
     }
 
-    /* UI overlay (dentro del viewer) */
     .ui {
       position: absolute;
       left: 12px;
@@ -66,7 +63,6 @@
     button { cursor: pointer; }
     button:disabled, select:disabled { opacity: 0.5; cursor: not-allowed; }
 
-    /* Fullscreen overlay */
     .overlay {
       position: fixed;
       inset: 0;
@@ -99,11 +95,7 @@
     }
 
     .modal-title { font-size: 13px; opacity: 0.9; }
-    .close {
-      cursor: pointer;
-      border-radius: 12px;
-      padding: 8px 10px;
-    }
+    .close { cursor: pointer; border-radius: 12px; padding: 8px 10px; }
 
     .viewer-full {
       width: 100%;
@@ -134,7 +126,7 @@
         <!-- Viewer en Card -->
         <model-viewer id="mvCard"
           class="viewer"
-          src="owl.glb"
+          src="./assets/model.gltf"  <!-- o ./assets/model.glb -->
           alt="Modelo 3D"
           camera-controls
           touch-action="pan-y"
@@ -142,12 +134,14 @@
           rotation-per-second="12deg"
           exposure="1.1"
           shadow-intensity="1"
-          environment-image="ForestSmall.hdr"
-          skybox-image=""
+          environment-image="./assets/env/studio.hdr"
+          skybox-image="./assets/env/studio.hdr"
           interaction-prompt="none"
+          loading="eager"
+          reveal="auto"
         ></model-viewer>
 
-        <!-- UI (control animaciones) -->
+        <!-- UI (animaciones) -->
         <div class="ui">
           <button id="playBtn">Play</button>
           <button id="pauseBtn">Pause</button>
@@ -168,15 +162,17 @@
       <!-- Viewer en Fullscreen -->
       <model-viewer id="mvFull"
         class="viewer-full"
-        src="./assets/model.glb"
+        src="owl.glb"  
         alt="Modelo 3D en fullscreen"
         camera-controls
         touch-action="pan-y"
         exposure="1.1"
         shadow-intensity="1"
-        environment-image="./assets/env/studio.hdr"
-        skybox-image="./assets/env/studio.hdr"
+        environment-image="ForestSmall.hdr"
+        skybox-image=""
         interaction-prompt="none"
+        loading="eager"
+        reveal="auto"
       ></model-viewer>
     </div>
   </div>
@@ -193,8 +189,7 @@
     const animSel = document.getElementById("animSel");
 
     function syncState(from, to) {
-      // Copia cámara/target aproximado usando orbit (si existe)
-      // (model-viewer expone cameraOrbit y fieldOfView como strings)
+      // Copia estado de cámara (strings tipo "30deg 75deg 2.5m")
       if (from.cameraOrbit) to.cameraOrbit = from.cameraOrbit;
       if (from.cameraTarget) to.cameraTarget = from.cameraTarget;
       if (from.fieldOfView) to.fieldOfView = from.fieldOfView;
@@ -207,27 +202,42 @@
     function openOverlay() {
       overlay.classList.add("open");
       overlay.setAttribute("aria-hidden", "false");
-      // sincroniza estado de card a fullscreen
+
+      // Sincroniza estado actual
       syncState(mvCard, mvFull);
+
+      // CLAVE: esperar a que el overlay ya tenga tamaño visible
+      requestAnimationFrame(() => {
+        // Recalcula encuadre/render cuando el canvas ya existe con dimensiones reales
+        if (typeof mvFull.updateFraming === "function") mvFull.updateFraming();
+
+        // Re-sincroniza cámara después del framing si quieres mantener el mismo ángulo
+        // (si prefieres que el framing mande, comenta la línea de abajo)
+        syncState(mvCard, mvFull);
+      });
     }
 
     function closeOverlay() {
-      // sincroniza de regreso (opcional)
+      // (opcional) sincroniza de regreso
       syncState(mvFull, mvCard);
       overlay.classList.remove("open");
       overlay.setAttribute("aria-hidden", "true");
+
+      // A veces ayuda re-encuadrar al volver a card (por si cambió el layout)
+      requestAnimationFrame(() => {
+        if (typeof mvCard.updateFraming === "function") mvCard.updateFraming();
+      });
     }
 
-    // Click en el card abre fullscreen
+    // Click en card abre fullscreen
     mvCard.addEventListener("click", () => openOverlay());
 
-    // Click en fullscreen cierra (opcional)
+    // Click en el viewer fullscreen cierra (si lo quieres)
     mvFull.addEventListener("click", () => closeOverlay());
 
     closeBtn.addEventListener("click", () => closeOverlay());
     overlay.addEventListener("click", (e) => {
-      // click fuera del modal cierra
-      if (e.target === overlay) closeOverlay();
+      if (e.target === overlay) closeOverlay(); // click fuera del modal
     });
 
     window.addEventListener("keydown", (e) => {
@@ -235,8 +245,8 @@
     });
 
     // --- Animaciones (si existen) ---
-    function setupAnimations(mv) {
-      const anims = mv.availableAnimations || [];
+    function setupAnimations() {
+      const anims = mvCard.availableAnimations || [];
       animSel.innerHTML = "";
 
       if (anims.length === 0) {
@@ -261,15 +271,14 @@
         animSel.appendChild(opt);
       }
 
-      // Selecciona la primera por defecto y reproduce
+      // Selecciona primera animación y reproduce
       mvCard.animationName = anims[0];
       mvFull.animationName = anims[0];
       animSel.value = anims[0];
       mvCard.play();
     }
 
-    // Espera a que cargue el modelo (en el card)
-    mvCard.addEventListener("load", () => setupAnimations(mvCard));
+    mvCard.addEventListener("load", () => setupAnimations());
 
     animSel.addEventListener("change", () => {
       const name = animSel.value;
