@@ -9,9 +9,9 @@
     @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap');
 
     :root {
-      --mint: #000000;
+      --mint: #c8f4f4;
       --mint-dark: #a8e6e6;
-      --coral: #59d87c;
+      --coral: #ff6b6b;
       --salmon: #ffa07a;
       --yellow: #f7dc6f;
       --lavender: #e8d4f0;
@@ -444,6 +444,8 @@
       .header { padding: 40px 24px 60px; }
     }
   </style>
+
+  <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
 </head>
 <body>
   <!-- Formas decorativas -->
@@ -491,13 +493,23 @@
       </div>
 
       <div class="viewer-area">
-        <canvas id="mvCard" class="viewer"></canvas>
+        <model-viewer id="mvCard"
+          class="viewer"
+          src="owl.glb"
+          alt="Modelo 3D"
+          camera-controls
+          touch-action="pan-y"
+          auto-rotate
+          rotation-per-second="12deg"
+          exposure="1.1"
+          shadow-intensity="0.8"
+          environment-image="ForestSmall.hdr"
+          interaction-prompt="none"
+          loading="eager"
+          reveal="auto"
+        ></model-viewer>
 
         <div class="ui">
-          <button id="texBtn" title="Toggle texturas">Textures</button>
-          <button id="wireBtn" title="Wireframe overlay">Wire</button>
-          <button id="wireOnlyBtn" title="Solo wireframe">Wire Only</button>
-
           <button id="playBtn">Play</button>
           <button id="pauseBtn">Pause</button>
           <select id="animSel"></select>
@@ -519,237 +531,74 @@
         <button id="closeBtn" class="close">Close (Esc)</button>
       </div>
 
-      <canvas id="mvFull" class="viewer-full"></canvas>
+      <model-viewer id="mvFull"
+        class="viewer-full"
+        src="owl.glb"  
+        alt="Modelo 3D en fullscreen"
+        camera-controls
+        touch-action="pan-y"
+        exposure="1.1"
+        shadow-intensity="0.8"
+        environment-image="ForestSmall.hdr"
+        interaction-prompt="none"
+        loading="eager"
+        reveal="auto"
+      ></model-viewer>
     </div>
   </div>
 
-  
   <script type="module">
-    import * as THREE from "https://unpkg.com/three@0.160.0/build/three.module.js";
-    import { OrbitControls } from "https://unpkg.com/three@0.160.0/examples/jsm/controls/OrbitControls.js";
-    import { GLTFLoader } from "https://unpkg.com/three@0.160.0/examples/jsm/loaders/GLTFLoader.js";
-    import { RGBELoader } from "https://unpkg.com/three@0.160.0/examples/jsm/loaders/RGBELoader.js";
-
-    // ==============================
-    // Config (usa tus mismos nombres)
-    // ==============================
-    const MODEL_URL = "owl.glb";          // .glb o .gltf
-    const HDR_URL   = "ForestSmall.hdr";  // HDRI equirectangular
-
-    // DOM
-    const canvasCard = document.getElementById("mvCard");
-    const canvasFull = document.getElementById("mvFull");
-
+    const mvCard = document.getElementById("mvCard");
+    const mvFull = document.getElementById("mvFull");
     const overlay = document.getElementById("overlay");
     const closeBtn = document.getElementById("closeBtn");
-
-    const texBtn = document.getElementById("texBtn");
-    const wireBtn = document.getElementById("wireBtn");
-    const wireOnlyBtn = document.getElementById("wireOnlyBtn");
-
     const playBtn = document.getElementById("playBtn");
     const pauseBtn = document.getElementById("pauseBtn");
     const animSel = document.getElementById("animSel");
 
-    // Estado
-    const state = {
-      modelCard: null,
-      modelFull: null,
-      mixerCard: null,
-      actions: new Map(),
-      activeClipName: "",
-      clips: [],
-      texturesOn: true,
-      wireOverlayOn: true,
-      wireOnlyOn: false,
-      savedMaps: new Map(),    // material.uuid -> maps
-      wireLines: [],           // lineSegments (overlay)
-      envTex: null
-    };
-
-    // Helpers
-    function makeViewer(canvas) {
-      const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
-      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-      renderer.outputColorSpace = THREE.SRGBColorSpace;
-      renderer.toneMapping = THREE.ACESFilmicToneMapping;
-      renderer.toneMappingExposure = 1.1;
-
-      const scene = new THREE.Scene();
-
-      const camera = new THREE.PerspectiveCamera(45, 2, 0.1, 2000);
-      camera.position.set(0.8, 0.6, 1.6);
-
-      const controls = new OrbitControls(camera, renderer.domElement);
-      controls.enableDamping = true;
-
-      // Apoyo (la iluminación real viene del HDR)
-      scene.add(new THREE.HemisphereLight(0xffffff, 0x222222, 0.35));
-      const dir = new THREE.DirectionalLight(0xffffff, 0.55);
-      dir.position.set(3, 5, 2);
-      scene.add(dir);
-
-      function resize() {
-        const w = canvas.clientWidth;
-        const h = canvas.clientHeight;
-        if (canvas.width !== w || canvas.height !== h) {
-          renderer.setSize(w, h, false);
-          camera.aspect = w / h;
-          camera.updateProjectionMatrix();
-        }
-      }
-
-      return { renderer, scene, camera, controls, resize };
+    function syncState(from, to) {
+      if (from.cameraOrbit) to.cameraOrbit = from.cameraOrbit;
+      if (from.cameraTarget) to.cameraTarget = from.cameraTarget;
+      if (from.fieldOfView) to.fieldOfView = from.fieldOfView;
+      to.animationName = from.animationName || "";
+      if (!from.paused) to.play(); else to.pause();
     }
 
-    const viewerCard = makeViewer(canvasCard);
-    const viewerFull = makeViewer(canvasFull);
-
-    async function loadEnvironment(scene) {
-      if (state.envTex) {
-        scene.environment = state.envTex;
-        return;
-      }
-      const tex = await new RGBELoader().loadAsync(HDR_URL);
-      tex.mapping = THREE.EquirectangularReflectionMapping;
-      state.envTex = tex;
-      scene.environment = tex;
-      scene.background = null; // si quieres ver el HDRI: scene.background = tex
-    }
-
-    function centerAndFrame(model, camera, controls) {
-      const box = new THREE.Box3().setFromObject(model);
-      const size = box.getSize(new THREE.Vector3());
-      const center = box.getCenter(new THREE.Vector3());
-
-      model.position.sub(center);
-
-      const maxDim = Math.max(size.x, size.y, size.z);
-      const fov = camera.fov * Math.PI / 180;
-      let cameraZ = (maxDim / 2) / Math.tan(fov / 2);
-      cameraZ *= 1.6;
-
-      camera.position.set(0, maxDim * 0.25, cameraZ);
-      camera.near = maxDim / 100;
-      camera.far = maxDim * 100;
-      camera.updateProjectionMatrix();
-
-      controls.target.set(0, 0, 0);
-      controls.update();
-    }
-
-    function cacheMaps(model) {
-      model.traverse((obj) => {
-        if (!obj.isMesh) return;
-        const mat = obj.material;
-        if (!mat) return;
-        if (!state.savedMaps.has(mat.uuid)) {
-          state.savedMaps.set(mat.uuid, {
-            map: mat.map || null,
-            normalMap: mat.normalMap || null,
-            roughnessMap: mat.roughnessMap || null,
-            metalnessMap: mat.metalnessMap || null,
-            emissiveMap: mat.emissiveMap || null,
-            aoMap: mat.aoMap || null
-          });
-        }
+    function openOverlay() {
+      overlay.classList.add("open");
+      overlay.setAttribute("aria-hidden", "false");
+      syncState(mvCard, mvFull);
+      requestAnimationFrame(() => {
+        if (typeof mvFull.updateFraming === "function") mvFull.updateFraming();
+        syncState(mvCard, mvFull);
       });
     }
 
-    function setTexturesEnabled(model, enabled) {
-      model.traverse((obj) => {
-        if (!obj.isMesh) return;
-        const mat = obj.material;
-        if (!mat) return;
-        const saved = state.savedMaps.get(mat.uuid);
-        if (!saved) return;
-
-        if (enabled) {
-          mat.map = saved.map;
-          mat.normalMap = saved.normalMap;
-          mat.roughnessMap = saved.roughnessMap;
-          mat.metalnessMap = saved.metalnessMap;
-          mat.emissiveMap = saved.emissiveMap;
-          mat.aoMap = saved.aoMap;
-        } else {
-          mat.map = null;
-          mat.normalMap = null;
-          mat.roughnessMap = null;
-          mat.metalnessMap = null;
-          mat.emissiveMap = null;
-          mat.aoMap = null;
-        }
-        mat.needsUpdate = true;
+    function closeOverlay() {
+      syncState(mvFull, mvCard);
+      overlay.classList.remove("open");
+      overlay.setAttribute("aria-hidden", "true");
+      requestAnimationFrame(() => {
+        if (typeof mvCard.updateFraming === "function") mvCard.updateFraming();
       });
     }
 
-    function clearWireOverlay(scene) {
-      for (const line of state.wireLines) {
-        if (line.parent) line.parent.remove(line);
-      }
-      state.wireLines.length = 0;
-    }
+    mvCard.addEventListener("click", () => openOverlay());
+    mvFull.addEventListener("click", () => closeOverlay());
+    closeBtn.addEventListener("click", () => closeOverlay());
+    overlay.addEventListener("click", (e) => {
+      if (e.target === overlay) closeOverlay();
+    });
 
-    function buildWireOverlay(scene, model) {
-      clearWireOverlay(scene);
+    window.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && overlay.classList.contains("open")) closeOverlay();
+    });
 
-      model.traverse((obj) => {
-        if (!obj.isMesh || !obj.geometry) return;
-
-        const geo = new THREE.WireframeGeometry(obj.geometry);
-        const mat = new THREE.LineBasicMaterial({
-          color: 0x111111,
-          transparent: true,
-          opacity: 0.6,
-          depthTest: false
-        });
-
-        const wire = new THREE.LineSegments(geo, mat);
-        wire.position.copy(obj.position);
-        wire.rotation.copy(obj.rotation);
-        wire.scale.copy(obj.scale);
-        wire.renderOrder = 999;
-
-        obj.parent.add(wire);
-        state.wireLines.push(wire);
-      });
-    }
-
-    function setWireMode(model, scene, { overlay, only }) {
-      // overlay: shading + líneas
-      // only: material wireframe (sin overlay)
-      if (!model) return;
-
-      if (only) {
-        clearWireOverlay(scene);
-        model.traverse((obj) => {
-          if (!obj.isMesh) return;
-          const m = obj.material;
-          if (!m) return;
-          // wireframe puro
-          m.wireframe = true;
-          m.needsUpdate = true;
-        });
-        return;
-      }
-
-      // no-only: apaga wireframe en material base
-      model.traverse((obj) => {
-        if (!obj.isMesh) return;
-        const m = obj.material;
-        if (!m) return;
-        m.wireframe = false;
-        m.needsUpdate = true;
-      });
-
-      if (overlay) buildWireOverlay(scene, model);
-      else clearWireOverlay(scene);
-    }
-
-    function setupAnimationUI(clips) {
+    function setupAnimations() {
+      const anims = mvCard.availableAnimations || [];
       animSel.innerHTML = "";
 
-      if (!clips.length) {
+      if (anims.length === 0) {
         const opt = document.createElement("option");
         opt.textContent = "No animations";
         opt.value = "";
@@ -764,219 +613,47 @@
       playBtn.disabled = false;
       pauseBtn.disabled = false;
 
-      for (const clip of clips) {
+      for (const name of anims) {
         const opt = document.createElement("option");
-        opt.value = clip.name;
-        opt.textContent = clip.name || "Clip";
+        opt.value = name;
+        opt.textContent = name;
         animSel.appendChild(opt);
       }
+
+      mvCard.animationName = anims[0];
+      mvFull.animationName = anims[0];
+      animSel.value = anims[0];
+      mvCard.play();
     }
 
-    function playClip(name) {
-      if (!state.mixerCard || !state.clips.length) return;
+    mvCard.addEventListener("load", () => setupAnimations());
 
-      const clip = state.clips.find(c => c.name === name) || state.clips[0];
-      state.activeClipName = clip.name;
+    animSel.addEventListener("change", () => {
+      const name = animSel.value;
+      if (!name) return;
+      mvCard.animationName = name;
+      mvFull.animationName = name;
+      mvCard.play();
+      if (overlay.classList.contains("open")) mvFull.play();
+    });
 
-      // fade entre clips
-      for (const [n, action] of state.actions) {
-        if (n === clip.name) continue;
-        action.fadeOut(0.15);
-      }
+    playBtn.addEventListener("click", () => {
+      mvCard.play();
+      if (overlay.classList.contains("open")) mvFull.play();
+    });
 
-      let action = state.actions.get(clip.name);
-      if (!action) {
-        action = state.mixerCard.clipAction(clip);
-        state.actions.set(clip.name, action);
-      }
+    pauseBtn.addEventListener("click", () => {
+      mvCard.pause();
+      if (overlay.classList.contains("open")) mvFull.pause();
+    });
 
-      action.reset().fadeIn(0.15).play();
-      state.mixerCard.timeScale = 1;
-    }
-
-    function pauseAnimations() {
-      if (!state.mixerCard) return;
-      state.mixerCard.timeScale = 0;
-    }
-
-    function updateButtonLabels() {
-      texBtn.textContent = state.texturesOn ? "Textures: ON" : "Textures: OFF";
-      wireBtn.textContent = state.wireOverlayOn ? "Wire: ON" : "Wire: OFF";
-      wireOnlyBtn.textContent = state.wireOnlyOn ? "Wire Only: ON" : "Wire Only: OFF";
-    }
-
-    async function init() {
-      await loadEnvironment(viewerCard.scene);
-      await loadEnvironment(viewerFull.scene);
-
-      const gltf = await new GLTFLoader().loadAsync(MODEL_URL);
-
-      // Card model
-      state.modelCard = gltf.scene;
-      viewerCard.scene.add(state.modelCard);
-      cacheMaps(state.modelCard);
-      centerAndFrame(state.modelCard, viewerCard.camera, viewerCard.controls);
-
-      // Full model (clon)
-      state.modelFull = gltf.scene.clone(true);
-      viewerFull.scene.add(state.modelFull);
-      centerAndFrame(state.modelFull, viewerFull.camera, viewerFull.controls);
-
-      // Animaciones
-      state.clips = gltf.animations || [];
-      setupAnimationUI(state.clips);
-
-      if (state.clips.length) {
-        state.mixerCard = new THREE.AnimationMixer(state.modelCard);
-        // default
-        animSel.value = state.clips[0].name;
-        playClip(state.clips[0].name);
-      }
-
-      // Defaults "tipo Sketchfab"
-      state.texturesOn = true;
-      state.wireOverlayOn = true;
-      state.wireOnlyOn = false;
-
-      setTexturesEnabled(state.modelCard, true);
-      setWireMode(state.modelCard, viewerCard.scene, { overlay: true, only: false });
-
-      updateButtonLabels();
-
-      // UI events
-      texBtn.addEventListener("click", () => {
-        state.texturesOn = !state.texturesOn;
-        setTexturesEnabled(state.modelCard, state.texturesOn);
-        // en wire-only normalmente no se ven texturas, pero dejamos el toggle por si regresas
-        updateButtonLabels();
-      });
-
-      wireBtn.addEventListener("click", () => {
-        state.wireOverlayOn = !state.wireOverlayOn;
-        if (state.wireOnlyOn) {
-          // si estás en wire only, wire overlay no aplica
-          updateButtonLabels();
-          return;
-        }
-        setWireMode(state.modelCard, viewerCard.scene, { overlay: state.wireOverlayOn, only: false });
-        updateButtonLabels();
-      });
-
-      wireOnlyBtn.addEventListener("click", () => {
-        state.wireOnlyOn = !state.wireOnlyOn;
-
-        if (state.wireOnlyOn) {
-          // wire only: apaga overlay y texturas (para look limpio)
-          state.wireOverlayOn = false;
-          setTexturesEnabled(state.modelCard, false);
-          setWireMode(state.modelCard, viewerCard.scene, { overlay: false, only: true });
-        } else {
-          // vuelve a shading + overlay (si estaba ON)
-          setWireMode(state.modelCard, viewerCard.scene, { overlay: state.wireOverlayOn, only: false });
-          setTexturesEnabled(state.modelCard, state.texturesOn);
-        }
-        updateButtonLabels();
-      });
-
-      playBtn.addEventListener("click", () => {
-        if (!state.clips.length) return;
-        playClip(animSel.value);
-      });
-
-      pauseBtn.addEventListener("click", () => pauseAnimations());
-
-      animSel.addEventListener("change", () => {
-        if (!state.clips.length) return;
-        playClip(animSel.value);
-      });
-
-      // Overlay open/close (canvas)
-      canvasCard.addEventListener("click", () => openOverlay());
-      canvasFull.addEventListener("click", () => closeOverlay());
-
-      closeBtn.addEventListener("click", () => closeOverlay());
-      overlay.addEventListener("click", (e) => {
-        if (e.target === overlay) closeOverlay();
-      });
-
-      window.addEventListener("keydown", (e) => {
-        if (e.key === "Escape" && overlay.classList.contains("open")) closeOverlay();
-      });
-
-      // Loop
-      const clock = new THREE.Clock();
-      function tick() {
-        requestAnimationFrame(tick);
-
-        viewerCard.resize();
-        viewerFull.resize();
-
-        const dt = clock.getDelta();
-        if (state.mixerCard && state.mixerCard.timeScale !== 0) {
-          state.mixerCard.update(dt);
-        }
-
-        viewerCard.controls.update();
-        viewerFull.controls.update();
-
-        viewerCard.renderer.render(viewerCard.scene, viewerCard.camera);
-        viewerFull.renderer.render(viewerFull.scene, viewerFull.camera);
-      }
-      tick();
-    }
-
-    function syncCameraFromCardToFull() {
-      // Copia cámara + target para que el fullscreen abra con la misma vista
-      viewerFull.controls.target.copy(viewerCard.controls.target);
-      viewerFull.camera.position.copy(viewerCard.camera.position);
-      viewerFull.camera.quaternion.copy(viewerCard.camera.quaternion);
-      viewerFull.camera.updateProjectionMatrix();
-      viewerFull.controls.update();
-    }
-
-    function syncCameraFromFullToCard() {
-      // Al cerrar, devuelve la cámara modificada en fullscreen a la card
-      viewerCard.controls.target.copy(viewerFull.controls.target);
-      viewerCard.camera.position.copy(viewerFull.camera.position);
-      viewerCard.camera.quaternion.copy(viewerFull.camera.quaternion);
-      viewerCard.camera.updateProjectionMatrix();
-      viewerCard.controls.update();
-    }
-
-
-    function openOverlay() {
-      overlay.classList.add("open");
-      overlay.setAttribute("aria-hidden", "false");
-      // asegura resize/controls con layout visible
-      requestAnimationFrame(() => {
-        viewerFull.resize();
-        syncCameraFromCardToFull();
-      });
-    }
-
-    function closeOverlay() {
-      syncCameraFromFullToCard();
-      overlay.classList.remove("open");
-      overlay.setAttribute("aria-hidden", "true");
-      requestAnimationFrame(() => {
-        viewerCard.resize();
-        viewerCard.controls.update();
-      });
-    }
-
-    // Filter buttons (tu lógica original)
+    // Filter buttons interaction
     document.querySelectorAll('.filter-btn').forEach(btn => {
       btn.addEventListener('click', () => {
         document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
       });
     });
-
-    init().catch((err) => {
-      console.error("Error inicializando Three.js viewer:", err);
-      alert("Error cargando el modelo/HDRI. Revisa rutas y consola.");
-    });
   </script>
-
 </body>
 </html>
