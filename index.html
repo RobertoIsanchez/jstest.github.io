@@ -3,95 +3,292 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>GLB Animado + HDRI</title>
+  <title>Viewer en Card + Fullscreen</title>
 
   <style>
-    html, body { margin:0; height:100%; background:#0b0b0b; overflow:hidden; }
-    model-viewer { width:100%; height:100vh; display:block; }
+    :root { color-scheme: dark; }
+    html, body { margin:0; height:100%; background:#0b0b0b; font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial; }
+
+    /* Layout */
+    .wrap { min-height: 100%; display: grid; place-items: center; padding: 24px; }
+
+    /* Card */
+    .card {
+      width: min(980px, 100%);
+      border-radius: 18px;
+      overflow: hidden;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      box-shadow: 0 20px 60px rgba(0,0,0,0.45);
+    }
+    .card-header {
+      padding: 14px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+    .title { font-size: 14px; opacity: 0.9; }
+    .hint { font-size: 12px; opacity: 0.6; }
+
+    .viewer-area { position: relative; }
+    .viewer {
+      width: 100%;
+      height: 520px;
+      display: block;
+      background: radial-gradient(1200px 600px at 50% 40%, rgba(255,255,255,0.06), transparent 60%);
+      cursor: zoom-in;
+    }
+
+    /* UI overlay (dentro del viewer) */
     .ui {
-      position: fixed; left: 12px; bottom: 12px;
-      display: flex; gap: 8px; align-items: center;
-      padding: 10px; border-radius: 12px;
-      background: rgba(0,0,0,.45); backdrop-filter: blur(8px);
-      color: white; font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial;
+      position: absolute;
+      left: 12px;
+      bottom: 12px;
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      padding: 10px;
+      border-radius: 14px;
+      background: rgba(0,0,0,.45);
+      border: 1px solid rgba(255,255,255,.10);
+      backdrop-filter: blur(8px);
     }
     button, select {
-      border-radius: 10px; border: 1px solid rgba(255,255,255,.15);
-      background: rgba(255,255,255,.08); color: white;
-      padding: 8px 10px; outline: none;
+      border-radius: 10px;
+      border: 1px solid rgba(255,255,255,.15);
+      background: rgba(255,255,255,.08);
+      color: white;
+      padding: 8px 10px;
+      outline: none;
+      font-size: 13px;
     }
     button { cursor: pointer; }
+    button:disabled, select:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    /* Fullscreen overlay */
+    .overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.78);
+      backdrop-filter: blur(6px);
+      display: none;
+      z-index: 9999;
+    }
+    .overlay.open { display: block; }
+
+    .modal {
+      position: absolute;
+      inset: 24px;
+      border-radius: 18px;
+      overflow: hidden;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.10);
+      box-shadow: 0 24px 80px rgba(0,0,0,0.65);
+      display: grid;
+      grid-template-rows: auto 1fr;
+    }
+
+    .modal-header {
+      padding: 12px 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      background: rgba(0,0,0,0.25);
+    }
+
+    .modal-title { font-size: 13px; opacity: 0.9; }
+    .close {
+      cursor: pointer;
+      border-radius: 12px;
+      padding: 8px 10px;
+    }
+
+    .viewer-full {
+      width: 100%;
+      height: 100%;
+      display: block;
+      background: radial-gradient(1400px 800px at 50% 40%, rgba(255,255,255,0.07), transparent 60%);
+      cursor: zoom-out;
+    }
+
+    @media (max-width: 720px) {
+      .viewer { height: 380px; }
+      .modal { inset: 12px; }
+      .ui { left: 10px; bottom: 10px; }
+    }
   </style>
 
   <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
 </head>
 <body>
+  <div class="wrap">
+    <div class="card">
+      <div class="card-header">
+        <div class="title">Modelo 3D</div>
+        <div class="hint">Click para ampliar</div>
+      </div>
 
-  <model-viewer id="mv"
-    src="owl.glb"
-    alt="Modelo 3D"
-    camera-controls
-    touch-action="pan-y"
+      <div class="viewer-area">
+        <!-- Viewer en Card -->
+        <model-viewer id="mvCard"
+          class="viewer"
+          src="owl.glb"
+          alt="Modelo 3D"
+          camera-controls
+          touch-action="pan-y"
+          auto-rotate
+          rotation-per-second="12deg"
+          exposure="1.1"
+          shadow-intensity="1"
+          environment-image="ForestSmall.hdr"
+          skybox-image=""
+          interaction-prompt="none"
+        ></model-viewer>
 
-    exposure="1.1"
-    shadow-intensity="1"
+        <!-- UI (control animaciones) -->
+        <div class="ui">
+          <button id="playBtn">Play</button>
+          <button id="pauseBtn">Pause</button>
+          <select id="animSel"></select>
+        </div>
+      </div>
+    </div>
+  </div>
 
-    environment-image="ForestSmall.hdr"
-    skybox-image=""
+  <!-- Overlay Fullscreen -->
+  <div id="overlay" class="overlay" aria-hidden="true">
+    <div class="modal">
+      <div class="modal-header">
+        <div class="modal-title">Vista ampliada</div>
+        <button id="closeBtn" class="close">Cerrar (Esc)</button>
+      </div>
 
-    interaction-prompt="none"
-  ></model-viewer>
-
-  <div class="ui">
-    <button id="btnPlay">Play</button>
-    <button id="btnPause">Pause</button>
-    <select id="animSelect"></select>
+      <!-- Viewer en Fullscreen -->
+      <model-viewer id="mvFull"
+        class="viewer-full"
+        src="./assets/model.glb"
+        alt="Modelo 3D en fullscreen"
+        camera-controls
+        touch-action="pan-y"
+        exposure="1.1"
+        shadow-intensity="1"
+        environment-image="./assets/env/studio.hdr"
+        skybox-image="./assets/env/studio.hdr"
+        interaction-prompt="none"
+      ></model-viewer>
+    </div>
   </div>
 
   <script type="module">
-    const mv = document.getElementById("mv");
-    const sel = document.getElementById("animSelect");
-    const btnPlay = document.getElementById("btnPlay");
-    const btnPause = document.getElementById("btnPause");
+    const mvCard = document.getElementById("mvCard");
+    const mvFull = document.getElementById("mvFull");
 
-    // Espera a que el modelo cargue
-    mv.addEventListener("load", () => {
+    const overlay = document.getElementById("overlay");
+    const closeBtn = document.getElementById("closeBtn");
+
+    const playBtn = document.getElementById("playBtn");
+    const pauseBtn = document.getElementById("pauseBtn");
+    const animSel = document.getElementById("animSel");
+
+    function syncState(from, to) {
+      // Copia cámara/target aproximado usando orbit (si existe)
+      // (model-viewer expone cameraOrbit y fieldOfView como strings)
+      if (from.cameraOrbit) to.cameraOrbit = from.cameraOrbit;
+      if (from.cameraTarget) to.cameraTarget = from.cameraTarget;
+      if (from.fieldOfView) to.fieldOfView = from.fieldOfView;
+
+      // Animación
+      to.animationName = from.animationName || "";
+      if (!from.paused) to.play(); else to.pause();
+    }
+
+    function openOverlay() {
+      overlay.classList.add("open");
+      overlay.setAttribute("aria-hidden", "false");
+      // sincroniza estado de card a fullscreen
+      syncState(mvCard, mvFull);
+    }
+
+    function closeOverlay() {
+      // sincroniza de regreso (opcional)
+      syncState(mvFull, mvCard);
+      overlay.classList.remove("open");
+      overlay.setAttribute("aria-hidden", "true");
+    }
+
+    // Click en el card abre fullscreen
+    mvCard.addEventListener("click", () => openOverlay());
+
+    // Click en fullscreen cierra (opcional)
+    mvFull.addEventListener("click", () => closeOverlay());
+
+    closeBtn.addEventListener("click", () => closeOverlay());
+    overlay.addEventListener("click", (e) => {
+      // click fuera del modal cierra
+      if (e.target === overlay) closeOverlay();
+    });
+
+    window.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && overlay.classList.contains("open")) closeOverlay();
+    });
+
+    // --- Animaciones (si existen) ---
+    function setupAnimations(mv) {
       const anims = mv.availableAnimations || [];
+      animSel.innerHTML = "";
 
-      sel.innerHTML = "";
       if (anims.length === 0) {
         const opt = document.createElement("option");
         opt.textContent = "Sin animaciones";
         opt.value = "";
-        sel.appendChild(opt);
-        sel.disabled = true;
-        btnPlay.disabled = true;
-        btnPause.disabled = true;
+        animSel.appendChild(opt);
+        animSel.disabled = true;
+        playBtn.disabled = true;
+        pauseBtn.disabled = true;
         return;
       }
 
-      // Llena dropdown
+      animSel.disabled = false;
+      playBtn.disabled = false;
+      pauseBtn.disabled = false;
+
       for (const name of anims) {
         const opt = document.createElement("option");
         opt.value = name;
         opt.textContent = name;
-        sel.appendChild(opt);
+        animSel.appendChild(opt);
       }
 
-      // Selecciona la primera y arranca (opcional)
-      mv.animationName = anims[0];
-      mv.play();
+      // Selecciona la primera por defecto y reproduce
+      mvCard.animationName = anims[0];
+      mvFull.animationName = anims[0];
+      animSel.value = anims[0];
+      mvCard.play();
+    }
+
+    // Espera a que cargue el modelo (en el card)
+    mvCard.addEventListener("load", () => setupAnimations(mvCard));
+
+    animSel.addEventListener("change", () => {
+      const name = animSel.value;
+      if (!name) return;
+      mvCard.animationName = name;
+      mvFull.animationName = name;
+      mvCard.play();
+      if (overlay.classList.contains("open")) mvFull.play();
     });
 
-    sel.addEventListener("change", () => {
-      if (!sel.value) return;
-      mv.animationName = sel.value;
-      mv.play();
+    playBtn.addEventListener("click", () => {
+      mvCard.play();
+      if (overlay.classList.contains("open")) mvFull.play();
     });
 
-    btnPlay.addEventListener("click", () => mv.play());
-    btnPause.addEventListener("click", () => mv.pause());
+    pauseBtn.addEventListener("click", () => {
+      mvCard.pause();
+      if (overlay.classList.contains("open")) mvFull.pause();
+    });
   </script>
-
 </body>
 </html>
