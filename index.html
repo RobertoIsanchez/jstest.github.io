@@ -9,651 +9,221 @@
     @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap');
 
     :root {
-      --mint: #c8f4f4;
-      --mint-dark: #a8e6e6;
-      --coral: #ff6b6b;
-      --salmon: #ffa07a;
-      --yellow: #f7dc6f;
-      --lavender: #e8d4f0;
-      --peach: #ffd4b8;
-      --navy: #1a1a2e;
-      --gray: #6b7280;
-      --white: #ffffff;
+      --mint:#c8f4f4;--mint-dark:#a8e6e6;--coral:#ff6b6b;
+      --salmon:#ffa07a;--yellow:#f7dc6f;--lavender:#e8d4f0;
+      --peach:#ffd4b8;--navy:#1a1a2e;--gray:#6b7280;--white:#fff;
     }
 
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
+    *{margin:0;padding:0;box-sizing:border-box}
+    html,body{height:100%;font-family:Poppins,system-ui;color:var(--navy)}
+    body{
+      background:linear-gradient(180deg,#fff 0%,#fff 280px,var(--mint) 280px);
+      overflow-x:hidden;
     }
 
-    html, body { 
-      height: 100%; 
-      font-family: 'Poppins', system-ui, -apple-system, sans-serif;
-      overflow-x: hidden;
-      color: var(--navy);
+    .header{text-align:center;padding:60px 24px 80px}
+    .header h1{font-size:clamp(48px,10vw,72px);font-weight:800}
+    .header h2{font-size:28px;color:var(--coral)}
+    .header p{font-size:14px;color:var(--gray);max-width:420px;margin:auto}
+
+    .container{max-width:1000px;margin:auto;padding:24px}
+    .card{
+      border-radius:24px;overflow:hidden;background:#fff;
+      box-shadow:0 20px 60px rgba(0,0,0,.08);
+      margin-bottom:48px;
     }
 
-    /* Fondo principal mint con formas decorativas */
-    body {
-      background: linear-gradient(180deg, var(--white) 0%, var(--white) 280px, var(--mint) 280px, var(--mint) 100%);
-      min-height: 100vh;
-      position: relative;
+    .card-header{
+      padding:20px 24px;display:flex;justify-content:space-between;
+      border-bottom:1px solid rgba(0,0,0,.05)
     }
+    .title{font-size:16px;font-weight:600}
+    .subtitle{font-size:12px;color:var(--gray)}
+    .hint{font-size:12px;background:var(--mint);padding:6px 14px;border-radius:20px}
 
-    /* Formas geométricas decorativas */
-    .shape {
-      position: absolute;
-      pointer-events: none;
-      z-index: 0;
+    .viewer-area{position:relative;background:linear-gradient(135deg,#fef9f3,#f0fafa)}
+    .viewer{width:100%;height:520px;cursor:zoom-in}
+    iframe.viewer{border:0}
+
+    .ui{
+      position:absolute;left:20px;bottom:20px;display:flex;gap:10px;
+      background:#fff;padding:12px 16px;border-radius:16px;
+      box-shadow:0 8px 24px rgba(0,0,0,.1)
     }
-
-    .shape-wave {
-      top: 80px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 50px;
-      height: 30px;
+    button,select{
+      background:var(--mint);border:none;border-radius:10px;
+      padding:8px 14px;font-size:13px;font-family:inherit;cursor:pointer
     }
+    button:hover{background:var(--coral);color:#fff}
 
-    .shape-wave svg {
-      fill: var(--yellow);
+    .overlay{
+      position:fixed;inset:0;background:rgba(200,244,244,.95);
+      backdrop-filter:blur(20px);display:none;z-index:9999
     }
-
-    .shape-triangle {
-      right: 35%;
-      top: 220px;
-      width: 0;
-      height: 0;
-      border-left: 12px solid transparent;
-      border-right: 12px solid transparent;
-      border-bottom: 20px solid var(--coral);
+    .overlay.open{display:block}
+    .modal{
+      position:absolute;inset:24px;border-radius:24px;
+      background:#fff;display:grid;grid-template-rows:auto 1fr
     }
-
-    .shape-circle {
-      right: 80px;
-      top: 140px;
-      width: 80px;
-      height: 80px;
-      border: 8px solid var(--lavender);
-      border-radius: 50%;
-      border-right-color: transparent;
-      transform: rotate(-30deg);
+    .modal-header{
+      padding:16px 24px;display:flex;justify-content:space-between;
+      border-bottom:1px solid rgba(0,0,0,.05)
     }
+    .close{background:var(--mint);border-radius:12px;padding:8px 16px}
 
-    .shape-line {
-      left: 60px;
-      top: 300px;
-      width: 60px;
-      height: 4px;
-      background: linear-gradient(90deg, var(--coral), var(--salmon));
-      border-radius: 2px;
-    }
+    .viewer-full{width:100%;height:100%;cursor:zoom-out}
+    iframe.viewer-full{border:0}
 
-    .shape-dots {
-      right: 120px;
-      bottom: 100px;
-      display: grid;
-      grid-template-columns: repeat(3, 8px);
-      gap: 6px;
-    }
-
-    .shape-dots span {
-      width: 8px;
-      height: 8px;
-      background: var(--coral);
-      border-radius: 50%;
-      opacity: 0.6;
-    }
-
-    /* Header / Hero Section */
-    .header {
-      text-align: center;
-      padding: 60px 24px 80px;
-      position: relative;
-      z-index: 1;
-    }
-
-    .header h1 {
-      font-size: clamp(48px, 10vw, 72px);
-      font-weight: 800;
-      color: var(--navy);
-      margin-bottom: 8px;
-      letter-spacing: -1px;
-    }
-
-    .header h2 {
-      font-size: clamp(20px, 4vw, 28px);
-      font-weight: 600;
-      color: var(--coral);
-      margin-bottom: 16px;
-    }
-
-    .header p {
-      font-size: 14px;
-      color: var(--gray);
-      max-width: 400px;
-      margin: 0 auto;
-      line-height: 1.6;
-    }
-
-    /* Filtros de categoría */
-    .filters {
-      display: flex;
-      justify-content: center;
-      gap: 32px;
-      padding: 24px;
-      position: relative;
-      z-index: 1;
-    }
-
-    .filter-btn {
-      background: none;
-      border: none;
-      font-family: inherit;
-      font-size: 14px;
-      color: var(--gray);
-      cursor: pointer;
-      padding: 8px 4px;
-      position: relative;
-      transition: color 0.3s ease;
-    }
-
-    .filter-btn:hover,
-    .filter-btn.active {
-      color: var(--navy);
-    }
-
-    .filter-btn.active::after {
-      content: '';
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      height: 2px;
-      background: var(--navy);
-    }
-
-    /* Contenedor principal */
-    .container {
-      max-width: 1000px;
-      margin: 0 auto;
-      padding: 24px;
-      position: relative;
-      z-index: 1;
-    }
-
-    /* Card con estilo pastel y sombras suaves */
-    .card {
-      border-radius: 24px;
-      overflow: hidden;
-      background: var(--white);
-      box-shadow: 
-        0 20px 60px rgba(0, 0, 0, 0.08),
-        0 8px 24px rgba(0, 0, 0, 0.04);
-      position: relative;
-      transition: transform 0.4s ease, box-shadow 0.4s ease;
-    }
-
-    .card:hover {
-      transform: translateY(-8px);
-      box-shadow: 
-        0 32px 80px rgba(0, 0, 0, 0.12),
-        0 16px 32px rgba(0, 0, 0, 0.06);
-    }
-
-    /* Acento de color en la card */
-    .card::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      height: 6px;
-      background: linear-gradient(90deg, var(--coral), var(--salmon), var(--yellow));
-    }
-
-    .card-header {
-      padding: 20px 24px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      background: var(--white);
-      border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-    }
-
-    .card-header-left {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-
-    .card-icon {
-      width: 40px;
-      height: 40px;
-      background: linear-gradient(135deg, var(--lavender), var(--peach));
-      border-radius: 12px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 18px;
-    }
-
-    .title { 
-      font-size: 16px; 
-      font-weight: 600;
-      color: var(--navy);
-    }
-
-    .subtitle {
-      font-size: 12px;
-      color: var(--gray);
-      margin-top: 2px;
-    }
-
-    .hint { 
-      font-size: 12px; 
-      color: var(--gray);
-      background: var(--mint);
-      padding: 6px 12px;
-      border-radius: 20px;
-      transition: background 0.3s ease;
-    }
-
-    .hint:hover {
-      background: var(--mint-dark);
-    }
-
-    /* Área del visor con fondo pastel */
-    .viewer-area { 
-      position: relative;
-      background: linear-gradient(135deg, #fef9f3 0%, #f0fafa 50%, #fdf2f8 100%);
-    }
-
-    .viewer {
-      width: 100%;
-      height: 520px;
-      display: block;
-      cursor: zoom-in;
-      --poster-color: transparent;
-    }
-
-    /* UI de controles con estilo moderno */
-    .ui {
-      position: absolute;
-      left: 20px;
-      bottom: 20px;
-      display: flex;
-      gap: 10px;
-      align-items: center;
-      padding: 12px 16px;
-      border-radius: 16px;
-      background: var(--white);
-      border: 1px solid rgba(0, 0, 0, 0.08);
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
-    }
-
-    button, select {
-      border-radius: 10px;
-      border: 2px solid transparent;
-      background: var(--mint);
-      color: var(--navy);
-      padding: 10px 16px;
-      outline: none;
-      font-size: 13px;
-      font-weight: 500;
-      font-family: inherit;
-      transition: all 0.2s ease;
-    }
-
-    button { 
-      cursor: pointer;
-    }
-
-    button:hover:not(:disabled) {
-      background: var(--coral);
-      color: var(--white);
-      transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba(255, 107, 107, 0.3);
-    }
-
-    button:active:not(:disabled) {
-      transform: translateY(0);
-    }
-
-    select {
-      cursor: pointer;
-    }
-
-    select:hover:not(:disabled) {
-      border-color: var(--coral);
-    }
-
-    button:disabled, select:disabled { 
-      opacity: 0.4; 
-      cursor: not-allowed; 
-    }
-
-    /* Modal/Overlay con estilo limpio */
-    .overlay {
-      position: fixed;
-      inset: 0;
-      background: rgba(200, 244, 244, 0.95);
-      backdrop-filter: blur(20px);
-      display: none;
-      z-index: 9999;
-    }
-
-    .overlay.open { 
-      display: block;
-      animation: fadeIn 0.3s ease;
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; }
-      to { opacity: 1; }
-    }
-
-    .modal {
-      position: absolute;
-      inset: 24px;
-      border-radius: 24px;
-      overflow: hidden;
-      background: var(--white);
-      box-shadow: 
-        0 40px 100px rgba(0, 0, 0, 0.15),
-        0 20px 50px rgba(0, 0, 0, 0.1);
-      display: grid;
-      grid-template-rows: auto 1fr;
-      animation: slideUp 0.4s ease;
-    }
-
-    @keyframes slideUp {
-      from { 
-        opacity: 0;
-        transform: translateY(30px) scale(0.96);
-      }
-      to { 
-        opacity: 1;
-        transform: translateY(0) scale(1);
-      }
-    }
-
-    .modal-header {
-      padding: 16px 24px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      background: var(--white);
-      border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-    }
-
-    .modal-title { 
-      font-size: 15px; 
-      font-weight: 600;
-      color: var(--navy);
-    }
-
-    .close { 
-      cursor: pointer; 
-      border-radius: 12px; 
-      padding: 10px 20px;
-      background: var(--mint);
-    }
-
-    .close:hover {
-      background: var(--coral);
-      color: var(--white);
-    }
-
-    .viewer-full {
-      width: 100%;
-      height: 100%;
-      display: block;
-      cursor: zoom-out;
-      background: linear-gradient(135deg, #fef9f3 0%, #f0fafa 50%, #fdf2f8 100%);
-    }
-
-    /* Footer */
-    .footer {
-      text-align: center;
-      padding: 48px 24px;
-      color: var(--gray);
-      font-size: 13px;
-      position: relative;
-      z-index: 1;
-    }
-
-    .footer a {
-      color: var(--coral);
-      text-decoration: none;
-      font-weight: 500;
-    }
-
-    @media (max-width: 720px) {
-      .viewer { height: 380px; }
-      .modal { inset: 12px; border-radius: 20px; }
-      .ui { left: 12px; bottom: 12px; padding: 10px 12px; flex-wrap: wrap; }
-      .card { border-radius: 20px; }
-      .card-header { padding: 16px 20px; }
-      button, select { padding: 8px 12px; font-size: 12px; }
-      .filters { gap: 16px; flex-wrap: wrap; }
-      .shape-circle { display: none; }
-      .header { padding: 40px 24px 60px; }
+    @media(max-width:720px){
+      .viewer{height:380px}.modal{inset:12px}
     }
   </style>
 
   <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
 </head>
 <body>
-  <!-- Formas decorativas -->
-  <div class="shape shape-wave">
-    <svg viewBox="0 0 50 30" xmlns="http://www.w3.org/2000/svg">
-      <path d="M0 15 Q 12.5 0, 25 15 T 50 15 M0 22 Q 12.5 7, 25 22 T 50 22 M0 29 Q 12.5 14, 25 29 T 50 29" stroke="#f7dc6f" stroke-width="3" fill="none"/>
-    </svg>
-  </div>
-  <div class="shape shape-triangle"></div>
-  <div class="shape shape-circle"></div>
-  <div class="shape shape-line"></div>
-  <div class="shape shape-dots">
-    <span></span><span></span><span></span>
-    <span></span><span></span><span></span>
-  </div>
 
-  <!-- Header -->
-  <header class="header">
-    <h1>Hello,</h1>
-    <h2>I'm a 3D Designer!</h2>
-    <p>Passionate about creating immersive 3D experiences, motion graphics, and interactive design.</p>
-  </header>
+<header class="header">
+  <h1>Hello,</h1>
+  <h2>I'm a 3D Designer</h2>
+  <p>Comparación de visualización entre modelos locales y Sketchfab</p>
+</header>
 
-  <!-- Filtros -->
-  <nav class="filters">
-    <button class="filter-btn active">All</button>
-    <button class="filter-btn">Characters</button>
-    <button class="filter-btn">Environments</button>
-    <button class="filter-btn">Products</button>
-    <button class="filter-btn">Animation</button>
-  </nav>
+<div class="container">
 
-  <!-- Card principal -->
-  <div class="container">
-    <div class="card">
-      <div class="card-header">
-        <div class="card-header-left">
-          <div class="card-icon">🦉</div>
-          <div>
-            <div class="title">3D Model Viewer</div>
-            <div class="subtitle">Interactive preview</div>
-          </div>
-        </div>
-        <div class="hint">Click to expand</div>
+  <!-- ================= LOCAL MODEL ================= -->
+  <div class="card">
+    <div class="card-header">
+      <div>
+        <div class="title">Local 3D Model</div>
+        <div class="subtitle">model-viewer + HDRI</div>
       </div>
-
-      <div class="viewer-area">
-        <model-viewer id="mvCard"
-          class="viewer"
-          src="owl.glb"
-          alt="Modelo 3D"
-          camera-controls
-          touch-action="pan-y"
-          auto-rotate
-          rotation-per-second="12deg"
-          exposure="1.1"
-          shadow-intensity="0.8"
-          environment-image="ForestSmall.hdr"
-          interaction-prompt="none"
-          loading="eager"
-          reveal="auto"
-        ></model-viewer>
-
-        <div class="ui">
-          <button id="playBtn">Play</button>
-          <button id="pauseBtn">Pause</button>
-          <select id="animSel"></select>
-        </div>
-      </div>
+      <div class="hint">Click to expand</div>
     </div>
-  </div>
 
-  <!-- Footer -->
-  <footer class="footer">
-    <p>Made with love by <a href="#">Your Name</a> | 2025</p>
-  </footer>
-
-  <!-- Modal Fullscreen -->
-  <div id="overlay" class="overlay" aria-hidden="true">
-    <div class="modal">
-      <div class="modal-header">
-        <div class="modal-title">Full Preview</div>
-        <button id="closeBtn" class="close">Close (Esc)</button>
-      </div>
-
-      <model-viewer id="mvFull"
-        class="viewer-full"
-        src="owl.glb"  
-        alt="Modelo 3D en fullscreen"
+    <div class="viewer-area">
+      <model-viewer id="mvCard"
+        class="viewer"
+        src="owl.glb"
         camera-controls
-        touch-action="pan-y"
+        auto-rotate
         exposure="1.1"
-        shadow-intensity="0.8"
         environment-image="ForestSmall.hdr"
-        interaction-prompt="none"
         loading="eager"
-        reveal="auto"
-      ></model-viewer>
+        reveal="auto">
+      </model-viewer>
+
+      <div class="ui">
+        <button id="playBtn">Play</button>
+        <button id="pauseBtn">Pause</button>
+        <select id="animSel"></select>
+      </div>
     </div>
   </div>
 
-  <script type="module">
-    const mvCard = document.getElementById("mvCard");
-    const mvFull = document.getElementById("mvFull");
-    const overlay = document.getElementById("overlay");
-    const closeBtn = document.getElementById("closeBtn");
-    const playBtn = document.getElementById("playBtn");
-    const pauseBtn = document.getElementById("pauseBtn");
-    const animSel = document.getElementById("animSel");
+  <!-- ================= SKETCHFAB ================= -->
+  <div class="card">
+    <div class="card-header">
+      <div>
+        <div class="title">Sketchfab Model</div>
+        <div class="subtitle">External viewer</div>
+      </div>
+      <div class="hint">Click to expand</div>
+    </div>
 
-    function syncState(from, to) {
-      if (from.cameraOrbit) to.cameraOrbit = from.cameraOrbit;
-      if (from.cameraTarget) to.cameraTarget = from.cameraTarget;
-      if (from.fieldOfView) to.fieldOfView = from.fieldOfView;
-      to.animationName = from.animationName || "";
-      if (!from.paused) to.play(); else to.pause();
+    <div class="viewer-area">
+      <iframe id="sfCard" class="viewer"
+        allow="autoplay; fullscreen; xr-spatial-tracking"
+        allowfullscreen></iframe>
+    </div>
+  </div>
+
+</div>
+
+<!-- ============== OVERLAY LOCAL ============== -->
+<div id="overlayLocal" class="overlay">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="title">Local Fullscreen</div>
+      <button class="close" id="closeLocal">Close</button>
+    </div>
+    <model-viewer id="mvFull"
+      class="viewer-full"
+      src="owl.glb"
+      camera-controls
+      environment-image="ForestSmall.hdr"
+      loading="eager"
+      reveal="auto"></model-viewer>
+  </div>
+</div>
+
+<!-- ============== OVERLAY SKETCHFAB ============== -->
+<div id="overlaySf" class="overlay">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="title">Sketchfab Fullscreen</div>
+      <button class="close" id="closeSf">Close</button>
+    </div>
+    <iframe id="sfFull" class="viewer-full"
+      allow="autoplay; fullscreen; xr-spatial-tracking"
+      allowfullscreen></iframe>
+  </div>
+</div>
+
+<script type="module">
+  /* LOCAL MODEL */
+  const mvCard = document.getElementById("mvCard");
+  const mvFull = document.getElementById("mvFull");
+  const overlayLocal = document.getElementById("overlayLocal");
+
+  mvCard.onclick = () => overlayLocal.classList.add("open");
+  document.getElementById("closeLocal").onclick =
+    () => overlayLocal.classList.remove("open");
+
+  mvCard.addEventListener("load", () => {
+    const anims = mvCard.availableAnimations || [];
+    const sel = animSel;
+    sel.innerHTML = "";
+    if (!anims.length) return;
+    anims.forEach(a=>{
+      const o=document.createElement("option");
+      o.value=o.textContent=a;sel.appendChild(o);
+    });
+    mvCard.animationName=anims[0];
+    mvFull.animationName=anims[0];
+    mvCard.play();
+  });
+
+  playBtn.onclick=()=>{mvCard.play();mvFull.play();}
+  pauseBtn.onclick=()=>{mvCard.pause();mvFull.pause();}
+  animSel.onchange=()=>{
+    mvCard.animationName=animSel.value;
+    mvFull.animationName=animSel.value;
+    mvCard.play();
+  };
+
+  /* SKETCHFAB */
+  const UID="3a137761afb24332a22062c377d48eec";
+  const sfURL=u=>`https://sketchfab.com/models/${u}/embed?autostart=1&autospin=0.2`;
+  sfCard.src=sfURL(UID);
+
+  sfCard.onclick=()=>{
+    overlaySf.classList.add("open");
+    sfFull.src=sfURL(UID);
+  };
+  closeSf.onclick=()=>{
+    overlaySf.classList.remove("open");
+    sfFull.src="about:blank";
+  };
+
+  window.addEventListener("keydown",e=>{
+    if(e.key==="Escape"){
+      overlayLocal.classList.remove("open");
+      overlaySf.classList.remove("open");
+      sfFull.src="about:blank";
     }
+  });
+</script>
 
-    function openOverlay() {
-      overlay.classList.add("open");
-      overlay.setAttribute("aria-hidden", "false");
-      syncState(mvCard, mvFull);
-      requestAnimationFrame(() => {
-        if (typeof mvFull.updateFraming === "function") mvFull.updateFraming();
-        syncState(mvCard, mvFull);
-      });
-    }
-
-    function closeOverlay() {
-      syncState(mvFull, mvCard);
-      overlay.classList.remove("open");
-      overlay.setAttribute("aria-hidden", "true");
-      requestAnimationFrame(() => {
-        if (typeof mvCard.updateFraming === "function") mvCard.updateFraming();
-      });
-    }
-
-    mvCard.addEventListener("click", () => openOverlay());
-    mvFull.addEventListener("click", () => closeOverlay());
-    closeBtn.addEventListener("click", () => closeOverlay());
-    overlay.addEventListener("click", (e) => {
-      if (e.target === overlay) closeOverlay();
-    });
-
-    window.addEventListener("keydown", (e) => {
-      if (e.key === "Escape" && overlay.classList.contains("open")) closeOverlay();
-    });
-
-    function setupAnimations() {
-      const anims = mvCard.availableAnimations || [];
-      animSel.innerHTML = "";
-
-      if (anims.length === 0) {
-        const opt = document.createElement("option");
-        opt.textContent = "No animations";
-        opt.value = "";
-        animSel.appendChild(opt);
-        animSel.disabled = true;
-        playBtn.disabled = true;
-        pauseBtn.disabled = true;
-        return;
-      }
-
-      animSel.disabled = false;
-      playBtn.disabled = false;
-      pauseBtn.disabled = false;
-
-      for (const name of anims) {
-        const opt = document.createElement("option");
-        opt.value = name;
-        opt.textContent = name;
-        animSel.appendChild(opt);
-      }
-
-      mvCard.animationName = anims[0];
-      mvFull.animationName = anims[0];
-      animSel.value = anims[0];
-      mvCard.play();
-    }
-
-    mvCard.addEventListener("load", () => setupAnimations());
-
-    animSel.addEventListener("change", () => {
-      const name = animSel.value;
-      if (!name) return;
-      mvCard.animationName = name;
-      mvFull.animationName = name;
-      mvCard.play();
-      if (overlay.classList.contains("open")) mvFull.play();
-    });
-
-    playBtn.addEventListener("click", () => {
-      mvCard.play();
-      if (overlay.classList.contains("open")) mvFull.play();
-    });
-
-    pauseBtn.addEventListener("click", () => {
-      mvCard.pause();
-      if (overlay.classList.contains("open")) mvFull.pause();
-    });
-
-    // Filter buttons interaction
-    document.querySelectorAll('.filter-btn').forEach(btn => {
-      btn.addEventListener('click', () => {
-        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-      });
-    });
-  </script>
 </body>
 </html>
