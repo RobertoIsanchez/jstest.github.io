@@ -3,175 +3,409 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Sketchfab Card Viewer</title>
+  <title>Comparación: Local GLTF vs Sketchfab</title>
 
   <style>
-    html,body{
-      margin:0;
-      height:100%;
-      background:#0b0b0b;
-      font-family:system-ui, -apple-system, Segoe UI, Roboto, Arial;
+    :root { color-scheme: dark; }
+    html, body {
+      margin: 0;
+      min-height: 100%;
+      background: #0b0b0b;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial;
     }
 
-    .wrap{
-      min-height:100%;
-      display:grid;
-      place-items:center;
-      padding:24px;
+    .page { padding: 24px; max-width: 1200px; margin: 0 auto; }
+    .head { display:flex; justify-content:space-between; align-items:baseline; gap:12px; margin-bottom: 14px; }
+    .head h1 { margin: 0; font-size: 16px; opacity: .95; font-weight: 600; }
+    .head p { margin: 0; font-size: 12px; opacity: .65; }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+    }
+    @media (max-width: 980px) {
+      .grid { grid-template-columns: 1fr; }
     }
 
-    .card{
-      width:min(980px,100%);
-      border-radius:18px;
-      overflow:hidden;
-      background:rgba(255,255,255,0.04);
-      border:1px solid rgba(255,255,255,0.08);
-      box-shadow:0 20px 60px rgba(0,0,0,0.45);
+    .card {
+      border-radius: 18px;
+      overflow: hidden;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      box-shadow: 0 20px 60px rgba(0,0,0,0.45);
     }
 
-    .card-header{
-      padding:14px 16px;
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
+    .card-header {
+      padding: 14px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      background: rgba(0,0,0,0.15);
+    }
+    .title { font-size: 14px; opacity: .9; }
+    .hint  { font-size: 12px; opacity: .6; }
+
+    /* Local viewer */
+    .viewer-area { position: relative; }
+    model-viewer.viewer {
+      width: 100%;
+      height: 520px;
+      display: block;
+      cursor: zoom-in;
+      background: radial-gradient(1200px 600px at 50% 40%, rgba(255,255,255,0.06), transparent 60%);
     }
 
-    .title{ font-size:14px; opacity:.9; }
-    .hint{ font-size:12px; opacity:.6; }
-
-    iframe{
-      width:100%;
-      height:520px;
-      border:0;
-      display:block;
-      background:#111;
-      cursor:zoom-in;
+    /* Sketchfab iframe */
+    iframe.sf {
+      width: 100%;
+      height: 520px;
+      border: 0;
+      display: block;
+      background: #111;
+      cursor: zoom-in;
     }
 
-    /* Fullscreen overlay */
-    .overlay{
-      position:fixed;
-      inset:0;
-      background:rgba(0,0,0,.8);
-      backdrop-filter:blur(6px);
-      display:none;
-      z-index:9999;
-    }
-    .overlay.open{ display:block; }
-
-    .modal{
-      position:absolute;
-      inset:24px;
-      border-radius:18px;
-      overflow:hidden;
-      background:#111;
-      display:grid;
-      grid-template-rows:auto 1fr;
+    @media (max-width: 720px) {
+      model-viewer.viewer, iframe.sf { height: 380px; }
     }
 
-    .modal-header{
-      padding:12px 16px;
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      background:rgba(0,0,0,.35);
+    /* Local UI (animaciones) */
+    .ui {
+      position: absolute;
+      left: 12px;
+      bottom: 12px;
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      padding: 10px;
+      border-radius: 14px;
+      background: rgba(0,0,0,.45);
+      border: 1px solid rgba(255,255,255,.10);
+      backdrop-filter: blur(8px);
+    }
+    button, select {
+      border-radius: 10px;
+      border: 1px solid rgba(255,255,255,.15);
+      background: rgba(255,255,255,.08);
+      color: white;
+      padding: 8px 10px;
+      outline: none;
+      font-size: 13px;
+    }
+    button { cursor: pointer; }
+    button:disabled, select:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    /* Shared overlay */
+    .overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.78);
+      backdrop-filter: blur(6px);
+      display: none;
+      z-index: 9999;
+    }
+    .overlay.open { display: block; }
+
+    .modal {
+      position: absolute;
+      inset: 24px;
+      border-radius: 18px;
+      overflow: hidden;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.10);
+      box-shadow: 0 24px 80px rgba(0,0,0,0.65);
+      display: grid;
+      grid-template-rows: auto 1fr;
     }
 
-    .close{
-      cursor:pointer;
-      padding:8px 12px;
-      border-radius:10px;
-      border:1px solid rgba(255,255,255,.15);
-      background:rgba(255,255,255,.08);
-      color:#fff;
-      font-size:13px;
+    .modal-header {
+      padding: 12px 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      background: rgba(0,0,0,0.25);
     }
 
-    .iframe-full{
-      width:100%;
-      height:100%;
-      border:0;
-      cursor:zoom-out;
+    .modal-title { font-size: 13px; opacity: 0.9; }
+    .close {
+      cursor: pointer;
+      border-radius: 12px;
+      padding: 8px 10px;
     }
 
-    @media(max-width:720px){
-      iframe{ height:380px; }
-      .modal{ inset:12px; }
+    /* Full viewers */
+    model-viewer.viewer-full {
+      width: 100%;
+      height: 100%;
+      display: block;
+      cursor: zoom-out;
+      background: radial-gradient(1400px 800px at 50% 40%, rgba(255,255,255,0.07), transparent 60%);
     }
+    iframe.sf-full {
+      width: 100%;
+      height: 100%;
+      border: 0;
+      display: block;
+      background: #111;
+      cursor: zoom-out;
+    }
+    @media (max-width: 720px) { .modal { inset: 12px; } }
   </style>
+
+  <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
 </head>
 <body>
 
-<div class="wrap">
-  <div class="card">
-    <div class="card-header">
-      <div class="title">Tomahawk Launcher</div>
-      <div class="hint">Click para ampliar</div>
+  <div class="page">
+    <div class="head">
+      <h1>Comparación de visualización</h1>
+      <p>Click en cualquier card para abrir fullscreen</p>
     </div>
 
-    <!-- Card -->
-    <iframe
-      id="sfCard"
-      allow="autoplay; fullscreen; xr-spatial-tracking"
-      allowfullscreen
-      title="Sketchfab Viewer">
-    </iframe>
-  </div>
-</div>
+    <div class="grid">
+      <!-- CARD 1: Local GLTF/GLB -->
+      <div class="card">
+        <div class="card-header">
+          <div class="title">Local (.gltf/.glb) + HDRI</div>
+          <div class="hint">Click para ampliar</div>
+        </div>
 
-<!-- Fullscreen -->
-<div id="overlay" class="overlay">
-  <div class="modal">
-    <div class="modal-header">
-      <div class="title">Vista ampliada</div>
-      <button id="closeBtn" class="close">Cerrar (Esc)</button>
+        <div class="viewer-area">
+          <model-viewer id="mvCard"
+            class="viewer"
+            alt="Modelo local"
+            camera-controls
+            touch-action="pan-y"
+            auto-rotate
+            rotation-per-second="12deg"
+            exposure="1.1"
+            shadow-intensity="1"
+            interaction-prompt="none"
+            loading="eager"
+            reveal="auto"
+          ></model-viewer>
+
+          <div class="ui">
+            <button id="playBtn">Play</button>
+            <button id="pauseBtn">Pause</button>
+            <select id="animSel"></select>
+          </div>
+        </div>
+      </div>
+
+      <!-- CARD 2: Sketchfab -->
+      <div class="card">
+        <div class="card-header">
+          <div class="title">Sketchfab (embed)</div>
+          <div class="hint">Click para ampliar</div>
+        </div>
+
+        <iframe
+          id="sfCard"
+          class="sf"
+          title="Sketchfab Viewer"
+          allow="autoplay; fullscreen; xr-spatial-tracking"
+          allowfullscreen>
+        </iframe>
+      </div>
     </div>
-
-    <iframe
-      id="sfFull"
-      class="iframe-full"
-      allow="autoplay; fullscreen; xr-spatial-tracking"
-      allowfullscreen
-      title="Sketchfab Viewer Fullscreen">
-    </iframe>
   </div>
-</div>
 
-<script>
-  const UID = "3a137761afb24332a22062c377d48eec";
+  <!-- OVERLAY 1: Fullscreen Local -->
+  <div id="overlayLocal" class="overlay" aria-hidden="true">
+    <div class="modal">
+      <div class="modal-header">
+        <div class="modal-title">Local fullscreen</div>
+        <button id="closeLocal" class="close">Cerrar (Esc)</button>
+      </div>
 
-  function embedUrl(uid){
-    return `https://sketchfab.com/models/${uid}/embed?autostart=1&autospin=0.2&controls=1`;
-  }
+      <model-viewer id="mvFull"
+        class="viewer-full"
+        alt="Modelo local fullscreen"
+        camera-controls
+        touch-action="pan-y"
+        exposure="1.1"
+        shadow-intensity="1"
+        interaction-prompt="none"
+        loading="eager"
+        reveal="auto"
+      ></model-viewer>
+    </div>
+  </div>
 
-  const sfCard = document.getElementById("sfCard");
-  const sfFull = document.getElementById("sfFull");
-  const overlay = document.getElementById("overlay");
-  const closeBtn = document.getElementById("closeBtn");
+  <!-- OVERLAY 2: Fullscreen Sketchfab -->
+  <div id="overlaySf" class="overlay" aria-hidden="true">
+    <div class="modal">
+      <div class="modal-header">
+        <div class="modal-title">Sketchfab fullscreen</div>
+        <button id="closeSf" class="close">Cerrar (Esc)</button>
+      </div>
 
-  // Carga inicial (card)
-  sfCard.src = embedUrl(UID);
+      <iframe
+        id="sfFull"
+        class="sf-full"
+        title="Sketchfab Viewer Fullscreen"
+        allow="autoplay; fullscreen; xr-spatial-tracking"
+        allowfullscreen>
+      </iframe>
+    </div>
+  </div>
 
-  function openFullscreen(){
-    overlay.classList.add("open");
-    sfFull.src = embedUrl(UID);
-  }
+  <script type="module">
+    // ====== CONFIGURA ESTO ======
+    const LOCAL_MODEL_URL = "owl.glb";   // o "./assets/model.glb"
+    const HDRI_URL = "ForestSmall.hdr";
 
-  function closeFullscreen(){
-    overlay.classList.remove("open");
-    sfFull.src = "about:blank";
-  }
-
-  sfCard.addEventListener("click", openFullscreen);
-  sfFull.addEventListener("click", closeFullscreen);
-  closeBtn.addEventListener("click", closeFullscreen);
-
-  window.addEventListener("keydown", e=>{
-    if(e.key==="Escape" && overlay.classList.contains("open")){
-      closeFullscreen();
+    const SKETCHFAB_UID = "3a137761afb24332a22062c377d48eec";
+    function sketchfabUrl(uid){
+      return `https://sketchfab.com/models/${uid}/embed?autostart=1&autospin=0.2&controls=1`;
     }
-  });
-</script>
+    // ============================
 
+    // ---- Local viewer refs
+    const mvCard = document.getElementById("mvCard");
+    const mvFull = document.getElementById("mvFull");
+
+    // Asigna src + HDRI (card y full)
+    mvCard.src = LOCAL_MODEL_URL;
+    mvFull.src = LOCAL_MODEL_URL;
+    mvCard.environmentImage = HDRI_URL;
+    mvCard.skyboxImage = HDRI_URL;
+    mvFull.environmentImage = HDRI_URL;
+    mvFull.skyboxImage = HDRI_URL;
+
+    // ---- Sketchfab refs
+    const sfCard = document.getElementById("sfCard");
+    const sfFull = document.getElementById("sfFull");
+    sfCard.src = sketchfabUrl(SKETCHFAB_UID);
+
+    // ---- Overlays
+    const overlayLocal = document.getElementById("overlayLocal");
+    const overlaySf = document.getElementById("overlaySf");
+    const closeLocal = document.getElementById("closeLocal");
+    const closeSf = document.getElementById("closeSf");
+
+    function syncState(from, to) {
+      if (from.cameraOrbit) to.cameraOrbit = from.cameraOrbit;
+      if (from.cameraTarget) to.cameraTarget = from.cameraTarget;
+      if (from.fieldOfView) to.fieldOfView = from.fieldOfView;
+      to.animationName = from.animationName || "";
+      if (!from.paused) to.play(); else to.pause();
+    }
+
+    function openLocal(){
+      overlayLocal.classList.add("open");
+      overlayLocal.setAttribute("aria-hidden", "false");
+
+      syncState(mvCard, mvFull);
+
+      requestAnimationFrame(() => {
+        if (typeof mvFull.updateFraming === "function") mvFull.updateFraming();
+        syncState(mvCard, mvFull);
+      });
+    }
+    function closeLocalFn(){
+      syncState(mvFull, mvCard);
+      overlayLocal.classList.remove("open");
+      overlayLocal.setAttribute("aria-hidden", "true");
+      requestAnimationFrame(() => {
+        if (typeof mvCard.updateFraming === "function") mvCard.updateFraming();
+      });
+    }
+
+    function openSf(){
+      overlaySf.classList.add("open");
+      overlaySf.setAttribute("aria-hidden", "false");
+      sfFull.src = sketchfabUrl(SKETCHFAB_UID);
+    }
+    function closeSfFn(){
+      overlaySf.classList.remove("open");
+      overlaySf.setAttribute("aria-hidden", "true");
+      sfFull.src = "about:blank";
+    }
+
+    // Click abre fullscreen
+    mvCard.addEventListener("click", openLocal);
+    sfCard.addEventListener("click", openSf);
+
+    // Click dentro de fullscreen (opcional cerrar)
+    mvFull.addEventListener("click", closeLocalFn);
+    sfFull.addEventListener("click", closeSfFn);
+
+    // Botones cerrar + click fuera
+    closeLocal.addEventListener("click", closeLocalFn);
+    closeSf.addEventListener("click", closeSfFn);
+
+    overlayLocal.addEventListener("click", (e) => { if (e.target === overlayLocal) closeLocalFn(); });
+    overlaySf.addEventListener("click", (e) => { if (e.target === overlaySf) closeSfFn(); });
+
+    // Esc cierra el que esté abierto
+    window.addEventListener("keydown", (e) => {
+      if (e.key !== "Escape") return;
+      if (overlayLocal.classList.contains("open")) closeLocalFn();
+      if (overlaySf.classList.contains("open")) closeSfFn();
+    });
+
+    // ---- Animaciones local (si existen)
+    const playBtn = document.getElementById("playBtn");
+    const pauseBtn = document.getElementById("pauseBtn");
+    const animSel = document.getElementById("animSel");
+
+    function setupAnimations() {
+      const anims = mvCard.availableAnimations || [];
+      animSel.innerHTML = "";
+
+      if (anims.length === 0) {
+        const opt = document.createElement("option");
+        opt.textContent = "Sin animaciones";
+        opt.value = "";
+        animSel.appendChild(opt);
+        animSel.disabled = true;
+        playBtn.disabled = true;
+        pauseBtn.disabled = true;
+        return;
+      }
+
+      animSel.disabled = false;
+      playBtn.disabled = false;
+      pauseBtn.disabled = false;
+
+      for (const name of anims) {
+        const opt = document.createElement("option");
+        opt.value = name;
+        opt.textContent = name;
+        animSel.appendChild(opt);
+      }
+
+      mvCard.animationName = anims[0];
+      mvFull.animationName = anims[0];
+      animSel.value = anims[0];
+      mvCard.play();
+    }
+
+    mvCard.addEventListener("load", setupAnimations);
+
+    animSel.addEventListener("change", () => {
+      const name = animSel.value;
+      if (!name) return;
+      mvCard.animationName = name;
+      mvFull.animationName = name;
+      mvCard.play();
+      if (overlayLocal.classList.contains("open")) mvFull.play();
+    });
+
+    playBtn.addEventListener("click", () => {
+      mvCard.play();
+      if (overlayLocal.classList.contains("open")) mvFull.play();
+    });
+
+    pauseBtn.addEventListener("click", () => {
+      mvCard.pause();
+      if (overlayLocal.classList.contains("open")) mvFull.pause();
+    });
+  </script>
 </body>
 </html>
