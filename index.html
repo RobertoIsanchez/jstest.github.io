@@ -2,51 +2,96 @@
 <html lang="es">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>3D Viewer con HDRI</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>GLB Animado + HDRI</title>
 
   <style>
-    html, body {
-      margin: 0;
-      height: 100%;
-      background: #0b0b0b;
-      overflow: hidden;
+    html, body { margin:0; height:100%; background:#0b0b0b; overflow:hidden; }
+    model-viewer { width:100%; height:100vh; display:block; }
+    .ui {
+      position: fixed; left: 12px; bottom: 12px;
+      display: flex; gap: 8px; align-items: center;
+      padding: 10px; border-radius: 12px;
+      background: rgba(0,0,0,.45); backdrop-filter: blur(8px);
+      color: white; font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial;
     }
-
-    model-viewer {
-      width: 100%;
-      height: 100vh;
-      display: block;
+    button, select {
+      border-radius: 10px; border: 1px solid rgba(255,255,255,.15);
+      background: rgba(255,255,255,.08); color: white;
+      padding: 8px 10px; outline: none;
     }
+    button { cursor: pointer; }
   </style>
 
-  <!-- model-viewer -->
-  <script
-    type="module"
-    src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js">
-  </script>
+  <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
 </head>
 <body>
 
-  <model-viewer
+  <model-viewer id="mv"
     src="owl.glb"
     alt="Modelo 3D"
-    
     camera-controls
     touch-action="pan-y"
-    auto-rotate
-    rotation-per-second="15deg"
 
     exposure="1.1"
     shadow-intensity="1"
 
-    environment-image="river_alcove_1k.hdr"
-    skybox-image="ForestSmall.hdr"
+    environment-image="ForestSmall.hdr"
+    skybox-image=""
 
-    loading="eager"
     interaction-prompt="none"
-  >
-  </model-viewer>
+  ></model-viewer>
+
+  <div class="ui">
+    <button id="btnPlay">Play</button>
+    <button id="btnPause">Pause</button>
+    <select id="animSelect"></select>
+  </div>
+
+  <script type="module">
+    const mv = document.getElementById("mv");
+    const sel = document.getElementById("animSelect");
+    const btnPlay = document.getElementById("btnPlay");
+    const btnPause = document.getElementById("btnPause");
+
+    // Espera a que el modelo cargue
+    mv.addEventListener("load", () => {
+      const anims = mv.availableAnimations || [];
+
+      sel.innerHTML = "";
+      if (anims.length === 0) {
+        const opt = document.createElement("option");
+        opt.textContent = "Sin animaciones";
+        opt.value = "";
+        sel.appendChild(opt);
+        sel.disabled = true;
+        btnPlay.disabled = true;
+        btnPause.disabled = true;
+        return;
+      }
+
+      // Llena dropdown
+      for (const name of anims) {
+        const opt = document.createElement("option");
+        opt.value = name;
+        opt.textContent = name;
+        sel.appendChild(opt);
+      }
+
+      // Selecciona la primera y arranca (opcional)
+      mv.animationName = anims[0];
+      mv.play();
+    });
+
+    sel.addEventListener("change", () => {
+      if (!sel.value) return;
+      mv.animationName = sel.value;
+      mv.play();
+    });
+
+    btnPlay.addEventListener("click", () => mv.play());
+    btnPause.addEventListener("click", () => mv.pause());
+  </script>
 
 </body>
 </html>
