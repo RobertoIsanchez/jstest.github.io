@@ -1,229 +1,416 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Portfolio 3D Designer</title>
-
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>3D Model Showcase</title>
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+        "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+      }
+    }
+  </script>
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap');
-
-    :root {
-      --mint:#c8f4f4;--mint-dark:#a8e6e6;--coral:#ff6b6b;
-      --salmon:#ffa07a;--yellow:#f7dc6f;--lavender:#e8d4f0;
-      --peach:#ffd4b8;--navy:#1a1a2e;--gray:#6b7280;--white:#fff;
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
     }
 
-    *{margin:0;padding:0;box-sizing:border-box}
-    html,body{height:100%;font-family:Poppins,system-ui;color:var(--navy)}
-    body{
-      background:linear-gradient(180deg,#fff 0%,#fff 280px,var(--mint) 280px);
-      overflow-x:hidden;
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
+      background: linear-gradient(180deg, #0a0a0a 0%, #2a2a2a 50%, #4a4a4a 100%);
     }
 
-    .header{text-align:center;padding:60px 24px 80px}
-    .header h1{font-size:clamp(48px,10vw,72px);font-weight:800}
-    .header h2{font-size:28px;color:var(--coral)}
-    .header p{font-size:14px;color:var(--gray);max-width:420px;margin:auto}
-
-    .container{max-width:1000px;margin:auto;padding:24px}
-    .card{
-      border-radius:24px;overflow:hidden;background:#fff;
-      box-shadow:0 20px 60px rgba(0,0,0,.08);
-      margin-bottom:48px;
+    #canvas-container {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
     }
 
-    .card-header{
-      padding:20px 24px;display:flex;justify-content:space-between;
-      border-bottom:1px solid rgba(0,0,0,.05)
+    .overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 10;
+      pointer-events: none;
     }
-    .title{font-size:16px;font-weight:600}
-    .subtitle{font-size:12px;color:var(--gray)}
-    .hint{font-size:12px;background:var(--mint);padding:6px 14px;border-radius:20px}
 
-    .viewer-area{position:relative;background:linear-gradient(135deg,#fef9f3,#f0fafa)}
-    .viewer{width:100%;height:520px;cursor:zoom-in}
-    iframe.viewer{border:0}
+    /* Logo - Arriba Izquierda */
+    .logo-container {
+      position: absolute;
+      top: 30px;
+      left: 40px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      pointer-events: auto;
+    }
 
-    .ui{
-      position:absolute;left:20px;bottom:20px;display:flex;gap:10px;
-      background:#fff;padding:12px 16px;border-radius:16px;
-      box-shadow:0 8px 24px rgba(0,0,0,.1)
+    .logo-icon {
+      width: 50px;
+      height: 50px;
+      background: #fff;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
     }
-    button,select{
-      background:var(--mint);border:none;border-radius:10px;
-      padding:8px 14px;font-size:13px;font-family:inherit;cursor:pointer
-    }
-    button:hover{background:var(--coral);color:#fff}
 
-    .overlay{
-      position:fixed;inset:0;background:rgba(200,244,244,.95);
-      backdrop-filter:blur(20px);display:none;z-index:9999
+    .logo-text {
+      color: #fff;
     }
-    .overlay.open{display:block}
-    .modal{
-      position:absolute;inset:24px;border-radius:24px;
-      background:#fff;display:grid;grid-template-rows:auto 1fr
-    }
-    .modal-header{
-      padding:16px 24px;display:flex;justify-content:space-between;
-      border-bottom:1px solid rgba(0,0,0,.05)
-    }
-    .close{background:var(--mint);border-radius:12px;padding:8px 16px}
 
-    .viewer-full{width:100%;height:100%;cursor:zoom-out}
-    iframe.viewer-full{border:0}
+    .logo-text h1 {
+      font-size: 18px;
+      font-weight: 700;
+      letter-spacing: 2px;
+    }
 
-    @media(max-width:720px){
-      .viewer{height:380px}.modal{inset:12px}
+    .logo-text p {
+      font-size: 10px;
+      letter-spacing: 3px;
+      opacity: 0.7;
+      text-transform: uppercase;
+    }
+
+    /* Iconos Software - Arriba Derecha */
+    .software-icons {
+      position: absolute;
+      top: 30px;
+      right: 40px;
+      display: flex;
+      gap: 15px;
+      pointer-events: auto;
+    }
+
+    .software-icon {
+      width: 40px;
+      height: 40px;
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .software-icon:hover {
+      background: rgba(255, 255, 255, 0.2);
+      transform: scale(1.1);
+    }
+
+    .software-icon svg {
+      width: 20px;
+      height: 20px;
+      fill: #fff;
+    }
+
+    /* Info Técnica - Abajo Izquierda */
+    .tech-info {
+      position: absolute;
+      bottom: 40px;
+      left: 40px;
+      color: #fff;
+      max-width: 350px;
+    }
+
+    .model-number {
+      font-size: 48px;
+      font-weight: 800;
+      margin-bottom: 5px;
+      background: linear-gradient(90deg, #fff, #888);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .model-name {
+      font-size: 14px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      opacity: 0.8;
+      margin-bottom: 20px;
+    }
+
+    .tech-specs {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .spec-row {
+      display: flex;
+      gap: 20px;
+      font-size: 11px;
+      opacity: 0.6;
+    }
+
+    .spec-label {
+      min-width: 80px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .spec-value {
+      color: #aaa;
+    }
+
+    .credits {
+      margin-top: 25px;
+      display: flex;
+      gap: 15px;
+      align-items: center;
+    }
+
+    .credit-badge {
+      padding: 6px 12px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 4px;
+      font-size: 10px;
+      letter-spacing: 1px;
+    }
+
+    /* Título Central Decorativo */
+    .background-text {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 180px;
+      font-weight: 900;
+      color: rgba(255, 255, 255, 0.03);
+      letter-spacing: 20px;
+      white-space: nowrap;
+      z-index: 0;
+      user-select: none;
+    }
+
+    /* Loading */
+    .loading {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      color: #fff;
+      font-size: 14px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+    }
+
+    .loading-spinner {
+      width: 40px;
+      height: 40px;
+      border: 2px solid rgba(255, 255, 255, 0.1);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 15px;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* Controles */
+    .controls-hint {
+      position: absolute;
+      bottom: 40px;
+      right: 40px;
+      color: rgba(255, 255, 255, 0.4);
+      font-size: 11px;
+      text-align: right;
+      letter-spacing: 1px;
     }
   </style>
-
-  <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
 </head>
 <body>
-
-<header class="header">
-  <h1>Hello,</h1>
-  <h2>I'm a 3D Designer</h2>
-  <p>Comparación de visualización entre modelos locales y Sketchfab</p>
-</header>
-
-<div class="container">
-
-  <!-- ================= LOCAL MODEL ================= -->
-  <div class="card">
-    <div class="card-header">
-      <div>
-        <div class="title">Local 3D Model</div>
-        <div class="subtitle">model-viewer + HDRI</div>
-      </div>
-      <div class="hint">Click to expand</div>
+  <div id="canvas-container">
+    <div class="loading" id="loading">
+      <div class="loading-spinner"></div>
+      Cargando modelo...
     </div>
+  </div>
 
-    <div class="viewer-area">
-      <model-viewer id="mvCard"
-        class="viewer"
-        src="owl.glb"
-        camera-controls
-        auto-rotate
-        exposure="1.1"
-        environment-image="ForestSmall.hdr"
-        loading="eager"
-        reveal="auto">
-      </model-viewer>
+  <div class="background-text">OWL</div>
 
-      <div class="ui">
-        <button id="playBtn">Play</button>
-        <button id="pauseBtn">Pause</button>
-        <select id="animSel"></select>
+  <div class="overlay">
+    <!-- Logo - Arriba Izquierda -->
+    <div class="logo-container">
+      <div class="logo-icon">🎨</div>
+      <div class="logo-text">
+        <h1>TU LOGO</h1>
+        <p>3D Artist Portfolio</p>
       </div>
     </div>
-  </div>
 
-  <!-- ================= SKETCHFAB ================= -->
-  <div class="card">
-    <div class="card-header">
-      <div>
-        <div class="title">Sketchfab Model</div>
-        <div class="subtitle">External viewer</div>
+    <!-- Iconos Software - Arriba Derecha -->
+    <div class="software-icons">
+      <div class="software-icon" title="Blender">
+        <svg viewBox="0 0 24 24"><path d="M12.51 13.214c.046-.8.438-1.506 1.03-2.006a3.424 3.424 0 0 1 2.212-.79c.85 0 1.631.3 2.211.79.592.5.983 1.206 1.028 2.005.045.823-.285 1.586-.865 2.153a3.389 3.389 0 0 1-2.374.938 3.393 3.393 0 0 1-2.376-.938c-.58-.567-.91-1.33-.865-2.152M7.35 14.831c.006.314.106.922.256 1.398a7.372 7.372 0 0 0 1.477 2.58 7.152 7.152 0 0 0 2.401 1.748 7.093 7.093 0 0 0 5.675.23 7.225 7.225 0 0 0 2.507-1.654 7.32 7.32 0 0 0 1.663-2.495c.39-.95.552-1.86.552-2.812a7.29 7.29 0 0 0-.554-2.813 7.32 7.32 0 0 0-1.663-2.495 7.225 7.225 0 0 0-2.507-1.654A7.093 7.093 0 0 0 12 6.001c-.89 0-1.756.119-2.571.397l-5.26-4.09a.49.49 0 0 0-.635.063.49.49 0 0 0-.029.669L6.97 7.97a7.333 7.333 0 0 0-1.663 2.497 7.29 7.29 0 0 0-.554 2.813c0 .487.054.974.156 1.447l-3.88 2.819c-.212.153-.254.435-.101.647a.49.49 0 0 0 .4.2.49.49 0 0 0 .247-.067l4.108-2.98c.039.162.067.322.111.485z"/></svg>
       </div>
-      <div class="hint">Click to expand</div>
+      <div class="software-icon" title="ZBrush">
+        <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+      </div>
+      <div class="software-icon" title="Substance Painter">
+        <svg viewBox="0 0 24 24"><path d="M12 22C6.49 22 2 17.51 2 12S6.49 2 12 2s10 4.04 10 9c0 3.31-2.69 6-6 6h-1.77c-.28 0-.5.22-.5.5 0 .12.05.23.13.33.41.47.64 1.06.64 1.67A2.5 2.5 0 0 1 12 22zm0-18c-4.41 0-8 3.59-8 8s3.59 8 8 8c.28 0 .5-.22.5-.5a.54.54 0 0 0-.14-.35c-.41-.46-.63-1.05-.63-1.65a2.5 2.5 0 0 1 2.5-2.5H16c2.21 0 4-1.79 4-4 0-3.86-3.59-7-8-7z"/><circle cx="6.5" cy="11.5" r="1.5"/><circle cx="9.5" cy="7.5" r="1.5"/><circle cx="14.5" cy="7.5" r="1.5"/><circle cx="17.5" cy="11.5" r="1.5"/></svg>
+      </div>
+      <div class="software-icon" title="Maya">
+        <svg viewBox="0 0 24 24"><path d="M21 16.5c0 .38-.21.71-.53.88l-7.9 4.44c-.16.12-.36.18-.57.18-.21 0-.41-.06-.57-.18l-7.9-4.44A.991.991 0 0 1 3 16.5v-9c0-.38.21-.71.53-.88l7.9-4.44c.16-.12.36-.18.57-.18.21 0 .41.06.57.18l7.9 4.44c.32.17.53.5.53.88v9zM12 4.15L5 8.09v7.82l7 3.94 7-3.94V8.09l-7-3.94z"/></svg>
+      </div>
     </div>
 
-    <div class="viewer-area">
-      <iframe id="sfCard" class="viewer"
-        allow="autoplay; fullscreen; xr-spatial-tracking"
-        allowfullscreen></iframe>
+    <!-- Info Técnica - Abajo Izquierda -->
+    <div class="tech-info">
+      <div class="model-number">#01</div>
+      <div class="model-name">Pato McQuack</div>
+      
+      <div class="tech-specs">
+        <div class="spec-row">
+          <span class="spec-label">Polígonos</span>
+          <span class="spec-value">45,000 tris</span>
+        </div>
+        <div class="spec-row">
+          <span class="spec-label">Texturas</span>
+          <span class="spec-value">4K PBR</span>
+        </div>
+        <div class="spec-row">
+          <span class="spec-label">Software</span>
+          <span class="spec-value">Blender, Substance Painter</span>
+        </div>
+        <div class="spec-row">
+          <span class="spec-label">Tiempo</span>
+          <span class="spec-value">~40 horas</span>
+        </div>
+      </div>
+
+      <div class="credits">
+        <!-- <span class="credit-badge">© 2026</span> -->
+        <!-- <span class="credit-badge">TU NOMBRE</span> -->
+        <!-- <span class="credit-badge">3D ARTIST</span> -->
+      </div>
+    </div>
+
+    <!-- Controles -->
+    <div class="controls-hint">
+      Arrastra para rotar<br>
+      Scroll para zoom
     </div>
   </div>
 
-</div>
+  <script type="module">
+    import * as THREE from 'three';
+    import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+    import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 
-<!-- ============== OVERLAY LOCAL ============== -->
-<div id="overlayLocal" class="overlay">
-  <div class="modal">
-    <div class="modal-header">
-      <div class="title">Local Fullscreen</div>
-      <button class="close" id="closeLocal">Close</button>
-    </div>
-    <model-viewer id="mvFull"
-      class="viewer-full"
-      src="owl.glb"
-      camera-controls
-      environment-image="ForestSmall.hdr"
-      loading="eager"
-      reveal="auto"></model-viewer>
-  </div>
-</div>
+    // Setup
+    const container = document.getElementById('canvas-container');
+    const loading = document.getElementById('loading');
 
-<!-- ============== OVERLAY SKETCHFAB ============== -->
-<div id="overlaySf" class="overlay">
-  <div class="modal">
-    <div class="modal-header">
-      <div class="title">Sketchfab Fullscreen</div>
-      <button class="close" id="closeSf">Close</button>
-    </div>
-    <iframe id="sfFull" class="viewer-full"
-      allow="autoplay; fullscreen; xr-spatial-tracking"
-      allowfullscreen></iframe>
-  </div>
-</div>
+    // Scene
+    const scene = new THREE.Scene();
 
-<script type="module">
-  /* LOCAL MODEL */
-  const mvCard = document.getElementById("mvCard");
-  const mvFull = document.getElementById("mvFull");
-  const overlayLocal = document.getElementById("overlayLocal");
+    // Camera
+    const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
+    camera.position.set(0, 1, 5);
 
-  mvCard.onclick = () => overlayLocal.classList.add("open");
-  document.getElementById("closeLocal").onclick =
-    () => overlayLocal.classList.remove("open");
+    // Renderer
+    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.outputColorSpace = THREE.SRGBColorSpace;
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.toneMappingExposure = 1;
+    container.appendChild(renderer.domElement);
 
-  mvCard.addEventListener("load", () => {
-    const anims = mvCard.availableAnimations || [];
-    const sel = animSel;
-    sel.innerHTML = "";
-    if (!anims.length) return;
-    anims.forEach(a=>{
-      const o=document.createElement("option");
-      o.value=o.textContent=a;sel.appendChild(o);
-    });
-    mvCard.animationName=anims[0];
-    mvFull.animationName=anims[0];
-    mvCard.play();
-  });
+    // Controls
+    const controls = new OrbitControls(camera, renderer.domElement);
+    controls.enableDamping = true;
+    controls.dampingFactor = 0.05;
+    controls.minDistance = 2;
+    controls.maxDistance = 10;
+    controls.target.set(0, 0.5, 0);
 
-  playBtn.onclick=()=>{mvCard.play();mvFull.play();}
-  pauseBtn.onclick=()=>{mvCard.pause();mvFull.pause();}
-  animSel.onchange=()=>{
-    mvCard.animationName=animSel.value;
-    mvFull.animationName=animSel.value;
-    mvCard.play();
-  };
+    // Lights
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+    scene.add(ambientLight);
 
-  /* SKETCHFAB */
-  const UID="3a137761afb24332a22062c377d48eec";
-  const sfURL=u=>`https://sketchfab.com/models/${u}/embed?autostart=1&autospin=0.2`;
-  sfCard.src=sfURL(UID);
+    const mainLight = new THREE.DirectionalLight(0xffffff, 1.5);
+    mainLight.position.set(5, 10, 7);
+    mainLight.castShadow = true;
+    scene.add(mainLight);
 
-  sfCard.onclick=()=>{
-    overlaySf.classList.add("open");
-    sfFull.src=sfURL(UID);
-  };
-  closeSf.onclick=()=>{
-    overlaySf.classList.remove("open");
-    sfFull.src="about:blank";
-  };
+    const fillLight = new THREE.DirectionalLight(0x8888ff, 0.5);
+    fillLight.position.set(-5, 5, -5);
+    scene.add(fillLight);
 
-  window.addEventListener("keydown",e=>{
-    if(e.key==="Escape"){
-      overlayLocal.classList.remove("open");
-      overlaySf.classList.remove("open");
-      sfFull.src="about:blank";
+    const rimLight = new THREE.DirectionalLight(0xffffff, 0.8);
+    rimLight.position.set(0, 5, -10);
+    scene.add(rimLight);
+
+    // Load GLB Model
+    const loader = new GLTFLoader();
+    
+    // Usa tu propio archivo .glb aquí
+    // Por ahora usamos el modelo de ejemplo del sistema
+    loader.load(
+      'owl.glb',
+      (gltf) => {
+        const model = gltf.scene;
+        
+        // Centrar y escalar el modelo
+        const box = new THREE.Box3().setFromObject(model);
+        const center = box.getCenter(new THREE.Vector3());
+        const size = box.getSize(new THREE.Vector3());
+        
+        const maxDim = Math.max(size.x, size.y, size.z);
+        const scale = 2 / maxDim;
+        model.scale.multiplyScalar(scale);
+        
+        model.position.x = -center.x * scale;
+        model.position.y = -center.y * scale + 0.5;
+        model.position.z = -center.z * scale;
+        
+        scene.add(model);
+        loading.style.display = 'none';
+      },
+      (progress) => {
+        const percent = (progress.loaded / progress.total * 100).toFixed(0);
+        loading.innerHTML = `<div class="loading-spinner"></div>Cargando... ${percent}%`;
+      },
+      (error) => {
+        console.error('Error cargando modelo:', error);
+        loading.innerHTML = 'Error al cargar el modelo<br><small>Asegúrate de usar un archivo .glb válido</small>';
+      }
+    );
+
+    // Animation loop
+    function animate() {
+      requestAnimationFrame(animate);
+      controls.update();
+      renderer.render(scene, camera);
     }
-  });
-</script>
+    animate();
 
+    // Resize handler
+    window.addEventListener('resize', () => {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    });
+  </script>
 </body>
 </html>
