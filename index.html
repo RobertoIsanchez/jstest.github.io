@@ -297,6 +297,86 @@
       text-align: right;
       letter-spacing: 1px;
     }
+
+    /* Controles de Iluminación HDR */
+    .lighting-controls {
+      position: absolute;
+      right: 40px;
+      top: 50%;
+      transform: translateY(-50%);
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      pointer-events: auto;
+    }
+
+    .light-btn {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      cursor: pointer;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .light-btn:hover {
+      transform: scale(1.15);
+      border-color: rgba(255, 255, 255, 0.6);
+    }
+
+    .light-btn.active {
+      border-color: #fff;
+      box-shadow: 0 0 15px rgba(255, 255, 255, 0.4);
+    }
+
+    .light-btn::after {
+      content: attr(data-name);
+      position: absolute;
+      right: 55px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: rgba(0, 0, 0, 0.8);
+      color: #fff;
+      padding: 5px 10px;
+      border-radius: 4px;
+      font-size: 10px;
+      letter-spacing: 1px;
+      white-space: nowrap;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+
+    .light-btn:hover::after {
+      opacity: 1;
+    }
+
+    /* Colores representativos de cada HDR */
+    .light-btn[data-hdr="studio"] {
+      background: linear-gradient(135deg, #3a3a3a 0%, #1a1a1a 100%);
+    }
+
+    .light-btn[data-hdr="sunset"] {
+      background: linear-gradient(135deg, #ff7e5f 0%, #feb47b 100%);
+    }
+
+    .light-btn[data-hdr="night"] {
+      background: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
+    }
+
+    .light-btn[data-hdr="forest"] {
+      background: linear-gradient(135deg, #134e5e 0%, #71b280 100%);
+    }
+
+    .light-btn[data-hdr="city"] {
+      background: linear-gradient(135deg, #4b6cb7 0%, #182848 100%);
+    }
+
+    .light-btn[data-hdr="warehouse"] {
+      background: linear-gradient(135deg, #8e9eab 0%, #eef2f3 100%);
+    }
   </style>
 </head>
 <body>
@@ -307,12 +387,12 @@
     </div>
   </div>
 
-  <div class="background-text">OWL</div>
+  <div class="background-text">MODEL</div>
 
   <div class="overlay">
     <!-- Logo - Arriba Izquierda -->
     <div class="logo-container">
-      <div class="logo-icon">🦉</div>
+      <div class="logo-icon">🎨</div>
       <div class="logo-text">
         <h1>TU LOGO</h1>
         <p>3D Artist Portfolio</p>
@@ -335,7 +415,7 @@
     <!-- Info Técnica - Abajo Izquierda -->
     <div class="tech-info">
       <div class="model-number">#01</div>
-      <div class="model-name">OWL</div>
+      <div class="model-name">Nombre del Modelo*</div>
       
       <div class="tech-specs">
         <div class="spec-row">
@@ -362,6 +442,16 @@
       </div>
     </div>
 
+    <!-- Controles de Iluminación HDR -->
+    <div class="lighting-controls">
+      <button class="light-btn active" data-hdr="studio" data-name="STUDIO" title="Studio"></button>
+      <button class="light-btn" data-hdr="sunset" data-name="SUNSET" title="Sunset"></button>
+      <button class="light-btn" data-hdr="night" data-name="NIGHT" title="Night"></button>
+      <button class="light-btn" data-hdr="forest" data-name="FOREST" title="Forest"></button>
+      <button class="light-btn" data-hdr="city" data-name="CITY" title="City"></button>
+      <button class="light-btn" data-hdr="warehouse" data-name="WAREHOUSE" title="Warehouse"></button>
+    </div>
+
     <!-- Controles -->
     <div class="controls-hint">
       Arrastra para rotar<br>
@@ -373,6 +463,7 @@
     import * as THREE from 'three';
     import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
     import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+    import { RGBELoader } from 'three/addons/loaders/RGBELoader.js';
 
     // Setup
     const container = document.getElementById('canvas-container');
@@ -404,22 +495,43 @@
     controls.maxDistance = 10;
     controls.target.set(0, 0.5, 0);
 
-    // Lights
+    // Mapeo de nombres a rutas de archivos HDR
+    // Puedes cambiar estas rutas a tus propios archivos .hdr
+    const hdrPaths = {
+      studio: './assets/studio.hdr',
+      sunset: './assets/sunset.hdr',
+      night: './assets/night.hdr',
+      forest: './assets/forest.hdr',
+      city: './assets/city.hdr',
+      warehouse: './assets/warehouse.hdr'
+    };
+
+    // Cache para HDRs cargados
+    const hdrCache = {};
+    const rgbeLoader = new RGBELoader();
+
+    // Luces por defecto (se usan cuando no hay HDR)
+    const defaultLights = [];
+
     const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
     scene.add(ambientLight);
+    defaultLights.push(ambientLight);
 
     const mainLight = new THREE.DirectionalLight(0xffffff, 1.5);
     mainLight.position.set(5, 10, 7);
     mainLight.castShadow = true;
     scene.add(mainLight);
+    defaultLights.push(mainLight);
 
     const fillLight = new THREE.DirectionalLight(0x8888ff, 0.5);
     fillLight.position.set(-5, 5, -5);
     scene.add(fillLight);
+    defaultLights.push(fillLight);
 
     const rimLight = new THREE.DirectionalLight(0xffffff, 0.8);
     rimLight.position.set(0, 5, -10);
     scene.add(rimLight);
+    defaultLights.push(rimLight);
 
     let mixer = null;
     let animations = [];
@@ -435,7 +547,6 @@
         return;
       }
 
-      // Botón Play/Pause
       const playBtn = document.createElement('button');
       playBtn.className = 'anim-btn';
       playBtn.id = 'play-btn';
@@ -449,13 +560,11 @@
         </svg>
       `;
       
-      // Botón Stop
       const stopBtn = document.createElement('button');
       stopBtn.className = 'anim-btn';
       stopBtn.title = 'Detener';
       stopBtn.innerHTML = `<svg viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12"/></svg>`;
 
-      // Selector de animaciones
       const select = document.createElement('select');
       select.className = 'anim-select';
       select.id = 'anim-select';
@@ -467,7 +576,6 @@
         select.appendChild(option);
       });
 
-      // Estado
       const status = document.createElement('span');
       status.className = 'anim-status';
       status.id = 'anim-status';
@@ -478,12 +586,10 @@
       animControls.appendChild(select);
       animControls.appendChild(status);
 
-      // Event listeners
       playBtn.addEventListener('click', togglePlay);
       stopBtn.addEventListener('click', stopAnimation);
       select.addEventListener('change', (e) => playAnimation(parseInt(e.target.value)));
 
-      // Reproducir primera animación
       playAnimation(0);
       updatePlayButton();
     }
@@ -544,11 +650,124 @@
       if (status) status.textContent = text;
     }
 
+    function loadHDR(hdrName) {
+      const path = hdrPaths[hdrName];
+      
+      // Si ya está en cache, usarlo directamente
+      if (hdrCache[hdrName]) {
+        applyEnvironment(hdrCache[hdrName]);
+        return;
+      }
+
+      // Intentar cargar el HDR
+      rgbeLoader.load(
+        path,
+        (texture) => {
+          texture.mapping = THREE.EquirectangularReflectionMapping;
+          hdrCache[hdrName] = texture;
+          applyEnvironment(texture);
+        },
+        undefined,
+        (error) => {
+          // Si falla la carga, usar iluminación simulada por color
+          console.warn(`HDR ${hdrName} no encontrado, usando iluminación simulada`);
+          applySimulatedLighting(hdrName);
+        }
+      );
+    }
+
+    function applyEnvironment(texture) {
+      scene.environment = texture;
+      // Opcional: mostrar el HDR como fondo
+      // scene.background = texture;
+    }
+
+    function applySimulatedLighting(hdrName) {
+      // Resetear luces
+      defaultLights.forEach(light => {
+        light.intensity = 0;
+      });
+
+      scene.environment = null;
+
+      const lightConfigs = {
+        studio: {
+          ambient: { color: 0xffffff, intensity: 0.6 },
+          main: { color: 0xffffff, intensity: 1.5, pos: [5, 10, 7] },
+          fill: { color: 0xcccccc, intensity: 0.4, pos: [-5, 5, -5] },
+          rim: { color: 0xffffff, intensity: 0.8, pos: [0, 5, -10] }
+        },
+        sunset: {
+          ambient: { color: 0xffa07a, intensity: 0.4 },
+          main: { color: 0xff8c00, intensity: 2.0, pos: [-8, 3, 5] },
+          fill: { color: 0xff6347, intensity: 0.6, pos: [5, 2, -5] },
+          rim: { color: 0xffd700, intensity: 1.0, pos: [0, 8, -8] }
+        },
+        night: {
+          ambient: { color: 0x1a1a2e, intensity: 0.3 },
+          main: { color: 0x4a69bd, intensity: 1.0, pos: [5, 10, 7] },
+          fill: { color: 0x6c5ce7, intensity: 0.5, pos: [-5, 5, -5] },
+          rim: { color: 0x00cec9, intensity: 0.6, pos: [0, 5, -10] }
+        },
+        forest: {
+          ambient: { color: 0x2d5016, intensity: 0.5 },
+          main: { color: 0x90EE90, intensity: 1.2, pos: [3, 12, 5] },
+          fill: { color: 0x228B22, intensity: 0.4, pos: [-5, 5, -5] },
+          rim: { color: 0xADFF2F, intensity: 0.7, pos: [0, 5, -10] }
+        },
+        city: {
+          ambient: { color: 0x2c3e50, intensity: 0.4 },
+          main: { color: 0x3498db, intensity: 1.3, pos: [5, 10, 7] },
+          fill: { color: 0x9b59b6, intensity: 0.5, pos: [-5, 5, -5] },
+          rim: { color: 0xe74c3c, intensity: 0.6, pos: [0, 5, -10] }
+        },
+        warehouse: {
+          ambient: { color: 0xffffff, intensity: 0.8 },
+          main: { color: 0xffffff, intensity: 1.8, pos: [0, 15, 0] },
+          fill: { color: 0xeeeeee, intensity: 0.6, pos: [-5, 5, -5] },
+          rim: { color: 0xffffff, intensity: 0.4, pos: [0, 5, -10] }
+        }
+      };
+
+      const config = lightConfigs[hdrName] || lightConfigs.studio;
+
+      ambientLight.color.setHex(config.ambient.color);
+      ambientLight.intensity = config.ambient.intensity;
+
+      mainLight.color.setHex(config.main.color);
+      mainLight.intensity = config.main.intensity;
+      mainLight.position.set(...config.main.pos);
+
+      fillLight.color.setHex(config.fill.color);
+      fillLight.intensity = config.fill.intensity;
+      fillLight.position.set(...config.fill.pos);
+
+      rimLight.color.setHex(config.rim.color);
+      rimLight.intensity = config.rim.intensity;
+      rimLight.position.set(...config.rim.pos);
+    }
+
+    const lightButtons = document.querySelectorAll('.light-btn');
+    lightButtons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        // Quitar clase active de todos
+        lightButtons.forEach(b => b.classList.remove('active'));
+        // Añadir clase active al clickeado
+        btn.classList.add('active');
+        // Cargar HDR correspondiente
+        const hdrName = btn.dataset.hdr;
+        loadHDR(hdrName);
+      });
+    });
+
+    // Cargar iluminación inicial (studio)
+    applySimulatedLighting('studio');
+
     // Load GLB Model
-    const loader = new GLTFLoader();
+    const gltfLoader = new GLTFLoader();
     
-    loader.load(
-      'owl.glb',
+    gltfLoader.load(
+      '/assets/3d/duck.glb',
       (gltf) => {
         const model = gltf.scene;
         
