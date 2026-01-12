@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>3D Model Showcase - Visualización Avanzada</title>
+  <title>3D Model Showcase - PBR Inspector</title>
   <script type="importmap">
     {
       "imports": {
@@ -13,465 +13,136 @@
     }
   </script>
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
+    * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      width: 100vw;
-      height: 100vh;
-      overflow: hidden;
+      width: 100vw; height: 100vh; overflow: hidden;
       background: linear-gradient(180deg, #0a0a0a 0%, #2a2a2a 50%, #4a4a4a 100%);
     }
+    #canvas-container { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; }
+    .overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 10; pointer-events: none; }
 
-    #canvas-container {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      z-index: 1;
+    /* UI Panels */
+    .top-bar {
+      position: absolute; top: 30px; left: 0; width: 100%;
+      display: flex; justify-content: space-between; align-items: flex-start;
+      padding: 0 40px; pointer-events: none;
     }
 
-    .overlay {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      z-index: 10;
-      pointer-events: none;
+    .logo-container { display: flex; align-items: center; gap: 12px; pointer-events: auto; }
+    .logo-icon { width: 50px; height: 50px; background: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 24px; }
+    .logo-text { color: #fff; }
+    .logo-text h1 { font-size: 18px; font-weight: 700; letter-spacing: 2px; }
+    .logo-text p { font-size: 10px; letter-spacing: 3px; opacity: 0.7; text-transform: uppercase; }
+
+    /* Selector de Modos y Mapas */
+    .controls-wrapper {
+      display: flex; flex-direction: column; align-items: center; gap: 15px; pointer-events: auto;
     }
 
-    /* Logo - Arriba Izquierda */
-    .logo-container {
-      position: absolute;
-      top: 30px;
-      left: 40px;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      pointer-events: auto;
+    .view-modes, .map-modes {
+      display: flex; gap: 5px; background: rgba(0, 0, 0, 0.6);
+      padding: 5px; border-radius: 30px; border: 1px solid rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
     }
 
-    .logo-icon {
-      width: 50px;
-      height: 50px;
-      background: #fff;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 24px;
+    .view-btn, .map-btn {
+      padding: 6px 15px; border: none; background: transparent;
+      color: #fff; font-size: 10px; letter-spacing: 1px;
+      text-transform: uppercase; cursor: pointer; border-radius: 20px;
+      transition: all 0.3s ease; opacity: 0.6;
     }
 
-    .logo-text {
-      color: #fff;
-    }
+    .view-btn.active, .map-btn.active { background: #fff; color: #000; opacity: 1; }
+    .view-btn:hover:not(.active), .map-btn:hover:not(.active) { opacity: 1; background: rgba(255, 255, 255, 0.1); }
 
-    .logo-text h1 {
-      font-size: 18px;
-      font-weight: 700;
-      letter-spacing: 2px;
-    }
+    .map-modes { margin-top: 5px; display: none; } /* Se muestra solo en modo 'Maps' */
 
-    .logo-text p {
-      font-size: 10px;
-      letter-spacing: 3px;
-      opacity: 0.7;
-      text-transform: uppercase;
-    }
+    /* Info Técnica */
+    .tech-info { position: absolute; bottom: 40px; left: 40px; color: #fff; max-width: 350px; pointer-events: auto; }
+    .model-number { font-size: 48px; font-weight: 800; margin-bottom: 5px; background: linear-gradient(90deg, #fff, #888); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .model-name { font-size: 14px; letter-spacing: 2px; text-transform: uppercase; opacity: 0.8; margin-bottom: 20px; }
+    .tech-specs { display: flex; flex-direction: column; gap: 8px; margin-bottom: 20px; }
+    .spec-row { display: flex; gap: 20px; font-size: 11px; opacity: 0.6; }
+    .spec-label { min-width: 80px; text-transform: uppercase; }
+    .spec-value { color: #aaa; }
 
-    /* Modos de Visualización - Arriba Centro */
-    .view-modes {
-      position: absolute;
-      top: 30px;
-      left: 50%;
-      transform: translateX(-50%);
-      display: flex;
-      gap: 10px;
-      background: rgba(0, 0, 0, 0.5);
-      padding: 5px;
-      border-radius: 30px;
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      pointer-events: auto;
-    }
+    /* Animaciones */
+    .animation-controls { display: flex; gap: 10px; align-items: center; }
+    .anim-btn { width: 36px; height: 36px; background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.3s ease; }
+    .anim-btn svg { width: 16px; height: 16px; fill: #fff; }
+    .anim-select { padding: 8px 12px; background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 4px; color: #fff; font-size: 11px; cursor: pointer; min-width: 120px; }
 
-    .view-btn {
-      padding: 8px 20px;
-      border: none;
-      background: transparent;
-      color: #fff;
-      font-size: 11px;
-      letter-spacing: 1px;
-      text-transform: uppercase;
-      cursor: pointer;
-      border-radius: 20px;
-      transition: all 0.3s ease;
-    }
+    /* Lighting */
+    .lighting-controls { position: absolute; right: 40px; top: 50%; transform: translateY(-50%); display: flex; flex-direction: column; gap: 12px; pointer-events: auto; }
+    .light-btn { width: 44px; height: 44px; border-radius: 50%; border: 2px solid rgba(255, 255, 255, 0.3); cursor: pointer; transition: all 0.3s ease; position: relative; }
+    .light-btn.active { border-color: #fff; box-shadow: 0 0 15px rgba(255, 255, 255, 0.4); }
+    .light-btn::after { content: attr(data-name); position: absolute; right: 55px; top: 50%; transform: translateY(-50%); background: rgba(0,0,0,0.8); color: #fff; padding: 5px 10px; border-radius: 4px; font-size: 10px; opacity: 0; pointer-events: none; transition: 0.3s; white-space: nowrap; }
+    .light-btn:hover::after { opacity: 1; }
 
-    .view-btn.active {
-      background: #fff;
-      color: #000;
-    }
-
-    .view-btn:hover:not(.active) {
-      background: rgba(255, 255, 255, 0.1);
-    }
-
-    /* Iconos Software - Arriba Derecha */
-    .software-icons {
-      position: absolute;
-      top: 30px;
-      right: 40px;
-      display: flex;
-      gap: 15px;
-      pointer-events: auto;
-    }
-
-    .software-icon {
-      width: 40px;
-      height: 40px;
-      background: rgba(255, 255, 255, 0.1);
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      transition: all 0.3s ease;
-    }
-
-    .software-icon:hover {
-      background: rgba(255, 255, 255, 0.2);
-      transform: scale(1.1);
-    }
-
-    .software-icon svg {
-      width: 20px;
-      height: 20px;
-      fill: #fff;
-    }
-
-    /* Info Técnica - Abajo Izquierda */
-    .tech-info {
-      position: absolute;
-      bottom: 40px;
-      left: 40px;
-      color: #fff;
-      max-width: 350px;
-    }
-
-    .model-number {
-      font-size: 48px;
-      font-weight: 800;
-      margin-bottom: 5px;
-      background: linear-gradient(90deg, #fff, #888);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-    }
-
-    .model-name {
-      font-size: 14px;
-      letter-spacing: 2px;
-      text-transform: uppercase;
-      opacity: 0.8;
-      margin-bottom: 20px;
-    }
-
-    .tech-specs {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
-
-    .spec-row {
-      display: flex;
-      gap: 20px;
-      font-size: 11px;
-      opacity: 0.6;
-    }
-
-    .spec-label {
-      min-width: 80px;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-    }
-
-    .spec-value {
-      color: #aaa;
-    }
-
-    /* Controles de Animación */
-    .animation-controls {
-      margin-top: 25px;
-      display: flex;
-      gap: 10px;
-      align-items: center;
-      flex-wrap: wrap;
-    }
-
-    .anim-btn {
-      width: 36px;
-      height: 36px;
-      background: rgba(255, 255, 255, 0.1);
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      pointer-events: auto;
-    }
-
-    .anim-btn:hover {
-      background: rgba(255, 255, 255, 0.2);
-      transform: scale(1.1);
-    }
-
-    .anim-btn:disabled {
-      opacity: 0.3;
-      cursor: not-allowed;
-      transform: none;
-    }
-
-    .anim-btn svg {
-      width: 16px;
-      height: 16px;
-      fill: #fff;
-    }
-
-    .anim-select {
-      padding: 8px 12px;
-      background: rgba(255, 255, 255, 0.1);
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      border-radius: 4px;
-      color: #fff;
-      font-size: 11px;
-      letter-spacing: 1px;
-      cursor: pointer;
-      pointer-events: auto;
-      min-width: 150px;
-    }
-
-    .anim-select:focus {
-      outline: none;
-      border-color: rgba(255, 255, 255, 0.4);
-    }
-
-    .anim-select option {
-      background: #1a1a1a;
-      color: #fff;
-    }
-
-    .anim-status {
-      font-size: 10px;
-      letter-spacing: 1px;
-      opacity: 0.5;
-      text-transform: uppercase;
-    }
-
-    .no-animations {
-      font-size: 10px;
-      letter-spacing: 1px;
-      opacity: 0.4;
-      font-style: italic;
-    }
-
-    /* Título Central Decorativo */
-    .background-text {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      font-size: 180px;
-      font-weight: 900;
-      color: rgba(255, 255, 255, 0.03);
-      letter-spacing: 20px;
-      white-space: nowrap;
-      z-index: 0;
-      user-select: none;
-    }
+    .light-btn[data-hdr="studio"] { background: #333; }
+    .light-btn[data-hdr="sunset"] { background: #ff7e5f; }
+    .light-btn[data-hdr="night"] { background: #0f0c29; }
 
     /* Loading */
-    .loading {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      color: #fff;
-      font-size: 14px;
-      letter-spacing: 3px;
-      text-transform: uppercase;
-    }
+    .loading { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: #fff; text-align: center; }
+    .spinner { width: 40px; height: 40px; border: 3px solid rgba(255,255,255,0.1); border-top-color: #fff; border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 10px; }
+    @keyframes spin { to { transform: rotate(360deg); } }
 
-    .loading-spinner {
-      width: 40px;
-      height: 40px;
-      border: 2px solid rgba(255, 255, 255, 0.1);
-      border-top-color: #fff;
-      border-radius: 50%;
-      animation: spin 1s linear infinite;
-      margin: 0 auto 15px;
-    }
-
-    @keyframes spin {
-      to { transform: rotate(360deg); }
-    }
-
-    /* Controles */
-    .controls-hint {
-      position: absolute;
-      bottom: 40px;
-      right: 40px;
-      color: rgba(255, 255, 255, 0.4);
-      font-size: 11px;
-      text-align: right;
-      letter-spacing: 1px;
-    }
-
-    /* Controles de Iluminación HDR */
-    .lighting-controls {
-      position: absolute;
-      right: 40px;
-      top: 50%;
-      transform: translateY(-50%);
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      pointer-events: auto;
-    }
-
-    .light-btn {
-      width: 44px;
-      height: 44px;
-      border-radius: 50%;
-      border: 2px solid rgba(255, 255, 255, 0.3);
-      cursor: pointer;
-      transition: all 0.3s ease;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .light-btn:hover {
-      transform: scale(1.15);
-      border-color: rgba(255, 255, 255, 0.6);
-    }
-
-    .light-btn.active {
-      border-color: #fff;
-      box-shadow: 0 0 15px rgba(255, 255, 255, 0.4);
-    }
-
-    .light-btn::after {
-      content: attr(data-name);
-      position: absolute;
-      right: 55px;
-      top: 50%;
-      transform: translateY(-50%);
-      background: rgba(0, 0, 0, 0.8);
-      color: #fff;
-      padding: 5px 10px;
-      border-radius: 4px;
-      font-size: 10px;
-      letter-spacing: 1px;
-      white-space: nowrap;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.3s ease;
-    }
-
-    .light-btn:hover::after {
-      opacity: 1;
-    }
-
-    /* Colores representativos de cada HDR */
-    .light-btn[data-hdr="studio"] { background: linear-gradient(135deg, #3a3a3a 0%, #1a1a1a 100%); }
-    .light-btn[data-hdr="sunset"] { background: linear-gradient(135deg, #ff7e5f 0%, #feb47b 100%); }
-    .light-btn[data-hdr="night"] { background: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%); }
-    .light-btn[data-hdr="forest"] { background: linear-gradient(135deg, #134e5e 0%, #71b280 100%); }
-    .light-btn[data-hdr="city"] { background: linear-gradient(135deg, #4b6cb7 0%, #182848 100%); }
-    .light-btn[data-hdr="warehouse"] { background: linear-gradient(135deg, #8e9eab 0%, #eef2f3 100%); }
+    .background-text { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 15vw; font-weight: 900; color: rgba(255,255,255,0.02); z-index: 0; pointer-events: none; white-space: nowrap; }
   </style>
 </head>
 <body>
-  <div id="canvas-container">
-    <div class="loading" id="loading">
-      <div class="loading-spinner"></div>
-      Cargando modelo...
-    </div>
-  </div>
-
-  <div class="background-text">MODEL 01</div>
+  <div id="canvas-container"></div>
+  <div class="background-text">INSPECTOR</div>
 
   <div class="overlay">
-    <!-- Logo - Arriba Izquierda -->
-    <div class="logo-container">
-      <div class="logo-icon">🎨</div>
-      <div class="logo-text">
-        <h1>TU LOGO</h1>
-        <p>3D Artist Portfolio</p>
+    <div class="top-bar">
+      <div class="logo-container">
+        <div class="logo-icon">🔍</div>
+        <div class="logo-text">
+          <h1>PBR VIEWER</h1>
+          <p>Technical Inspection</p>
+        </div>
       </div>
-    </div>
 
-    <!-- Modos de Visualización - Arriba Centro -->
-    <div class="view-modes">
-      <button class="view-btn active" data-mode="full">Render Completo</button>
-      <button class="view-btn" data-mode="texture">Solo Texturas</button>
-      <button class="view-btn" data-mode="wireframe">Wireframe</button>
-    </div>
-
-    <!-- Iconos Software - Arriba Derecha -->
-    <div class="software-icons">
-      <div class="software-icon" title="Blender">
-        <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/></svg>
+      <div class="controls-wrapper">
+        <div class="view-modes">
+          <button class="view-btn active" data-mode="full">Render</button>
+          <button class="view-btn" data-mode="maps">Mapas PBR</button>
+          <button class="view-btn" data-mode="wireframe">Wireframe</button>
+        </div>
+        <div class="map-modes" id="map-selector">
+          <button class="map-btn active" data-map="albedo">Albedo</button>
+          <button class="map-btn" data-map="roughness">Roughness</button>
+          <button class="map-btn" data-map="metallic">Metallic</button>
+          <button class="map-btn" data-map="normal">Normal</button>
+          <button class="map-btn" data-map="emissive">Emissive</button>
+        </div>
       </div>
+
+      <div style="width: 150px;"></div> <!-- Spacer -->
     </div>
 
-    <!-- Info Técnica - Abajo Izquierda -->
     <div class="tech-info">
       <div class="model-number">01</div>
-      <div class="model-name">Owl Character Model</div>
-      
+      <div class="model-name">Owl Character</div>
       <div class="tech-specs">
-        <div class="spec-row">
-          <span class="spec-label">Polígonos</span>
-          <span class="spec-value" id="poly-count">Cargando...</span>
-        </div>
-        <div class="spec-row">
-          <span class="spec-label">Texturas</span>
-          <span class="spec-value">4K PBR Workflow</span>
-        </div>
-        <div class="spec-row">
-          <span class="spec-label">Software</span>
-          <span class="spec-value">Blender / Substance</span>
-        </div>
+        <div class="spec-row"><span class="spec-label">Polígonos</span><span class="spec-value" id="poly-count">...</span></div>
+        <div class="spec-row"><span class="spec-label">Modo Actual</span><span class="spec-value" id="current-mode-text">Render Completo</span></div>
       </div>
-
-      <div class="animation-controls" id="animation-controls">
-        <!-- Se genera dinámicamente -->
-      </div>
+      <div class="animation-controls" id="animation-controls"></div>
     </div>
 
-    <!-- Controles de Iluminación -->
     <div class="lighting-controls">
-      <div class="light-btn active" data-hdr="studio" data-name="Studio Light"></div>
-      <div class="light-btn" data-hdr="sunset" data-name="Sunset Warmth"></div>
-      <div class="light-btn" data-hdr="night" data-name="Night City"></div>
-      <div class="light-btn" data-hdr="forest" data-name="Forest Nature"></div>
-      <div class="light-btn" data-hdr="city" data-name="Urban Day"></div>
-      <div class="light-btn" data-hdr="warehouse" data-name="Industrial"></div>
+      <div class="light-btn active" data-hdr="studio" data-name="Studio"></div>
+      <div class="light-btn" data-hdr="sunset" data-name="Sunset"></div>
+      <div class="light-btn" data-hdr="night" data-name="Night"></div>
     </div>
 
-    <div class="controls-hint">
-      CLICK IZQUIERDO: ROTAR<br>
-      CLICK DERECHO: PANORÁMICA<br>
-      SCROLL: ZOOM
+    <div class="loading" id="loading">
+      <div class="spinner"></div>
+      <div id="load-text">Cargando...</div>
     </div>
   </div>
 
@@ -479,9 +150,8 @@
     import * as THREE from 'three';
     import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
     import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
-    import { RGBELoader } from 'three/addons/loaders/RGBELoader.js';
 
-    // Setup básico
+    // Scene Setup
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
     camera.position.set(3, 2, 5);
@@ -491,223 +161,168 @@
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
     renderer.toneMappingExposure = 1.2;
-    renderer.shadowMap.enabled = true;
     document.getElementById('canvas-container').appendChild(renderer.domElement);
 
     const controls = new OrbitControls(camera, renderer.domElement);
     controls.enableDamping = true;
-    controls.minDistance = 1;
-    controls.maxDistance = 10;
 
-    // Elementos DOM
-    const loading = document.getElementById('loading');
-    const animControls = document.getElementById('animation-controls');
-    const polyCountEl = document.getElementById('poly-count');
-
-    // HDR Paths
-    const hdrPaths = {
-      studio: 'studio.hdr',
-      sunset: 'sunset.hdr',
-      night: 'night.hdr',
-      forest: 'forest.hdr',
-      city: 'city.hdr',
-      warehouse: 'warehouse.hdr'
-    };
-
-    const hdrCache = {};
-    const rgbeLoader = new RGBELoader();
-    const defaultLights = [];
-
-    // Luces
+    // Lights
     const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
     scene.add(ambientLight);
-    defaultLights.push(ambientLight);
-
     const mainLight = new THREE.DirectionalLight(0xffffff, 1.5);
     mainLight.position.set(5, 10, 7);
-    mainLight.castShadow = true;
     scene.add(mainLight);
-    defaultLights.push(mainLight);
 
-    const fillLight = new THREE.DirectionalLight(0x8888ff, 0.5);
-    fillLight.position.set(-5, 5, -5);
-    scene.add(fillLight);
-    defaultLights.push(fillLight);
-
-    const rimLight = new THREE.DirectionalLight(0xffffff, 0.8);
-    rimLight.position.set(0, 5, -10);
-    scene.add(rimLight);
-    defaultLights.push(rimLight);
-
-    let mixer = null;
-    let animations = [];
-    let currentAction = null;
-    let isPlaying = true;
+    // State
     let loadedModel = null;
+    let mixer = null;
     const clock = new THREE.Clock();
+    const materialsData = new Map(); // Store original and debug materials
 
-    // Gestión de Materiales para Modos de Visualización
-    const originalMaterials = new Map();
-    const textureOnlyMaterials = new Map();
-    const wireframeMaterial = new THREE.MeshBasicMaterial({ color: 0x00ff00, wireframe: true });
+    // Materials Logic
+    function createDebugMaterials(child) {
+      const original = child.material;
+      const debug = {};
 
-    function setupMaterials(model) {
-      model.traverse((child) => {
-        if (child.isMesh) {
-          // Guardar original
-          originalMaterials.set(child, child.material);
-          
-          // Crear versión "Solo Texturas" (sin luces/sombras complejas si se desea, o simplemente el material base)
-          // Aquí usaremos MeshBasicMaterial con el mapa original para un look "unlit"
-          if (child.material.map) {
-            const basicMat = new THREE.MeshBasicMaterial({ 
-              map: child.material.map,
-              skinning: child.material.skinning || false,
-              morphTargets: child.material.morphTargets || false
-            });
-            textureOnlyMaterials.set(child, basicMat);
-          } else {
-            textureOnlyMaterials.set(child, new THREE.MeshBasicMaterial({ color: child.material.color }));
-          }
-        }
+      // Albedo (Color base)
+      debug.albedo = new THREE.MeshBasicMaterial({ 
+        map: original.map, 
+        color: original.color,
+        skinning: original.skinning, morphTargets: original.morphTargets 
       });
+
+      // Roughness (Escala de grises)
+      debug.roughness = new THREE.MeshBasicMaterial({ 
+        map: original.roughnessMap || null,
+        color: original.roughnessMap ? 0xffffff : new THREE.Color(original.roughness, original.roughness, original.roughness),
+        skinning: original.skinning, morphTargets: original.morphTargets
+      });
+
+      // Metallic (Escala de grises)
+      debug.metallic = new THREE.MeshBasicMaterial({ 
+        map: original.metalnessMap || null,
+        color: original.metalnessMap ? 0xffffff : new THREE.Color(original.metalness, original.metalness, original.metalness),
+        skinning: original.skinning, morphTargets: original.morphTargets
+      });
+
+      // Normal (Mapa de normales)
+      debug.normal = new THREE.MeshBasicMaterial({ 
+        map: original.normalMap || null,
+        color: original.normalMap ? 0xffffff : 0x8080ff, // Color neutro de normal si no hay mapa
+        skinning: original.skinning, morphTargets: original.morphTargets
+      });
+
+      // Emissive
+      debug.emissive = new THREE.MeshBasicMaterial({ 
+        map: original.emissiveMap || null,
+        color: original.emissive,
+        skinning: original.skinning, morphTargets: original.morphTargets
+      });
+
+      // Wireframe
+      debug.wireframe = new THREE.MeshBasicMaterial({ color: 0x00ff00, wireframe: true });
+
+      materialsData.set(child, { original, debug });
     }
 
-    function setViewMode(mode) {
+    function updateVisualMode(mode, mapType = 'albedo') {
       if (!loadedModel) return;
+      
+      const modeText = document.getElementById('current-mode-text');
+      const mapSelector = document.getElementById('map-selector');
+      
+      mapSelector.style.display = mode === 'maps' ? 'flex' : 'none';
 
-      loadedModel.traverse((child) => {
+      loadedModel.traverse(child => {
         if (child.isMesh) {
-          switch(mode) {
-            case 'full':
-              child.material = originalMaterials.get(child);
-              break;
-            case 'texture':
-              child.material = textureOnlyMaterials.get(child);
-              break;
-            case 'wireframe':
-              child.material = wireframeMaterial;
-              break;
+          const data = materialsData.get(child);
+          if (!data) return;
+
+          if (mode === 'full') {
+            child.material = data.original;
+            modeText.textContent = "Render Completo";
+          } else if (mode === 'wireframe') {
+            child.material = data.debug.wireframe;
+            modeText.textContent = "Wireframe";
+          } else if (mode === 'maps') {
+            child.material = data.debug[mapType];
+            modeText.textContent = `Mapa: ${mapType.toUpperCase()}`;
           }
         }
       });
     }
 
-    // Eventos de botones de modo
+    // UI Events
     document.querySelectorAll('.view-btn').forEach(btn => {
-      btn.addEventListener('click', (e) => {
+      btn.onclick = () => {
         document.querySelectorAll('.view-btn').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
-        setViewMode(btn.dataset.mode);
-      });
+        updateVisualMode(btn.dataset.mode);
+      };
     });
 
-    // Animaciones
-    function createAnimationControls(clips) {
-      animControls.innerHTML = '';
-      if (clips.length === 0) {
-        animControls.innerHTML = '<span class="no-animations">Sin animaciones</span>';
-        return;
-      }
-
-      const playBtn = document.createElement('button');
-      playBtn.className = 'anim-btn';
-      playBtn.innerHTML = `<svg viewBox="0 0 24 24" id="play-icon" style="display:none;"><path d="M6 4l12 8-12 8V4z"/></svg><svg viewBox="0 0 24 24" id="pause-icon"><path d="M6 4h4v16H6V4zm8 0h4v16h-4V4z"/></svg>`;
-      
-      const select = document.createElement('select');
-      select.className = 'anim-select';
-      clips.forEach((clip, i) => {
-        const opt = document.createElement('option');
-        opt.value = i;
-        opt.textContent = clip.name || `Anim ${i+1}`;
-        select.appendChild(opt);
-      });
-
-      animControls.appendChild(playBtn);
-      animControls.appendChild(select);
-
-      playBtn.onclick = () => {
-        isPlaying = !isPlaying;
-        if (currentAction) currentAction.paused = !isPlaying;
-        playBtn.querySelector('#play-icon').style.display = isPlaying ? 'none' : 'block';
-        playBtn.querySelector('#pause-icon').style.display = isPlaying ? 'block' : 'none';
-      };
-
-      select.onchange = (e) => {
-        const index = parseInt(e.target.value);
-        if (currentAction) currentAction.fadeOut(0.3);
-        currentAction = mixer.clipAction(clips[index]);
-        currentAction.reset().fadeIn(0.3).play();
-        isPlaying = true;
-        playBtn.querySelector('#play-icon').style.display = 'none';
-        playBtn.querySelector('#pause-icon').style.display = 'block';
-      };
-
-      currentAction = mixer.clipAction(clips[0]);
-      currentAction.play();
-    }
-
-    // Iluminación
-    function applySimulatedLighting(hdrName) {
-      defaultLights.forEach(l => l.intensity = 0);
-      scene.environment = null;
-
-      const configs = {
-        studio: { amb: 0.6, main: [1.5, [5,10,7]], fill: [0.4, [-5,5,-5]], rim: [0.8, [0,5,-10]], col: 0xffffff },
-        sunset: { amb: 0.4, main: [2.0, [-8,3,5]], fill: [0.6, [5,2,-5]], rim: [1.0, [0,8,-8]], col: 0xff8c00 },
-        night: { amb: 0.3, main: [1.0, [5,10,7]], fill: [0.5, [-5,5,-5]], rim: [0.6, [0,5,-10]], col: 0x4a69bd },
-        forest: { amb: 0.5, main: [1.2, [3,12,5]], fill: [0.4, [-5,5,-5]], rim: [0.7, [0,5,-10]], col: 0x90EE90 },
-        city: { amb: 0.4, main: [1.3, [5,10,7]], fill: [0.5, [-5,5,-5]], rim: [0.6, [0,5,-10]], col: 0x3498db },
-        warehouse: { amb: 0.8, main: [1.8, [0,15,0]], fill: [0.6, [-5,5,-5]], rim: [0.4, [0,5,-10]], col: 0xffffff }
-      };
-
-      const c = configs[hdrName] || configs.studio;
-      ambientLight.intensity = c.amb;
-      mainLight.intensity = c.main[0]; mainLight.position.set(...c.main[1]);
-      fillLight.intensity = c.fill[0]; fillLight.position.set(...c.fill[1]);
-      rimLight.intensity = c.rim[0]; rimLight.position.set(...c.rim[1]);
-    }
-
-    document.querySelectorAll('.light-btn').forEach(btn => {
+    document.querySelectorAll('.map-btn').forEach(btn => {
       btn.onclick = () => {
-        document.querySelectorAll('.light-btn').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.map-btn').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
-        applySimulatedLighting(btn.dataset.hdr);
+        updateVisualMode('maps', btn.dataset.map);
       };
     });
 
-    applySimulatedLighting('studio');
-
-    // Carga de Modelo
-    const gltfLoader = new GLTFLoader();
-    gltfLoader.load('owl.glb', (gltf) => {
+    // Model Loading
+    const loader = new GLTFLoader();
+    loader.load('owl.glb', (gltf) => {
       loadedModel = gltf.scene;
       
-      // Estadísticas
+      // Setup materials
       let triangles = 0;
-      loadedModel.traverse(c => { if(c.isMesh) triangles += c.geometry.attributes.position.count / 3; });
-      polyCountEl.textContent = `${Math.round(triangles).toLocaleString()} Tris`;
+      loadedModel.traverse(child => {
+        if (child.isMesh) {
+          triangles += child.geometry.attributes.position.count / 3;
+          createDebugMaterials(child);
+        }
+      });
+      document.getElementById('poly-count').textContent = `${Math.round(triangles).toLocaleString()} Tris`;
 
-      // Centrar
+      // Center & Scale
       const box = new THREE.Box3().setFromObject(loadedModel);
-      const center = box.getCenter(new THREE.Vector3());
       const size = box.getSize(new THREE.Vector3());
-      const scale = 2 / Math.max(size.x, size.y, size.z);
-      loadedModel.scale.multiplyScalar(scale);
+      const center = box.getCenter(new THREE.Vector3());
+      const scale = 2.5 / Math.max(size.x, size.y, size.z);
+      loadedModel.scale.setScalar(scale);
       loadedModel.position.set(-center.x*scale, -center.y*scale + 0.5, -center.z*scale);
-      
-      setupMaterials(loadedModel);
+
       scene.add(loadedModel);
-      loading.style.display = 'none';
+      document.getElementById('loading').style.display = 'none';
 
       if (gltf.animations.length > 0) {
         mixer = new THREE.AnimationMixer(loadedModel);
-        createAnimationControls(gltf.animations);
+        const action = mixer.clipAction(gltf.animations[0]);
+        action.play();
+        
+        // Simple animation UI
+        const animUI = document.getElementById('animation-controls');
+        animUI.innerHTML = `<button class="anim-btn" id="play-pause">⏸</button>
+                            <select class="anim-select" id="anim-sel"></select>`;
+        
+        const sel = document.getElementById('anim-sel');
+        gltf.animations.forEach((a, i) => {
+          const opt = document.createElement('option');
+          opt.value = i; opt.textContent = a.name || `Anim ${i+1}`;
+          sel.appendChild(opt);
+        });
+
+        document.getElementById('play-pause').onclick = (e) => {
+          const paused = action.paused;
+          action.paused = !paused;
+          e.target.textContent = paused ? '⏸' : '▶';
+        };
       }
     }, (p) => {
-      loading.innerHTML = `<div class="loading-spinner"></div>Cargando... ${(p.loaded/p.total*100).toFixed(0)}%`;
+      document.getElementById('load-text').textContent = `Cargando... ${(p.loaded/p.total*100).toFixed(0)}%`;
     });
 
+    // Render Loop
     function animate() {
       requestAnimationFrame(animate);
       if (mixer) mixer.update(clock.getDelta());
