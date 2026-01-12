@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>3D Model Showcase - PBR Inspector</title>
+  <title>3D Model Showcase</title>
   <script type="importmap">
     {
       "imports": {
@@ -13,136 +13,771 @@
     }
   </script>
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      width: 100vw; height: 100vh; overflow: hidden;
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
       background: linear-gradient(180deg, #0a0a0a 0%, #2a2a2a 50%, #4a4a4a 100%);
     }
-    #canvas-container { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; }
-    .overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 10; pointer-events: none; }
 
-    /* UI Panels */
-    .top-bar {
-      position: absolute; top: 30px; left: 0; width: 100%;
-      display: flex; justify-content: space-between; align-items: flex-start;
-      padding: 0 40px; pointer-events: none;
+    #canvas-container {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
     }
 
-    .logo-container { display: flex; align-items: center; gap: 12px; pointer-events: auto; }
-    .logo-icon { width: 50px; height: 50px; background: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 24px; }
-    .logo-text { color: #fff; }
-    .logo-text h1 { font-size: 18px; font-weight: 700; letter-spacing: 2px; }
-    .logo-text p { font-size: 10px; letter-spacing: 3px; opacity: 0.7; text-transform: uppercase; }
-
-    /* Selector de Modos y Mapas */
-    .controls-wrapper {
-      display: flex; flex-direction: column; align-items: center; gap: 15px; pointer-events: auto;
+    .overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 10;
+      pointer-events: none;
     }
 
-    .view-modes, .map-modes {
-      display: flex; gap: 5px; background: rgba(0, 0, 0, 0.6);
-      padding: 5px; border-radius: 30px; border: 1px solid rgba(255, 255, 255, 0.1);
+    /* Logo - Arriba Izquierda */
+    .logo-container {
+      position: absolute;
+      top: 30px;
+      left: 40px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      pointer-events: auto;
+    }
+
+    .logo-icon {
+      width: 50px;
+      height: 50px;
+      background: #fff;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+    }
+
+    .logo-text {
+      color: #fff;
+    }
+
+    .logo-text h1 {
+      font-size: 18px;
+      font-weight: 700;
+      letter-spacing: 2px;
+    }
+
+    .logo-text p {
+      font-size: 10px;
+      letter-spacing: 3px;
+      opacity: 0.7;
+      text-transform: uppercase;
+    }
+
+    /* Iconos Software - Arriba Derecha */
+    .software-icons {
+      position: absolute;
+      top: 30px;
+      right: 40px;
+      display: flex;
+      gap: 15px;
+      pointer-events: auto;
+    }
+
+    .software-icon {
+      width: 40px;
+      height: 40px;
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: none;
+    }
+
+    .software-icon.visible {
+      display: flex;
+    }
+
+    .software-icon:hover {
+      background: rgba(255, 255, 255, 0.2);
+      transform: scale(1.1);
+    }
+
+    .software-icon svg {
+      width: 20px;
+      height: 20px;
+      fill: #fff;
+    }
+
+    /* Info Técnica - Abajo Izquierda */
+    .tech-info {
+      position: absolute;
+      bottom: 40px;
+      left: 40px;
+      color: #fff;
+      max-width: 350px;
+    }
+
+    .model-number {
+      font-size: 48px;
+      font-weight: 800;
+      margin-bottom: 5px;
+      background: linear-gradient(90deg, #fff, #888);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .model-name {
+      font-size: 14px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      opacity: 0.8;
+      margin-bottom: 20px;
+    }
+
+    .tech-specs {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .spec-row {
+      display: flex;
+      gap: 20px;
+      font-size: 11px;
+      opacity: 0.6;
+    }
+
+    .spec-label {
+      min-width: 80px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .spec-value {
+      color: #aaa;
+    }
+
+    /* Controles de Animación */
+    .animation-controls {
+      margin-top: 25px;
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .anim-btn {
+      width: 36px;
+      height: 36px;
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      pointer-events: auto;
+    }
+
+    .anim-btn:hover {
+      background: rgba(255, 255, 255, 0.2);
+      transform: scale(1.1);
+    }
+
+    .anim-btn:disabled {
+      opacity: 0.3;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .anim-btn svg {
+      width: 16px;
+      height: 16px;
+      fill: #fff;
+    }
+
+    .anim-select {
+      padding: 8px 12px;
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 4px;
+      color: #fff;
+      font-size: 11px;
+      letter-spacing: 1px;
+      cursor: pointer;
+      pointer-events: auto;
+      min-width: 150px;
+    }
+
+    .anim-select:focus {
+      outline: none;
+      border-color: rgba(255, 255, 255, 0.4);
+    }
+
+    .anim-select option {
+      background: #1a1a1a;
+      color: #fff;
+    }
+
+    .anim-status {
+      font-size: 10px;
+      letter-spacing: 1px;
+      opacity: 0.5;
+      text-transform: uppercase;
+    }
+
+    .no-animations {
+      font-size: 10px;
+      letter-spacing: 1px;
+      opacity: 0.4;
+      font-style: italic;
+    }
+
+    /* Título Central Decorativo */
+    .background-text {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 180px;
+      font-weight: 900;
+      color: rgba(255, 255, 255, 0.03);
+      letter-spacing: 20px;
+      white-space: nowrap;
+      z-index: 0;
+      user-select: none;
+    }
+
+    /* Loading */
+    .loading {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      color: #fff;
+      font-size: 14px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+    }
+
+    .loading-spinner {
+      width: 40px;
+      height: 40px;
+      border: 2px solid rgba(255, 255, 255, 0.1);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 15px;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* Controles */
+    .controls-hint {
+      position: absolute;
+      bottom: 40px;
+      right: 40px;
+      color: rgba(255, 255, 255, 0.4);
+      font-size: 11px;
+      text-align: right;
+      letter-spacing: 1px;
+    }
+
+    /* Controles de Iluminación HDR */
+    .lighting-controls {
+      position: absolute;
+      right: 40px;
+      top: 50%;
+      transform: translateY(-50%);
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      pointer-events: auto;
+    }
+
+    .light-btn {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      cursor: pointer;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .light-btn:hover {
+      transform: scale(1.15);
+      border-color: rgba(255, 255, 255, 0.6);
+    }
+
+    .light-btn.active {
+      border-color: #fff;
+      box-shadow: 0 0 15px rgba(255, 255, 255, 0.4);
+    }
+
+    .light-btn::after {
+      content: attr(data-name);
+      position: absolute;
+      right: 55px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: rgba(0, 0, 0, 0.8);
+      color: #fff;
+      padding: 5px 10px;
+      border-radius: 4px;
+      font-size: 10px;
+      letter-spacing: 1px;
+      white-space: nowrap;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+
+    .light-btn:hover::after {
+      opacity: 1;
+    }
+
+    /* Colores representativos de cada HDR */
+    .light-btn[data-hdr="studio"] {
+      background: linear-gradient(135deg, #3a3a3a 0%, #1a1a1a 100%);
+    }
+
+    .light-btn[data-hdr="sunset"] {
+      background: linear-gradient(135deg, #ff7e5f 0%, #feb47b 100%);
+    }
+
+    .light-btn[data-hdr="night"] {
+      background: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
+    }
+
+    .light-btn[data-hdr="forest"] {
+      background: linear-gradient(135deg, #134e5e 0%, #71b280 100%);
+    }
+
+    .light-btn[data-hdr="city"] {
+      background: linear-gradient(135deg, #4b6cb7 0%, #182848 100%);
+    }
+
+    .light-btn[data-hdr="warehouse"] {
+      background: linear-gradient(135deg, #8e9eab 0%, #eef2f3 100%);
+    }
+
+    /* Panel de ajustes avanzados de HDR */
+    .hdr-settings-panel {
+      position: absolute;
+      right: 100px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: rgba(0, 0, 0, 0.7);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 12px;
+      padding: 20px;
+      pointer-events: auto;
+      min-width: 200px;
       backdrop-filter: blur(10px);
     }
 
-    .view-btn, .map-btn {
-      padding: 6px 15px; border: none; background: transparent;
-      color: #fff; font-size: 10px; letter-spacing: 1px;
-      text-transform: uppercase; cursor: pointer; border-radius: 20px;
-      transition: all 0.3s ease; opacity: 0.6;
+    .hdr-settings-panel h3 {
+      color: #fff;
+      font-size: 11px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin-bottom: 20px;
+      opacity: 0.7;
     }
 
-    .view-btn.active, .map-btn.active { background: #fff; color: #000; opacity: 1; }
-    .view-btn:hover:not(.active), .map-btn:hover:not(.active) { opacity: 1; background: rgba(255, 255, 255, 0.1); }
+    .hdr-slider-group {
+      margin-bottom: 18px;
+    }
 
-    .map-modes { margin-top: 5px; display: none; } /* Se muestra solo en modo 'Maps' */
+    .hdr-slider-group:last-child {
+      margin-bottom: 0;
+    }
 
-    /* Info Técnica */
-    .tech-info { position: absolute; bottom: 40px; left: 40px; color: #fff; max-width: 350px; pointer-events: auto; }
-    .model-number { font-size: 48px; font-weight: 800; margin-bottom: 5px; background: linear-gradient(90deg, #fff, #888); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-    .model-name { font-size: 14px; letter-spacing: 2px; text-transform: uppercase; opacity: 0.8; margin-bottom: 20px; }
-    .tech-specs { display: flex; flex-direction: column; gap: 8px; margin-bottom: 20px; }
-    .spec-row { display: flex; gap: 20px; font-size: 11px; opacity: 0.6; }
-    .spec-label { min-width: 80px; text-transform: uppercase; }
-    .spec-value { color: #aaa; }
+    .hdr-slider-label {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
 
-    /* Animaciones */
-    .animation-controls { display: flex; gap: 10px; align-items: center; }
-    .anim-btn { width: 36px; height: 36px; background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.3s ease; }
-    .anim-btn svg { width: 16px; height: 16px; fill: #fff; }
-    .anim-select { padding: 8px 12px; background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 4px; color: #fff; font-size: 11px; cursor: pointer; min-width: 120px; }
+    .hdr-slider-label span {
+      color: #fff;
+      font-size: 10px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      opacity: 0.6;
+    }
 
-    /* Lighting */
-    .lighting-controls { position: absolute; right: 40px; top: 50%; transform: translateY(-50%); display: flex; flex-direction: column; gap: 12px; pointer-events: auto; }
-    .light-btn { width: 44px; height: 44px; border-radius: 50%; border: 2px solid rgba(255, 255, 255, 0.3); cursor: pointer; transition: all 0.3s ease; position: relative; }
-    .light-btn.active { border-color: #fff; box-shadow: 0 0 15px rgba(255, 255, 255, 0.4); }
-    .light-btn::after { content: attr(data-name); position: absolute; right: 55px; top: 50%; transform: translateY(-50%); background: rgba(0,0,0,0.8); color: #fff; padding: 5px 10px; border-radius: 4px; font-size: 10px; opacity: 0; pointer-events: none; transition: 0.3s; white-space: nowrap; }
-    .light-btn:hover::after { opacity: 1; }
+    .hdr-slider-label .value {
+      color: #fff;
+      font-size: 10px;
+      opacity: 0.8;
+      font-family: monospace;
+    }
 
-    .light-btn[data-hdr="studio"] { background: #333; }
-    .light-btn[data-hdr="sunset"] { background: #ff7e5f; }
-    .light-btn[data-hdr="night"] { background: #0f0c29; }
+    .hdr-slider {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 100%;
+      height: 4px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 2px;
+      outline: none;
+      cursor: pointer;
+    }
 
-    /* Loading */
-    .loading { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: #fff; text-align: center; }
-    .spinner { width: 40px; height: 40px; border: 3px solid rgba(255,255,255,0.1); border-top-color: #fff; border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 10px; }
-    @keyframes spin { to { transform: rotate(360deg); } }
+    .hdr-slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 14px;
+      height: 14px;
+      background: #fff;
+      border-radius: 50%;
+      cursor: pointer;
+      transition: transform 0.2s ease;
+    }
 
-    .background-text { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 15vw; font-weight: 900; color: rgba(255,255,255,0.02); z-index: 0; pointer-events: none; white-space: nowrap; }
+    .hdr-slider::-webkit-slider-thumb:hover {
+      transform: scale(1.2);
+    }
+
+    .hdr-slider::-moz-range-thumb {
+      width: 14px;
+      height: 14px;
+      background: #fff;
+      border-radius: 50%;
+      cursor: pointer;
+      border: none;
+    }
+
+    /* Toggle de sombras */
+    .shadow-toggle {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 15px;
+      padding-top: 15px;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .shadow-toggle span {
+      color: #fff;
+      font-size: 10px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      opacity: 0.6;
+    }
+
+    .toggle-switch {
+      position: relative;
+      width: 44px;
+      height: 24px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 12px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    .toggle-switch.active {
+      background: rgba(100, 200, 100, 0.5);
+    }
+
+    .toggle-switch::after {
+      content: '';
+      position: absolute;
+      top: 3px;
+      left: 3px;
+      width: 18px;
+      height: 18px;
+      background: #fff;
+      border-radius: 50%;
+      transition: transform 0.3s ease;
+    }
+
+    .toggle-switch.active::after {
+      transform: translateX(20px);
+    }
+
+    /* Botón reset */
+    .hdr-reset-btn {
+      width: 100%;
+      margin-top: 15px;
+      padding: 8px 12px;
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 6px;
+      color: #fff;
+      font-size: 10px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .hdr-reset-btn:hover {
+      background: rgba(255, 255, 255, 0.2);
+    }
+
+    /* Galería de modelos - Abajo Centro */
+    .model-gallery {
+      position: absolute;
+      bottom: 40px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 15px;
+      pointer-events: auto;
+    }
+
+    .gallery-item {
+      width: 60px;
+      height: 60px;
+      border-radius: 12px;
+      border: 2px solid rgba(255, 255, 255, 0.2);
+      background: rgba(255, 255, 255, 0.05);
+      cursor: pointer;
+      transition: all 0.3s ease;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+
+    .gallery-item:hover {
+      transform: scale(1.1);
+      border-color: rgba(255, 255, 255, 0.5);
+    }
+
+    .gallery-item.active {
+      border-color: #fff;
+      box-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+    }
+
+    .gallery-item img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .gallery-item .gallery-number {
+      font-size: 18px;
+      font-weight: 700;
+      color: rgba(255, 255, 255, 0.5);
+    }
+
+    .gallery-item::after {
+      content: attr(data-name);
+      position: absolute;
+      bottom: calc(100% + 10px);
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(0, 0, 0, 0.9);
+      color: #fff;
+      padding: 6px 12px;
+      border-radius: 4px;
+      font-size: 10px;
+      letter-spacing: 1px;
+      white-space: nowrap;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+
+    .gallery-item:hover::after {
+      opacity: 1;
+    }
+
+    /* Flechas de navegación */
+    .nav-arrow {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      background: rgba(255, 255, 255, 0.05);
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      pointer-events: auto;
+    }
+
+    .nav-arrow:hover {
+      background: rgba(255, 255, 255, 0.15);
+      transform: scale(1.1);
+    }
+
+    .nav-arrow svg {
+      width: 16px;
+      height: 16px;
+      fill: #fff;
+    }
   </style>
 </head>
 <body>
-  <div id="canvas-container"></div>
-  <div class="background-text">INSPECTOR</div>
+  <div id="canvas-container">
+    <div class="loading" id="loading">
+      <div class="loading-spinner"></div>
+      Cargando modelo...
+    </div>
+  </div>
+
+  <div class="background-text" id="background-text">MODEL</div>
 
   <div class="overlay">
-    <div class="top-bar">
-      <div class="logo-container">
-        <div class="logo-icon">🔍</div>
-        <div class="logo-text">
-          <h1>PBR VIEWER</h1>
-          <p>Technical Inspection</p>
-        </div>
+    <!-- Logo - Arriba Izquierda -->
+    <div class="logo-container">
+      <div class="logo-icon">🎨</div>
+      <div class="logo-text">
+        <h1>TU LOGO</h1>
+        <p>3D Artist Portfolio</p>
       </div>
-
-      <div class="controls-wrapper">
-        <div class="view-modes">
-          <button class="view-btn active" data-mode="full">Render</button>
-          <button class="view-btn" data-mode="maps">Mapas PBR</button>
-          <button class="view-btn" data-mode="wireframe">Wireframe</button>
-        </div>
-        <div class="map-modes" id="map-selector">
-          <button class="map-btn active" data-map="albedo">Albedo</button>
-          <button class="map-btn" data-map="roughness">Roughness</button>
-          <button class="map-btn" data-map="metallic">Metallic</button>
-          <button class="map-btn" data-map="normal">Normal</button>
-          <button class="map-btn" data-map="emissive">Emissive</button>
-        </div>
-      </div>
-
-      <div style="width: 150px;"></div> <!-- Spacer -->
     </div>
 
+    <!-- Iconos Software - Arriba Derecha -->
+    <div class="software-icons" id="software-icons">
+      <div class="software-icon" data-software="blender" title="Blender">
+        <svg viewBox="0 0 60 60"><path d="M19.45,34.6c-.31,1.51,0,3.44.4,4.83.39,1.39.96,2.59,1.67,3.78.71,1.19,1.38,2.11,2.34,3.11s1.84,1.75,2.97,2.53c1.12.78,2.23,1.36,3.54,1.91,1.31.55,2.74.98,4.21,1.24,1.47.26,3.56.4,5.1.31,1.54-.1,3.22-.42,4.62-.84,1.4-.42,2.63-.93,3.86-1.59s2.2-1.36,3.25-2.24c1.05-.88,1.83-1.71,2.66-2.79.83-1.08,1.46-2.12,2.04-3.41.59-1.29,1-2.79,1.24-4.25s.21-3.6-.04-5.05c-.25-1.45-.71-2.87-1.3-4.15-.59-1.27-1.26-2.34-2.09-3.4-.83-1.06-1.68-1.91-2.7-2.75-1.03-.83-2.04-1.57-3.08-2.37-1.03-.8-2.07-1.59-3.1-2.39-1.03-.8-2.05-1.57-3.1-2.35-1.04-.79-2.01-1.61-3.08-2.37-1.07-.76-1.99-1.66-3.1-2.4-1.11-.73-1.92-1.84-3.28-2.17-1.35-.34-3.06-.06-3.93,1.27-.87,1.33.42,2.65,1.52,3.38s1.95,1.68,3.01,2.44c1.06.76,1.94,1.7,3,2.45-1.45.09-2.99.03-4.48.04s-3.04-.01-4.53,0-3.07-.01-4.53,0-3.08-.03-4.48,0-3.17-.1-4.44.09c-1.26.19-2.09.75-2.8,1.73-.71.98-.62,2.38.44,3.14,1.06.76,2.56.58,3.94.58s3.1,0,4.53,0,3.03-.04,4.44.04c-1.69,1.22-3.34,2.52-5,3.79-1.66,1.27-3.29,2.51-4.97,3.78-1.67,1.27-3.28,2.55-4.97,3.82-1.69,1.28-3.25,2.49-4.97,3.78-1.72,1.29-2.63,4.37-.55,5.8,2.08,1.43,4.52.02,6.11-1.43s3.23-2.58,4.84-3.96c1.6-1.38,3.19-2.6,4.8-3.95M38.96,22.87c1.92.19,4.08.65,5.72,1.67,1.63,1.02,2.76,2,3.81,3.62,1.05,1.62,1.68,3.87,1.53,5.82.14-1.95.83-3.9,2.02-5.41,1.19-1.51,2.33-2.51,4.04-3.34,1.71-.84,4.12-1.48,6.14-1.29Z"/><path d="M37.95,39.66h.92c3.29,0,6.95-2.85,6.95-6.33v-.75c0-2.17-1.39-3.98-3.16-5.19-1.78-1.21-4.71-1.51-6.74-.8-2.03.71-3.51,1.93-4.41,3.9-.91,1.97-.53,4.77.9,6.42,1.43,1.64,3.39,2.76,5.55,2.76Z"/></svg>
+      </div>
+      <div class="software-icon" data-software="substance" title="Substance Painter">
+        <svg viewBox="0 0 60 60"><circle cx="26.93" cy="8.09" r="3.28"/><circle cx="50.99" cy="50.02" r="5.17"/><circle cx="6.12" cy="50.02" r="2.28"/><path d="M26.91,14.84c-11.06,0-20.01,8.95-20.01,20.01s8.95,20.01,20.01,20.01,20.01-8.95,20.01-20.01-8.95-20.01-20.01-20.01h0ZM13.36,27.08l13.52-7.81,13.48,7.81v7.06l-6.21-2v-1.46l-7.28-4.21-5.35,3.1,18.83,6.03v7.06l-13.52,7.81-13.52-7.78v-7.1l6.24,1.96v1.46l7.28,4.21,5.42-3.14-18.91-5.99v-7.03Z"/></svg>
+      </div>
+      <div class="software-icon" data-software="photoshop" title="Adobe Photoshop">
+        <svg viewBox="0 0 60 60"><path d="M23.57,21.41c-1.01,0-1.7.1-2.06.2v6.51c.43.1,1.66.13,1.66.13,2.65,0,4.28-1.34,4.28-3.6,0-2.02-1.41-3.24-3.89-3.24Z"/><path d="M47.55,10H12.45c-1.35,0-2.45,1.09-2.45,2.44v35.1c0,1.35,1.1,2.45,2.45,2.45h35.1c1.35,0,2.45-1.1,2.45-2.45V12.45c0-1.35-1.1-2.45-2.45-2.45ZM30.37,29.75c-1.7,1.6-4.22,2.32-7.16,2.32-.66,0-1.24-.03-1.7-.1v7.88h-4.94v-21.74c1.54-.26,3.69-.46,6.74-.46s5.26.59,6.73,1.77c1.41,1.11,2.36,2.94,2.36,5.1s-.72,3.98-2.03,5.23ZM37.81,40.18c-2.1,0-3.96-.45-5.17-1.11l.88-3.56c.92.55,2.81,1.21,4.29,1.21s2.12-.52,2.12-1.34-.49-1.21-2.35-1.83c-3.3-1.11-4.58-2.91-4.55-4.81,0-2.97,2.55-5.23,6.51-5.23,1.86,0,3.53.43,4.51.92l-.88,3.43c-.72-.39-2.09-.91-3.47-.91-1.21,0-1.89.49-1.89,1.31,0,.75.62,1.14,2.58,1.83,3.04,1.04,4.32,2.58,4.35,4.93,0,2.98-2.36,5.17-6.93,5.17Z"/></svg>
+      </div>
+      <div class="software-icon" data-software="maya" title="Maya">
+        <svg viewBox="0 0 24 24"><path d="M12 2L2 7v10l10 5 10-5V7L12 2zm0 2.18l6.9 3.45L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+      </div>
+      <div class="software-icon" data-software="zbrush" title="ZBrush">
+        <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+      </div>
+      <div class="software-icon" data-software="cinema4d" title="Cinema 4D">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 6v12M6 12h12v12H6V12z"/></svg>
+      </div>
+      <div class="software-icon" data-software="3dsmax" title="3ds Max">
+        <svg viewBox="0 0 24 24"><path d="M3 3h18v18H3V3zm2 2v14h14V5H5z"/><path d="M7 7h4v4H7V7zm6 0h4v4h-4V7zm-6 6h4v4H7V13zm6 0h4v4h-4v-4z"/></svg>
+      </div>
+      <div class="software-icon" data-software="marvelous" title="Marvelous Designer">
+        <svg viewBox="0 0 24 24"><path d="M12 2l-2 7H4l6 4.5-2 7.5 6-4.5 6 4.5-2-7.5 6-4.5h-6L12 2z"/></svg>
+      </div>
+    </div>
+
+    <!-- Info Técnica - Abajo Izquierda -->
     <div class="tech-info">
-      <div class="model-number">01</div>
-      <div class="model-name">Owl Character</div>
-      <div class="tech-specs">
-        <div class="spec-row"><span class="spec-label">Polígonos</span><span class="spec-value" id="poly-count">...</span></div>
-        <div class="spec-row"><span class="spec-label">Modo Actual</span><span class="spec-value" id="current-mode-text">Render Completo</span></div>
+      <div class="model-number" id="model-number">#01</div>
+      <div class="model-name" id="model-name">Nombre del Modelo*</div>
+      
+      <div class="tech-specs" id="tech-specs">
+        <!-- Se genera dinámicamente -->
       </div>
-      <div class="animation-controls" id="animation-controls"></div>
+
+      <!-- Controles de Animación -->
+      <div class="animation-controls" id="animation-controls">
+        <span class="no-animations" id="no-anim-msg">Sin animaciones</span>
+      </div>
     </div>
 
+    <!-- Galería de Modelos - Abajo Centro -->
+    <div class="model-gallery" id="model-gallery">
+      <button class="nav-arrow" id="prev-model" title="Anterior">
+        <svg viewBox="0 0 24 24"><path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></svg>
+      </button>
+      <!-- Los items de la galería se generan dinámicamente -->
+      <div id="gallery-items" style="display: flex; gap: 15px;"></div>
+      <button class="nav-arrow" id="next-model" title="Siguiente">
+        <svg viewBox="0 0 24 24"><path d="M8.59 16.59L10 18l6-6-6-6-1.41 1.41L13.17 12z"/></svg>
+      </button>
+    </div>
+
+    <!-- Controles de Iluminación HDR -->
     <div class="lighting-controls">
-      <div class="light-btn active" data-hdr="studio" data-name="Studio"></div>
-      <div class="light-btn" data-hdr="sunset" data-name="Sunset"></div>
-      <div class="light-btn" data-hdr="night" data-name="Night"></div>
+      <button class="light-btn active" data-hdr="studio" data-name="STUDIO" title="Studio"></button>
+      <button class="light-btn" data-hdr="sunset" data-name="SUNSET" title="Sunset"></button>
+      <button class="light-btn" data-hdr="night" data-name="NIGHT" title="Night"></button>
+      <button class="light-btn" data-hdr="forest" data-name="FOREST" title="Forest"></button>
+      <button class="light-btn" data-hdr="city" data-name="CITY" title="City"></button>
+      <button class="light-btn" data-hdr="warehouse" data-name="WAREHOUSE" title="Warehouse"></button>
     </div>
 
-    <div class="loading" id="loading">
-      <div class="spinner"></div>
-      <div id="load-text">Cargando...</div>
+    <!-- Panel de ajustes avanzados de HDR -->
+    <div class="hdr-settings-panel">
+      <h3>Ajustes de Luz</h3>
+      
+      <div class="hdr-slider-group">
+        <div class="hdr-slider-label">
+          <span>Rotación HDR</span>
+          <span class="value" id="rotation-value">0°</span>
+        </div>
+        <input type="range" class="hdr-slider" id="hdr-rotation" min="0" max="360" value="0" step="1">
+      </div>
+
+      <div class="hdr-slider-group">
+        <div class="hdr-slider-label">
+          <span>Exposición</span>
+          <span class="value" id="exposure-value">1.0</span>
+        </div>
+        <input type="range" class="hdr-slider" id="hdr-exposure" min="0.1" max="3" value="1" step="0.1">
+      </div>
+
+      <div class="hdr-slider-group">
+        <div class="hdr-slider-label">
+          <span>Intensidad Luz</span>
+          <span class="value" id="intensity-value">1.0</span>
+        </div>
+        <input type="range" class="hdr-slider" id="light-intensity" min="0" max="3" value="1" step="0.1">
+      </div>
+
+      <div class="hdr-slider-group">
+        <div class="hdr-slider-label">
+          <span>Intensidad Ambiente</span>
+          <span class="value" id="ambient-value">0.5</span>
+        </div>
+        <input type="range" class="hdr-slider" id="ambient-intensity" min="0" max="2" value="0.5" step="0.1">
+      </div>
+
+      <div class="shadow-toggle">
+        <span>Sombras</span>
+        <div class="toggle-switch active" id="shadow-toggle"></div>
+      </div>
+
+      <div class="hdr-slider-group" id="shadow-settings" style="margin-top: 15px;">
+        <div class="hdr-slider-label">
+          <span>Suavidad Sombra</span>
+          <span class="value" id="shadow-blur-value">2</span>
+        </div>
+        <input type="range" class="hdr-slider" id="shadow-blur" min="0" max="10" value="2" step="1">
+      </div>
+
+      <button class="hdr-reset-btn" id="hdr-reset">Restablecer</button>
+    </div>
+
+    <!-- Controles -->
+    <div class="controls-hint">
+      Arrastra para rotar<br>
+      Scroll para zoom
     </div>
   </div>
 
@@ -150,192 +785,736 @@
     import * as THREE from 'three';
     import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
     import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+    import { RGBELoader } from 'three/addons/loaders/RGBELoader.js';
 
-    // Scene Setup
+    // ============================================================
+    // Edita este array para añadir tus propios modelos
+    // ============================================================
+    const modelsGallery = [
+      {
+        id: 1,
+        name: "OWL",
+        path: "owl.glb",
+        thumbnail: "", // Ruta a imagen de preview (opcional)
+        backgroundText: "OWL",
+        software: ["blender", "substance"], // IDs de software usados
+        specs: {
+          "Polígonos": "12,000 tris",
+          "Texturas": "2K PBR",
+          "Software": "Blender, Substance Painter",
+          "Tiempo": "~8 horas",
+          "Año": "2024"
+        }
+      },
+      {
+        id: 2,
+        name: "Character Model",
+        path: "/models/character.glb", // Cambia a tu modelo
+        thumbnail: "",
+        backgroundText: "CHARACTER",
+        software: ["blender", "zbrush", "substance", "photoshop"],
+        specs: {
+          "Polígonos": "85,000 tris",
+          "Texturas": "4K PBR",
+          "Software": "Blender, ZBrush, Substance",
+          "Rigging": "Sí, completo",
+          "Tiempo": "~120 horas"
+        }
+      },
+      {
+        id: 3,
+        name: "Environment Prop",
+        path: "/models/prop.glb", // Cambia a tu modelo
+        thumbnail: "",
+        backgroundText: "PROP",
+        software: ["blender", "photoshop"],
+        specs: {
+          "Polígonos": "5,200 tris",
+          "Texturas": "2K Diffuse",
+          "Software": "Blender, Photoshop",
+          "LODs": "3 niveles",
+          "Tiempo": "~15 horas"
+        }
+      },
+      {
+        id: 4,
+        name: "Vehicle",
+        path: "/models/vehicle.glb", // Cambia a tu modelo
+        thumbnail: "",
+        backgroundText: "VEHICLE",
+        software: ["blender", "substance", "maya"],
+        specs: {
+          "Polígonos": "45,000 tris",
+          "Texturas": "4K PBR",
+          "Software": "Blender, Maya, Substance",
+          "Interior": "Detallado",
+          "Tiempo": "~80 horas"
+        }
+      }
+    ];
+    // ============================================================
+
+    // Variables globales
+    let currentModelIndex = 0;
+    let currentModel = null;
+    let mixer = null;
+    let animations = [];
+    let currentAction = null;
+    let isPlaying = true;
+    const clock = new THREE.Clock();
+
+    // Setup
+    const container = document.getElementById('canvas-container');
+    const loading = document.getElementById('loading');
+    const animControls = document.getElementById('animation-controls');
+    const galleryItems = document.getElementById('gallery-items');
+    const backgroundText = document.getElementById('background-text');
+
+    // Scene
     const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
-    camera.position.set(3, 2, 5);
 
+    // Camera
+    const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
+    camera.position.set(0, 1, 5);
+
+    // Renderer
     const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
     renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.outputColorSpace = THREE.SRGBColorSpace;
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    renderer.toneMappingExposure = 1.2;
-    document.getElementById('canvas-container').appendChild(renderer.domElement);
+    renderer.toneMappingExposure = 1;
+    renderer.shadowMap.enabled = true;
+    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    container.appendChild(renderer.domElement);
 
+    // Controls
     const controls = new OrbitControls(camera, renderer.domElement);
     controls.enableDamping = true;
+    controls.dampingFactor = 0.05;
+    controls.minDistance = 2;
+    controls.maxDistance = 10;
+    controls.target.set(0, 0.5, 0);
 
-    // Lights
+    // HDR paths
+    const hdrPaths = {
+      studio: 'studio.hdr',
+      sunset: 'sunset.hdr',
+      night: 'night.hdr',
+      forest: 'forest.hdr',
+      city: 'city.hdr',
+      warehouse: 'warehouse.hdr'
+    };
+
+    const hdrCache = {};
+    const rgbeLoader = new RGBELoader();
+
+    // Luces por defecto
+    const defaultLights = [];
+
     const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
     scene.add(ambientLight);
+    defaultLights.push(ambientLight);
+
     const mainLight = new THREE.DirectionalLight(0xffffff, 1.5);
     mainLight.position.set(5, 10, 7);
+    mainLight.castShadow = true;
+    mainLight.shadow.mapSize.width = 2048;
+    mainLight.shadow.mapSize.height = 2048;
+    mainLight.shadow.camera.near = 0.1;
+    mainLight.shadow.camera.far = 50;
+    mainLight.shadow.camera.left = -10;
+    mainLight.shadow.camera.right = 10;
+    mainLight.shadow.camera.top = 10;
+    mainLight.shadow.camera.bottom = -10;
+    mainLight.shadow.radius = 2;
+    mainLight.shadow.bias = -0.0001;
     scene.add(mainLight);
+    defaultLights.push(mainLight);
 
-    // State
-    let loadedModel = null;
-    let mixer = null;
-    const clock = new THREE.Clock();
-    const materialsData = new Map(); // Store original and debug materials
+    const fillLight = new THREE.DirectionalLight(0x8888ff, 0.5);
+    fillLight.position.set(-5, 5, -5);
+    scene.add(fillLight);
+    defaultLights.push(fillLight);
 
-    // Materials Logic
-    function createDebugMaterials(child) {
-      const original = child.material;
-      const debug = {};
+    const rimLight = new THREE.DirectionalLight(0xffffff, 0.8);
+    rimLight.position.set(0, 5, -10);
+    scene.add(rimLight);
+    defaultLights.push(rimLight);
 
-      // Albedo (Color base)
-      debug.albedo = new THREE.MeshBasicMaterial({ 
-        map: original.map, 
-        color: original.color,
-        skinning: original.skinning, morphTargets: original.morphTargets 
+    // ============================================================
+    // ============================================================
+
+    function createGalleryUI() {
+      galleryItems.innerHTML = '';
+      
+      modelsGallery.forEach((model, index) => {
+        const item = document.createElement('div');
+        item.className = `gallery-item ${index === currentModelIndex ? 'active' : ''}`;
+        item.dataset.index = index;
+        item.dataset.name = model.name;
+        
+        if (model.thumbnail) {
+          item.innerHTML = `<img src="${model.thumbnail}" alt="${model.name}">`;
+        } else {
+          item.innerHTML = `<span class="gallery-number">${String(index + 1).padStart(2, '0')}</span>`;
+        }
+        
+        item.addEventListener('click', () => loadModelByIndex(index));
+        galleryItems.appendChild(item);
       });
-
-      // Roughness (Escala de grises)
-      debug.roughness = new THREE.MeshBasicMaterial({ 
-        map: original.roughnessMap || null,
-        color: original.roughnessMap ? 0xffffff : new THREE.Color(original.roughness, original.roughness, original.roughness),
-        skinning: original.skinning, morphTargets: original.morphTargets
-      });
-
-      // Metallic (Escala de grises)
-      debug.metallic = new THREE.MeshBasicMaterial({ 
-        map: original.metalnessMap || null,
-        color: original.metalnessMap ? 0xffffff : new THREE.Color(original.metalness, original.metalness, original.metalness),
-        skinning: original.skinning, morphTargets: original.morphTargets
-      });
-
-      // Normal (Mapa de normales)
-      debug.normal = new THREE.MeshBasicMaterial({ 
-        map: original.normalMap || null,
-        color: original.normalMap ? 0xffffff : 0x8080ff, // Color neutro de normal si no hay mapa
-        skinning: original.skinning, morphTargets: original.morphTargets
-      });
-
-      // Emissive
-      debug.emissive = new THREE.MeshBasicMaterial({ 
-        map: original.emissiveMap || null,
-        color: original.emissive,
-        skinning: original.skinning, morphTargets: original.morphTargets
-      });
-
-      // Wireframe
-      debug.wireframe = new THREE.MeshBasicMaterial({ color: 0x00ff00, wireframe: true });
-
-      materialsData.set(child, { original, debug });
     }
 
-    function updateVisualMode(mode, mapType = 'albedo') {
-      if (!loadedModel) return;
-      
-      const modeText = document.getElementById('current-mode-text');
-      const mapSelector = document.getElementById('map-selector');
-      
-      mapSelector.style.display = mode === 'maps' ? 'flex' : 'none';
-
-      loadedModel.traverse(child => {
-        if (child.isMesh) {
-          const data = materialsData.get(child);
-          if (!data) return;
-
-          if (mode === 'full') {
-            child.material = data.original;
-            modeText.textContent = "Render Completo";
-          } else if (mode === 'wireframe') {
-            child.material = data.debug.wireframe;
-            modeText.textContent = "Wireframe";
-          } else if (mode === 'maps') {
-            child.material = data.debug[mapType];
-            modeText.textContent = `Mapa: ${mapType.toUpperCase()}`;
-          }
+    function updateSoftwareIcons(softwareList) {
+      const allIcons = document.querySelectorAll('.software-icon');
+      allIcons.forEach(icon => {
+        const software = icon.dataset.software;
+        if (softwareList.includes(software)) {
+          icon.classList.add('visible');
+        } else {
+          icon.classList.remove('visible');
         }
       });
     }
 
-    // UI Events
-    document.querySelectorAll('.view-btn').forEach(btn => {
-      btn.onclick = () => {
-        document.querySelectorAll('.view-btn').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        updateVisualMode(btn.dataset.mode);
-      };
-    });
-
-    document.querySelectorAll('.map-btn').forEach(btn => {
-      btn.onclick = () => {
-        document.querySelectorAll('.map-btn').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        updateVisualMode('maps', btn.dataset.map);
-      };
-    });
-
-    // Model Loading
-    const loader = new GLTFLoader();
-    loader.load('ixo.glb', (gltf) => {
-      loadedModel = gltf.scene;
+    function updateTechSpecs(specs) {
+      const techSpecs = document.getElementById('tech-specs');
+      techSpecs.innerHTML = '';
       
-      // Setup materials
-      let triangles = 0;
-      loadedModel.traverse(child => {
-        if (child.isMesh) {
-          triangles += child.geometry.attributes.position.count / 3;
-          createDebugMaterials(child);
-        }
+      Object.entries(specs).forEach(([label, value]) => {
+        const row = document.createElement('div');
+        row.className = 'spec-row';
+        row.innerHTML = `
+          <span class="spec-label">${label}</span>
+          <span class="spec-value">${value}</span>
+        `;
+        techSpecs.appendChild(row);
       });
-      document.getElementById('poly-count').textContent = `${Math.round(triangles).toLocaleString()} Tris`;
+    }
 
-      // Center & Scale
-      const box = new THREE.Box3().setFromObject(loadedModel);
-      const size = box.getSize(new THREE.Vector3());
-      const center = box.getCenter(new THREE.Vector3());
-      const scale = 2.5 / Math.max(size.x, size.y, size.z);
-      loadedModel.scale.setScalar(scale);
-      loadedModel.position.set(-center.x*scale, -center.y*scale + 0.5, -center.z*scale);
+    function updateModelInfo(modelData) {
+      document.getElementById('model-number').textContent = `#${String(modelData.id).padStart(2, '0')}`;
+      document.getElementById('model-name').textContent = modelData.name + '*';
+      backgroundText.textContent = modelData.backgroundText || 'MODEL';
+      
+      updateTechSpecs(modelData.specs);
+      updateSoftwareIcons(modelData.software);
+      
+      // Actualizar galería activa
+      document.querySelectorAll('.gallery-item').forEach((item, index) => {
+        item.classList.toggle('active', index === currentModelIndex);
+      });
+    }
 
-      scene.add(loadedModel);
-      document.getElementById('loading').style.display = 'none';
+    function loadModelByIndex(index) {
+      if (index < 0 || index >= modelsGallery.length) return;
+      currentModelIndex = index;
+      
+      const modelData = modelsGallery[index];
+      updateModelInfo(modelData);
+      loadModel(modelData.path);
+    }
 
-      if (gltf.animations.length > 0) {
-        mixer = new THREE.AnimationMixer(loadedModel);
-        const action = mixer.clipAction(gltf.animations[0]);
-        action.play();
-        
-        // Simple animation UI
-        const animUI = document.getElementById('animation-controls');
-        animUI.innerHTML = `<button class="anim-btn" id="play-pause">⏸</button>
-                            <select class="anim-select" id="anim-sel"></select>`;
-        
-        const sel = document.getElementById('anim-sel');
-        gltf.animations.forEach((a, i) => {
-          const opt = document.createElement('option');
-          opt.value = i; opt.textContent = a.name || `Anim ${i+1}`;
-          sel.appendChild(opt);
-        });
+    // Navegación
+    document.getElementById('prev-model').addEventListener('click', () => {
+      const newIndex = (currentModelIndex - 1 + modelsGallery.length) % modelsGallery.length;
+      loadModelByIndex(newIndex);
+    });
 
-        document.getElementById('play-pause').onclick = (e) => {
-          const paused = action.paused;
-          action.paused = !paused;
-          e.target.textContent = paused ? '⏸' : '▶';
-        };
+    document.getElementById('next-model').addEventListener('click', () => {
+      const newIndex = (currentModelIndex + 1) % modelsGallery.length;
+      loadModelByIndex(newIndex);
+    });
+
+    // Atajos de teclado
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowLeft') {
+        const newIndex = (currentModelIndex - 1 + modelsGallery.length) % modelsGallery.length;
+        loadModelByIndex(newIndex);
+      } else if (e.key === 'ArrowRight') {
+        const newIndex = (currentModelIndex + 1) % modelsGallery.length;
+        loadModelByIndex(newIndex);
       }
-    }, (p) => {
-      document.getElementById('load-text').textContent = `Cargando... ${(p.loaded/p.total*100).toFixed(0)}%`;
     });
 
-    // Render Loop
+    // ============================================================
+    // FUNCIONES DE ANIMACIÓN
+    // ============================================================
+
+    function createAnimationControls(clips) {
+      animControls.innerHTML = '';
+      
+      if (clips.length === 0) {
+        animControls.innerHTML = '<span class="no-animations">Sin animaciones</span>';
+        return;
+      }
+
+      const playBtn = document.createElement('button');
+      playBtn.className = 'anim-btn';
+      playBtn.id = 'play-btn';
+      playBtn.title = 'Reproducir/Pausar';
+      playBtn.innerHTML = `
+        <svg viewBox="0 0 24 24" id="play-icon">
+          <path d="M6 4l12 8-12 8V4z"/>
+        </svg>
+        <svg viewBox="0 0 24 24" id="pause-icon" style="display:none;">
+          <path d="M6 4h4v16H6V4zm8 0h4v16h-4V4z"/>
+        </svg>
+      `;
+      
+      const stopBtn = document.createElement('button');
+      stopBtn.className = 'anim-btn';
+      stopBtn.title = 'Detener';
+      stopBtn.innerHTML = `<svg viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12"/></svg>`;
+
+      const select = document.createElement('select');
+      select.className = 'anim-select';
+      select.id = 'anim-select';
+      
+      clips.forEach((clip, index) => {
+        const option = document.createElement('option');
+        option.value = index;
+        option.textContent = clip.name || `Animación ${index + 1}`;
+        select.appendChild(option);
+      });
+
+      const status = document.createElement('span');
+      status.className = 'anim-status';
+      status.id = 'anim-status';
+      status.textContent = 'Reproduciendo';
+
+      animControls.appendChild(playBtn);
+      animControls.appendChild(stopBtn);
+      animControls.appendChild(select);
+      animControls.appendChild(status);
+
+      playBtn.addEventListener('click', togglePlay);
+      stopBtn.addEventListener('click', stopAnimation);
+      select.addEventListener('change', (e) => playAnimation(parseInt(e.target.value)));
+
+      playAnimation(0);
+      updatePlayButton();
+    }
+
+    function playAnimation(index) {
+      if (!mixer || !animations[index]) return;
+
+      if (currentAction) {
+        currentAction.fadeOut(0.3);
+      }
+
+      currentAction = mixer.clipAction(animations[index]);
+      currentAction.reset();
+      currentAction.fadeIn(0.3);
+      currentAction.play();
+      
+      isPlaying = true;
+      updatePlayButton();
+      updateStatus('Reproduciendo');
+    }
+
+    function togglePlay() {
+      if (!currentAction) return;
+
+      if (isPlaying) {
+        currentAction.paused = true;
+        isPlaying = false;
+        updateStatus('Pausado');
+      } else {
+        currentAction.paused = false;
+        isPlaying = true;
+        updateStatus('Reproduciendo');
+      }
+      updatePlayButton();
+    }
+
+    function stopAnimation() {
+      if (!currentAction) return;
+
+      currentAction.stop();
+      currentAction.reset();
+      isPlaying = false;
+      updatePlayButton();
+      updateStatus('Detenido');
+    }
+
+    function updatePlayButton() {
+      const playIcon = document.getElementById('play-icon');
+      const pauseIcon = document.getElementById('pause-icon');
+      if (playIcon && pauseIcon) {
+        playIcon.style.display = isPlaying ? 'none' : 'block';
+        pauseIcon.style.display = isPlaying ? 'block' : 'none';
+      }
+    }
+
+    function updateStatus(text) {
+      const status = document.getElementById('anim-status');
+      if (status) status.textContent = text;
+    }
+
+    // ============================================================
+    // FUNCIONES DE ILUMINACIÓN HDR
+    // ============================================================
+
+    function loadHDR(hdrName) {
+      const path = hdrPaths[hdrName];
+      
+      if (hdrCache[hdrName]) {
+        applyEnvironment(hdrCache[hdrName]);
+        return;
+      }
+
+      rgbeLoader.load(
+        path,
+        (texture) => {
+          texture.mapping = THREE.EquirectangularReflectionMapping;
+          hdrCache[hdrName] = texture;
+          applyEnvironment(texture);
+        },
+        undefined,
+        (error) => {
+          console.warn(`HDR ${hdrName} no encontrado, usando iluminación simulada`);
+          applySimulatedLighting(hdrName);
+        }
+      );
+    }
+
+    function applyEnvironment(texture) {
+      scene.environment = texture;
+    }
+
+    function applySimulatedLighting(hdrName) {
+      defaultLights.forEach(light => {
+        light.intensity = 0;
+      });
+
+      scene.environment = null;
+
+      const lightConfigs = {
+        studio: {
+          ambient: { color: 0xffffff, intensity: 0.6 },
+          main: { color: 0xffffff, intensity: 1.5, pos: [5, 10, 7] },
+          fill: { color: 0xcccccc, intensity: 0.4, pos: [-5, 5, -5] },
+          rim: { color: 0xffffff, intensity: 0.8, pos: [0, 5, -10] }
+        },
+        sunset: {
+          ambient: { color: 0xffa07a, intensity: 0.4 },
+          main: { color: 0xff8c00, intensity: 2.0, pos: [-8, 3, 5] },
+          fill: { color: 0xff6347, intensity: 0.6, pos: [5, 2, -5] },
+          rim: { color: 0xffd700, intensity: 1.0, pos: [0, 8, -8] }
+        },
+        night: {
+          ambient: { color: 0x1a1a2e, intensity: 0.3 },
+          main: { color: 0x4a69bd, intensity: 1.0, pos: [5, 10, 7] },
+          fill: { color: 0x6c5ce7, intensity: 0.5, pos: [-5, 5, -5] },
+          rim: { color: 0x00cec9, intensity: 0.6, pos: [0, 5, -10] }
+        },
+        forest: {
+          ambient: { color: 0x2d5016, intensity: 0.5 },
+          main: { color: 0x90EE90, intensity: 1.2, pos: [3, 12, 5] },
+          fill: { color: 0x228B22, intensity: 0.4, pos: [-5, 5, -5] },
+          rim: { color: 0xADFF2F, intensity: 0.7, pos: [0, 5, -10] }
+        },
+        city: {
+          ambient: { color: 0x2c3e50, intensity: 0.4 },
+          main: { color: 0x3498db, intensity: 1.3, pos: [5, 10, 7] },
+          fill: { color: 0x9b59b6, intensity: 0.5, pos: [-5, 5, -5] },
+          rim: { color: 0xe74c3c, intensity: 0.6, pos: [0, 5, -10] }
+        },
+        warehouse: {
+          ambient: { color: 0xffffff, intensity: 0.8 },
+          main: { color: 0xffffff, intensity: 1.8, pos: [0, 15, 0] },
+          fill: { color: 0xeeeeee, intensity: 0.6, pos: [-5, 5, -5] },
+          rim: { color: 0xffffff, intensity: 0.4, pos: [0, 5, -10] }
+        }
+      };
+
+      const config = lightConfigs[hdrName] || lightConfigs.studio;
+
+      ambientLight.color.setHex(config.ambient.color);
+      ambientLight.intensity = config.ambient.intensity;
+
+      mainLight.color.setHex(config.main.color);
+      mainLight.intensity = config.main.intensity;
+      mainLight.position.set(...config.main.pos);
+
+      fillLight.color.setHex(config.fill.color);
+      fillLight.intensity = config.fill.intensity;
+      fillLight.position.set(...config.fill.pos);
+
+      rimLight.color.setHex(config.rim.color);
+      rimLight.intensity = config.rim.intensity;
+      rimLight.position.set(...config.rim.pos);
+    }
+
+    const lightButtons = document.querySelectorAll('.light-btn');
+    lightButtons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        lightButtons.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        const hdrName = btn.dataset.hdr;
+        loadHDR(hdrName);
+      });
+    });
+
+    applySimulatedLighting('studio');
+
+    // ============================================================
+    // ============================================================
+
+    // ============================================================
+    // ============================================================
+
+    const hdrRotationSlider = document.getElementById('hdr-rotation');
+    const hdrExposureSlider = document.getElementById('hdr-exposure');
+    const lightIntensitySlider = document.getElementById('light-intensity');
+    const ambientIntensitySlider = document.getElementById('ambient-intensity');
+    const shadowToggle = document.getElementById('shadow-toggle');
+    const shadowBlurSlider = document.getElementById('shadow-blur');
+    const hdrResetBtn = document.getElementById('hdr-reset');
+
+    // Variables de estado HDR
+    let hdrRotation = 0;
+    let baseExposure = 1;
+    let baseLightIntensity = 1;
+    let baseAmbientIntensity = 0.5;
+    let shadowsEnabled = true;
+    let shadowBlur = 2;
+
+    // Pivot para rotar el HDR environment
+    const envRotationPivot = new THREE.Group();
+    scene.add(envRotationPivot);
+
+    // Slider: Rotación HDR
+    hdrRotationSlider.addEventListener('input', (e) => {
+      hdrRotation = parseFloat(e.target.value);
+      document.getElementById('rotation-value').textContent = `${Math.round(hdrRotation)}°`;
+      
+      // Rotar las luces para simular rotación del HDR
+      const radians = THREE.MathUtils.degToRad(hdrRotation);
+      mainLight.position.set(
+        5 * Math.cos(radians) - 7 * Math.sin(radians),
+        10,
+        5 * Math.sin(radians) + 7 * Math.cos(radians)
+      );
+      fillLight.position.set(
+        -5 * Math.cos(radians) + 5 * Math.sin(radians),
+        5,
+        -5 * Math.sin(radians) - 5 * Math.cos(radians)
+      );
+      rimLight.position.set(
+        -10 * Math.sin(radians),
+        5,
+        -10 * Math.cos(radians)
+      );
+
+      // Si hay un HDR real cargado, rotar su mapeo
+      if (scene.environment && scene.environment.rotation !== undefined) {
+        scene.environment.rotation = radians;
+      }
+    });
+
+    // Slider: Exposición
+    hdrExposureSlider.addEventListener('input', (e) => {
+      baseExposure = parseFloat(e.target.value);
+      document.getElementById('exposure-value').textContent = baseExposure.toFixed(1);
+      renderer.toneMappingExposure = baseExposure;
+    });
+
+    // Slider: Intensidad de luz principal
+    lightIntensitySlider.addEventListener('input', (e) => {
+      baseLightIntensity = parseFloat(e.target.value);
+      document.getElementById('intensity-value').textContent = baseLightIntensity.toFixed(1);
+      mainLight.intensity = 1.5 * baseLightIntensity;
+      fillLight.intensity = 0.5 * baseLightIntensity;
+      rimLight.intensity = 0.8 * baseLightIntensity;
+    });
+
+    // Slider: Intensidad ambiente
+    ambientIntensitySlider.addEventListener('input', (e) => {
+      baseAmbientIntensity = parseFloat(e.target.value);
+      document.getElementById('ambient-value').textContent = baseAmbientIntensity.toFixed(1);
+      ambientLight.intensity = baseAmbientIntensity;
+    });
+
+    // Toggle: Sombras
+    shadowToggle.addEventListener('click', () => {
+      shadowsEnabled = !shadowsEnabled;
+      shadowToggle.classList.toggle('active', shadowsEnabled);
+      
+      renderer.shadowMap.enabled = shadowsEnabled;
+      mainLight.castShadow = shadowsEnabled;
+      
+      // Mostrar/ocultar slider de suavidad de sombra
+      document.getElementById('shadow-settings').style.display = shadowsEnabled ? 'block' : 'none';
+      
+      // Forzar actualización de sombras en todos los objetos
+      scene.traverse((obj) => {
+        if (obj.isMesh) {
+          obj.castShadow = shadowsEnabled;
+          obj.receiveShadow = shadowsEnabled;
+        }
+      });
+    });
+
+    // Slider: Suavidad de sombra
+    shadowBlurSlider.addEventListener('input', (e) => {
+      shadowBlur = parseInt(e.target.value);
+      document.getElementById('shadow-blur-value').textContent = shadowBlur;
+      mainLight.shadow.radius = shadowBlur;
+    });
+
+    // Botón Reset
+    hdrResetBtn.addEventListener('click', () => {
+      // Restablecer valores
+      hdrRotation = 0;
+      baseExposure = 1;
+      baseLightIntensity = 1;
+      baseAmbientIntensity = 0.5;
+      shadowsEnabled = true;
+      shadowBlur = 2;
+
+      // Actualizar sliders
+      hdrRotationSlider.value = 0;
+      hdrExposureSlider.value = 1;
+      lightIntensitySlider.value = 1;
+      ambientIntensitySlider.value = 0.5;
+      shadowBlurSlider.value = 2;
+
+      // Actualizar labels
+      document.getElementById('rotation-value').textContent = '0°';
+      document.getElementById('exposure-value').textContent = '1.0';
+      document.getElementById('intensity-value').textContent = '1.0';
+      document.getElementById('ambient-value').textContent = '0.5';
+      document.getElementById('shadow-blur-value').textContent = '2';
+
+      // Aplicar valores
+      renderer.toneMappingExposure = 1;
+      mainLight.intensity = 1.5;
+      fillLight.intensity = 0.5;
+      rimLight.intensity = 0.8;
+      ambientLight.intensity = 0.5;
+      mainLight.position.set(5, 10, 7);
+      fillLight.position.set(-5, 5, -5);
+      rimLight.position.set(0, 5, -10);
+      mainLight.shadow.radius = 2;
+      
+      // Restablecer sombras
+      shadowToggle.classList.add('active');
+      renderer.shadowMap.enabled = true;
+      mainLight.castShadow = true;
+      document.getElementById('shadow-settings').style.display = 'block';
+    });
+
+    // ============================================================
+    // ============================================================
+
+    // ============================================================
+    // CARGA DE MODELOS
+    // ============================================================
+
+    const gltfLoader = new GLTFLoader();
+
+    function loadModel(path) {
+      loading.style.display = 'block';
+      loading.innerHTML = `<div class="loading-spinner"></div>Cargando modelo...`;
+
+      // Limpiar modelo anterior
+      if (currentModel) {
+        scene.remove(currentModel);
+        currentModel = null;
+      }
+
+      // Limpiar animaciones anteriores
+      if (mixer) {
+        mixer.stopAllAction();
+        mixer = null;
+      }
+      animations = [];
+      currentAction = null;
+
+      gltfLoader.load(
+        path,
+        (gltf) => {
+          currentModel = gltf.scene;
+          
+          // Centrar y escalar el modelo
+          const box = new THREE.Box3().setFromObject(currentModel);
+          const center = box.getCenter(new THREE.Vector3());
+          const size = box.getSize(new THREE.Vector3());
+          
+          const maxDim = Math.max(size.x, size.y, size.z);
+          const scale = 2 / maxDim;
+          currentModel.scale.multiplyScalar(scale);
+          
+          currentModel.position.x = -center.x * scale;
+          currentModel.position.y = -center.y * scale + 0.5;
+          currentModel.position.z = -center.z * scale;
+          
+          currentModel.traverse((child) => {
+            if (child.isMesh) {
+              child.castShadow = shadowsEnabled;
+              child.receiveShadow = shadowsEnabled;
+            }
+          });
+          
+          scene.add(currentModel);
+          loading.style.display = 'none';
+
+          // Configurar animaciones
+          animations = gltf.animations;
+          if (animations && animations.length > 0) {
+            mixer = new THREE.AnimationMixer(currentModel);
+            createAnimationControls(animations);
+          } else {
+            animControls.innerHTML = '<span class="no-animations">Sin animaciones</span>';
+          }
+
+          // Resetear cámara
+          camera.position.set(0, 1, 5);
+          controls.target.set(0, 0.5, 0);
+          controls.update();
+        },
+        (progress) => {
+          if (progress.total > 0) {
+            const percent = (progress.loaded / progress.total * 100).toFixed(0);
+            loading.innerHTML = `<div class="loading-spinner"></div>Cargando... ${percent}%`;
+          }
+        },
+        (error) => {
+          console.error('Error cargando modelo:', error);
+          loading.innerHTML = 'Error al cargar el modelo<br><small>Verifica la ruta del archivo .glb</small>';
+        }
+      );
+    }
+
+    // ============================================================
+    // ============================================================
+
+    // ============================================================
+    // INICIALIZACIÓN
+    // ============================================================
+
+    createGalleryUI();
+    loadModelByIndex(0);
+
     function animate() {
       requestAnimationFrame(animate);
-      if (mixer) mixer.update(clock.getDelta());
+      
+      const delta = clock.getDelta();
+      if (mixer) mixer.update(delta);
+      
       controls.update();
       renderer.render(scene, camera);
     }
     animate();
 
-    window.onresize = () => {
+    // Resize handler
+    window.addEventListener('resize', () => {
       camera.aspect = window.innerWidth / window.innerHeight;
       camera.updateProjectionMatrix();
       renderer.setSize(window.innerWidth, window.innerHeight);
-    };
+    });
   </script>
 </body>
 </html>
