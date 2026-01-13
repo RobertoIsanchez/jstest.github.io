@@ -383,14 +383,14 @@
       background: linear-gradient(135deg, #8e9eab 0%, #eef2f3 100%);
     }
 
-    /* Panel de ajustes avanzados de HDR */
+    /* Panel de ajustes sin fondo negro, solo transparente con backdrop-filter */
     .hdr-settings-panel {
       position: absolute;
       right: 100px;
       top: 50%;
       transform: translateY(-50%);
-      background: rgba(0, 0, 0, 0.7);
-      border: 1px solid rgba(255, 255, 255, 0.15);
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.2);
       border-radius: 12px;
       padding: 20px;
       pointer-events: auto;
@@ -404,7 +404,40 @@
       letter-spacing: 2px;
       text-transform: uppercase;
       margin-bottom: 20px;
-      opacity: 0.7;
+      opacity: 0.9;
+    }
+
+    /* Añadido estilo para el menú desplegable de texturas */
+    .texture-view-select {
+      width: 100%;
+      padding: 10px 12px;
+      margin-bottom: 20px;
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 6px;
+      color: #fff;
+      font-size: 10px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .texture-view-select:hover {
+      background: rgba(255, 255, 255, 0.15);
+      border-color: rgba(255, 255, 255, 0.3);
+    }
+
+    .texture-view-select:focus {
+      outline: none;
+      border-color: rgba(255, 255, 255, 0.4);
+      background: rgba(255, 255, 255, 0.2);
+    }
+
+    .texture-view-select option {
+      background: #1a1a1a;
+      color: #fff;
+      padding: 10px;
     }
 
     .hdr-slider-group {
@@ -427,13 +460,13 @@
       font-size: 10px;
       letter-spacing: 1px;
       text-transform: uppercase;
-      opacity: 0.6;
+      opacity: 0.8;
     }
 
     .hdr-slider-label .value {
       color: #fff;
       font-size: 10px;
-      opacity: 0.8;
+      opacity: 0.9;
       font-family: monospace;
     }
 
@@ -442,7 +475,7 @@
       appearance: none;
       width: 100%;
       height: 4px;
-      background: rgba(255, 255, 255, 0.1);
+      background: rgba(255, 255, 255, 0.2);
       border-radius: 2px;
       outline: none;
       cursor: pointer;
@@ -479,7 +512,7 @@
       justify-content: space-between;
       margin-top: 15px;
       padding-top: 15px;
-      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      border-top: 1px solid rgba(255, 255, 255, 0.15);
     }
 
     .shadow-toggle span {
@@ -487,14 +520,14 @@
       font-size: 10px;
       letter-spacing: 1px;
       text-transform: uppercase;
-      opacity: 0.6;
+      opacity: 0.8;
     }
 
     .toggle-switch {
       position: relative;
       width: 44px;
       height: 24px;
-      background: rgba(255, 255, 255, 0.1);
+      background: rgba(255, 255, 255, 0.15);
       border-radius: 12px;
       cursor: pointer;
       transition: background 0.3s ease;
@@ -539,6 +572,9 @@
     .hdr-reset-btn:hover {
       background: rgba(255, 255, 255, 0.2);
     }
+
+    /* Panel de visualización de materiales */
+    /* Eliminado panel de visualización de materiales */
 
     /* Galería de modelos - Abajo Centro */
     .model-gallery {
@@ -660,7 +696,7 @@
     <!-- Iconos Software - Arriba Derecha -->
     <div class="software-icons" id="software-icons">
       <div class="software-icon" data-software="blender" title="Blender">
-        <svg viewBox="0 0 60 60"><path d="M19.45,34.6c-.31,1.51,0,3.44.4,4.83.39,1.39.96,2.59,1.67,3.78.71,1.19,1.38,2.11,2.34,3.11s1.84,1.75,2.97,2.53c1.12.78,2.23,1.36,3.54,1.91,1.31.55,2.74.98,4.21,1.24,1.47.26,3.56.4,5.1.31,1.54-.1,3.22-.42,4.62-.84,1.4-.42,2.63-.93,3.86-1.59s2.2-1.36,3.25-2.24c1.05-.88,1.83-1.71,2.66-2.79.83-1.08,1.46-2.12,2.04-3.41.59-1.29,1-2.79,1.24-4.25s.21-3.6-.04-5.05c-.25-1.45-.71-2.87-1.3-4.15-.59-1.27-1.26-2.34-2.09-3.4-.83-1.06-1.68-1.91-2.7-2.75-1.03-.83-2.04-1.57-3.08-2.37-1.03-.8-2.07-1.59-3.1-2.39-1.03-.8-2.05-1.57-3.1-2.35-1.04-.79-2.01-1.61-3.08-2.37-1.07-.76-1.99-1.66-3.1-2.4-1.11-.73-1.92-1.84-3.28-2.17-1.35-.34-3.06-.06-3.93,1.27-.87,1.33.42,2.65,1.52,3.38s1.95,1.68,3.01,2.44c1.06.76,1.94,1.7,3,2.45-1.45.09-2.99.03-4.48.04s-3.04-.01-4.53,0-3.07-.01-4.53,0-3.08-.03-4.48,0-3.17-.1-4.44.09c-1.26.19-2.09.75-2.8,1.73-.71.98-.62,2.38.44,3.14,1.06.76,2.56.58,3.94.58s3.1,0,4.53,0,3.03-.04,4.44.04c-1.69,1.22-3.34,2.52-5,3.79-1.66,1.27-3.29,2.51-4.97,3.78-1.67,1.27-3.28,2.55-4.97,3.82-1.69,1.28-3.25,2.49-4.97,3.78-1.72,1.29-2.63,4.37-.55,5.8,2.08,1.43,4.52.02,6.11-1.43s3.23-2.58,4.84-3.96c1.6-1.38,3.19-2.6,4.8-3.95M38.96,22.87c1.92.19,4.08.65,5.72,1.67,1.63,1.02,2.76,2,3.81,3.62,1.05,1.62,1.68,3.87,1.53,5.82.14-1.95.83-3.9,2.02-5.41,1.19-1.51,2.33-2.51,4.04-3.34,1.71-.84,4.12-1.48,6.14-1.29Z"/><path d="M37.95,39.66h.92c3.29,0,6.95-2.85,6.95-6.33v-.75c0-2.17-1.39-3.98-3.16-5.19-1.78-1.21-4.71-1.51-6.74-.8-2.03.71-3.51,1.93-4.41,3.9-.91,1.97-.53,4.77.9,6.42,1.43,1.64,3.39,2.76,5.55,2.76Z"/></svg>
+        <svg viewBox="0 0 60 60"><path d="M19.45,34.6c-.31,1.51,0,3.44.4,4.83.39,1.39.96,2.59,1.67,3.78.71,1.19,1.38,2.11,2.34,3.11s1.84,1.75,2.97,2.53c1.12.78,2.23,1.36,3.54,1.91,1.31.55,2.74.98,4.21,1.24,1.47.26,3.56.4,5.1.31,1.54-.1,3.22-.42,4.62-.84,1.4-.42,2.63-.93,3.86-1.59s2.2-1.36,3.25-2.24c1.05-.88,1.83-1.71,2.66-2.79.83-1.08,1.46-2.12,2.04-3.41.59-1.29,1-2.79,1.24-4.25s.21-3.6-.04-5.05c-.25-1.45-.71-2.87-1.3-4.15-.59-1.27-1.26-2.34-2.09-3.4-.83-1.06-1.68-1.91-2.7-2.75-1.03-.83-2.04-1.57-3.08-2.37-1.03-.8-2.07-1.59-3.1-2.39-1.03-.8-2.05-1.57-3.10-2.35-1.04-.79-2.01-1.61-3.08-2.37-1.07-.76-1.99-1.66-3.1-2.4-1.11-.73-1.92-1.84-3.28-2.17-1.35-.34-3.06-.06-3.93,1.27-.87,1.33.42,2.65,1.52,3.38s1.95,1.68,3.01,2.44c1.06.76,1.94,1.7,3,2.45-1.45.09-2.99.03-4.48.04s-3.04-.01-4.53,0-3.07-.01-4.53,0-3.08-.03-4.48,0-3.17-.1-4.44.09c-1.26.19-2.09.75-2.8,1.73-.71.98-.62,2.38.44,3.14,1.06.76,2.56.58,3.94.58s3.1,0,4.53,0,3.03-.04,4.44.04c-1.69,1.22-3.34,2.52-5,3.79-1.66,1.27-3.29,2.51-4.97,3.78-1.67,1.27-3.28,2.55-4.97,3.82-1.69,1.28-3.25,2.49-4.97,3.78-1.72,1.29-2.63,4.37-.55,5.8,2.08,1.43,4.52.02,6.11-1.43s3.23-2.58,4.84-3.96c1.6-1.38,3.19-2.6,4.8-3.95M38.96,22.87c1.92.19,4.08.65,5.72,1.67,1.63,1.02,2.76,2,3.81,3.62,1.05,1.62,1.68,3.87,1.53,5.82.14-1.95.83-3.9,2.02-5.41,1.19-1.51,2.33-2.51,4.04-3.34,1.71-.84,4.12-1.48,6.14-1.29Z"/><path d="M37.95,39.66h.92c3.29,0,6.95-2.85,6.95-6.33v-.75c0-2.17-1.39-3.98-3.16-5.19-1.78-1.21-4.71-1.51-6.74-.8-2.03.71-3.51,1.93-4.41,3.9-.91,1.97-.53,4.77.9,6.42,1.43,1.64,3.39,2.76,5.55,2.76Z"/></svg>
       </div>
       <div class="software-icon" data-software="substance" title="Substance Painter">
         <svg viewBox="0 0 60 60"><circle cx="26.93" cy="8.09" r="3.28"/><circle cx="50.99" cy="50.02" r="5.17"/><circle cx="6.12" cy="50.02" r="2.28"/><path d="M26.91,14.84c-11.06,0-20.01,8.95-20.01,20.01s8.95,20.01,20.01,20.01,20.01-8.95,20.01-20.01-8.95-20.01-20.01-20.01h0ZM13.36,27.08l13.52-7.81,13.48,7.81v7.06l-6.21-2v-1.46l-7.28-4.21-5.35,3.1,18.83,6.03v7.06l-13.52,7.81-13.52-7.78v-7.1l6.24,1.96v1.46l7.28,4.21,5.42-3.14-18.91-5.99v-7.03Z"/></svg>
@@ -726,6 +762,18 @@
     <div class="hdr-settings-panel">
       <h3>Ajustes de Luz</h3>
       
+      <!-- Menú desplegable para selección de visualización de texturas -->
+      <select class="texture-view-select" id="texture-view-select">
+        <option value="composite">Composite (Render)</option>
+        <option value="wireframe">Wireframe</option>
+        <option value="albedo">Albedo</option>
+        <option value="metallic">Metallic</option>
+        <option value="roughness">Roughness</option>
+        <option value="normal">Normal</option>
+        <option value="emissive">Emissive</option>
+        <option value="opacity">Opacity</option>
+      </select>
+
       <div class="hdr-slider-group">
         <div class="hdr-slider-label">
           <span>Rotación HDR</span>
@@ -787,17 +835,15 @@
     import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
     import { RGBELoader } from 'three/addons/loaders/RGBELoader.js';
 
-    // ============================================================
-    // Edita este array para añadir tus propios modelos
-    // ============================================================
+
     const modelsGallery = [
       {
         id: 1,
-        name: "OWL",
+        name: "Owl",
         path: "owl.glb",
-        thumbnail: "", // Ruta a imagen de preview (opcional)
-        backgroundText: "OWL",
-        software: ["blender", "substance"], // IDs de software usados
+        thumbnail: "",
+        backgroundText: "DUCK",
+        software: ["blender", "substance"],
         specs: {
           "Polígonos": "12,000 tris",
           "Texturas": "2K PBR",
@@ -809,7 +855,7 @@
       {
         id: 2,
         name: "Character Model",
-        path: "/models/character.glb", // Cambia a tu modelo
+        path: "miles.glb",
         thumbnail: "",
         backgroundText: "CHARACTER",
         software: ["blender", "zbrush", "substance", "photoshop"],
@@ -824,7 +870,7 @@
       {
         id: 3,
         name: "Environment Prop",
-        path: "/models/prop.glb", // Cambia a tu modelo
+        path: "/models/prop.glb",
         thumbnail: "",
         backgroundText: "PROP",
         software: ["blender", "photoshop"],
@@ -839,7 +885,7 @@
       {
         id: 4,
         name: "Vehicle",
-        path: "/models/vehicle.glb", // Cambia a tu modelo
+        path: "/models/vehicle.glb",
         thumbnail: "",
         backgroundText: "VEHICLE",
         software: ["blender", "substance", "maya"],
@@ -852,7 +898,6 @@
         }
       }
     ];
-    // ============================================================
 
     // Variables globales
     let currentModelIndex = 0;
@@ -862,6 +907,9 @@
     let currentAction = null;
     let isPlaying = true;
     const clock = new THREE.Clock();
+
+    let originalMaterials = new Map();
+    let currentViewMode = 'composite';
 
     // Setup
     const container = document.getElementById('canvas-container');
@@ -942,8 +990,111 @@
     scene.add(rimLight);
     defaultLights.push(rimLight);
 
-    // ============================================================
-    // ============================================================
+    function setViewMode(mode) {
+      if (!currentModel) return;
+      
+      currentViewMode = mode;
+      
+      currentModel.traverse((child) => {
+        if (child.isMesh) {
+          // Guardar el material original si no está guardado
+          if (!originalMaterials.has(child.uuid)) {
+            originalMaterials.set(child.uuid, child.material.clone());
+          }
+          
+          const originalMat = originalMaterials.get(child.uuid);
+          
+          switch(mode) {
+            case 'composite':
+              // Restaurar material original
+              child.material = originalMat.clone();
+              child.material.wireframe = false;
+              break;
+              
+            case 'albedo':
+              // Mostrar solo albedo/color base
+              const albedoMat = new THREE.MeshBasicMaterial({
+                map: originalMat.map,
+                color: originalMat.color
+              });
+              child.material = albedoMat;
+              break;
+              
+            case 'metallic':
+              // Visualizar metalness
+              const metallicMat = new THREE.MeshBasicMaterial({
+                map: originalMat.metalnessMap,
+                color: originalMat.metalnessMap ? 0xffffff : new THREE.Color(originalMat.metalness, originalMat.metalness, originalMat.metalness)
+              });
+              child.material = metallicMat;
+              break;
+              
+            case 'roughness':
+              // Visualizar roughness
+              const roughnessMat = new THREE.MeshBasicMaterial({
+                map: originalMat.roughnessMap,
+                color: originalMat.roughnessMap ? 0xffffff : new THREE.Color(originalMat.roughness, originalMat.roughness, originalMat.roughness)
+              });
+              child.material = roughnessMat;
+              break;
+              
+            case 'emissive':
+              // Visualizar emissive
+              const emissiveMat = new THREE.MeshBasicMaterial({
+                map: originalMat.emissiveMap,
+                color: originalMat.emissive,
+                emissive: originalMat.emissive,
+                emissiveIntensity: 1
+              });
+              child.material = emissiveMat;
+              break;
+              
+            case 'normal':
+              // Visualizar normal map
+              if (originalMat.normalMap) {
+                const normalMat = new THREE.MeshBasicMaterial({
+                  map: originalMat.normalMap
+                });
+                child.material = normalMat;
+              } else {
+                const noNormalMat = new THREE.MeshBasicMaterial({
+                  color: 0x8080ff
+                });
+                child.material = noNormalMat;
+              }
+              break;
+              
+            case 'opacity':
+              // Visualizar alpha/opacity
+              const opacityMat = new THREE.MeshBasicMaterial({
+                map: originalMat.alphaMap,
+                color: 0xffffff,
+                transparent: true,
+                opacity: originalMat.opacity
+              });
+              child.material = opacityMat;
+              break;
+              
+            case 'wireframe':
+              // Modo wireframe
+              const wireframeMat = originalMat.clone();
+              wireframeMat.wireframe = true;
+              wireframeMat.color = new THREE.Color(0x00ffff);
+              child.material = wireframeMat;
+              break;
+          }
+          
+          child.material.needsUpdate = true;
+        }
+      });
+    }
+
+    const textureViewSelect = document.getElementById('texture-view-select');
+    textureViewSelect.addEventListener('change', (e) => {
+      const mode = e.target.value;
+      setViewMode(mode);
+    });
+
 
     function createGalleryUI() {
       galleryItems.innerHTML = '';
@@ -1000,7 +1151,6 @@
       updateTechSpecs(modelData.specs);
       updateSoftwareIcons(modelData.software);
       
-      // Actualizar galería activa
       document.querySelectorAll('.gallery-item').forEach((item, index) => {
         item.classList.toggle('active', index === currentModelIndex);
       });
@@ -1015,7 +1165,6 @@
       loadModel(modelData.path);
     }
 
-    // Navegación
     document.getElementById('prev-model').addEventListener('click', () => {
       const newIndex = (currentModelIndex - 1 + modelsGallery.length) % modelsGallery.length;
       loadModelByIndex(newIndex);
@@ -1026,7 +1175,6 @@
       loadModelByIndex(newIndex);
     });
 
-    // Atajos de teclado
     document.addEventListener('keydown', (e) => {
       if (e.key === 'ArrowLeft') {
         const newIndex = (currentModelIndex - 1 + modelsGallery.length) % modelsGallery.length;
@@ -1037,9 +1185,6 @@
       }
     });
 
-    // ============================================================
-    // FUNCIONES DE ANIMACIÓN
-    // ============================================================
 
     function createAnimationControls(clips) {
       animControls.innerHTML = '';
@@ -1152,9 +1297,6 @@
       if (status) status.textContent = text;
     }
 
-    // ============================================================
-    // FUNCIONES DE ILUMINACIÓN HDR
-    // ============================================================
 
     function loadHDR(hdrName) {
       const path = hdrPaths[hdrName];
@@ -1164,8 +1306,7 @@
         return;
       }
 
-      rgbeLoader.load(
-        path,
+      rgbeLoader.load(path, 
         (texture) => {
           texture.mapping = THREE.EquirectangularReflectionMapping;
           hdrCache[hdrName] = texture;
@@ -1173,7 +1314,8 @@
         },
         undefined,
         (error) => {
-          console.warn(`HDR ${hdrName} no encontrado, usando iluminación simulada`);
+          console.error('Error cargando HDR:', error);
+          // Fallback to simulated lighting if HDR fails to load
           applySimulatedLighting(hdrName);
         }
       );
@@ -1181,14 +1323,15 @@
 
     function applyEnvironment(texture) {
       scene.environment = texture;
+      scene.background = null; // Clear previous background if any
     }
 
+    // Function to apply simulated lighting as a fallback
     function applySimulatedLighting(hdrName) {
       defaultLights.forEach(light => {
-        light.intensity = 0;
+        light.intensity = 0; // Turn off existing lights initially
       });
-
-      scene.environment = null;
+      scene.environment = null; // Ensure no HDR environment is active
 
       const lightConfigs = {
         studio: {
@@ -1229,7 +1372,7 @@
         }
       };
 
-      const config = lightConfigs[hdrName] || lightConfigs.studio;
+      const config = lightConfigs[hdrName] || lightConfigs.studio; // Default to studio if name not found
 
       ambientLight.color.setHex(config.ambient.color);
       ambientLight.intensity = config.ambient.intensity;
@@ -1252,269 +1395,287 @@
       btn.addEventListener('click', () => {
         lightButtons.forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
+        
         const hdrName = btn.dataset.hdr;
         loadHDR(hdrName);
       });
     });
 
-    applySimulatedLighting('studio');
-
-    // ============================================================
-    // ============================================================
-
-    // ============================================================
-    // ============================================================
+    loadHDR('studio'); // Load studio HDR by default
 
     const hdrRotationSlider = document.getElementById('hdr-rotation');
-    const hdrExposureSlider = document.getElementById('hdr-exposure');
-    const lightIntensitySlider = document.getElementById('light-intensity');
-    const ambientIntensitySlider = document.getElementById('ambient-intensity');
-    const shadowToggle = document.getElementById('shadow-toggle');
-    const shadowBlurSlider = document.getElementById('shadow-blur');
-    const hdrResetBtn = document.getElementById('hdr-reset');
-
-    // Variables de estado HDR
-    let hdrRotation = 0;
-    let baseExposure = 1;
-    let baseLightIntensity = 1;
-    let baseAmbientIntensity = 0.5;
-    let shadowsEnabled = true;
-    let shadowBlur = 2;
-
-    // Pivot para rotar el HDR environment
-    const envRotationPivot = new THREE.Group();
-    scene.add(envRotationPivot);
-
-    // Slider: Rotación HDR
+    const rotationValue = document.getElementById('rotation-value');
+    
     hdrRotationSlider.addEventListener('input', (e) => {
-      hdrRotation = parseFloat(e.target.value);
-      document.getElementById('rotation-value').textContent = `${Math.round(hdrRotation)}°`;
+      const rotation = parseFloat(e.target.value);
+      rotationValue.textContent = `${rotation}°`;
       
-      // Rotar las luces para simular rotación del HDR
-      const radians = THREE.MathUtils.degToRad(hdrRotation);
-      mainLight.position.set(
-        5 * Math.cos(radians) - 7 * Math.sin(radians),
-        10,
-        5 * Math.sin(radians) + 7 * Math.cos(radians)
-      );
-      fillLight.position.set(
-        -5 * Math.cos(radians) + 5 * Math.sin(radians),
-        5,
-        -5 * Math.sin(radians) - 5 * Math.cos(radians)
-      );
-      rimLight.position.set(
-        -10 * Math.sin(radians),
-        5,
-        -10 * Math.cos(radians)
-      );
-
-      // Si hay un HDR real cargado, rotar su mapeo
-      if (scene.environment && scene.environment.rotation !== undefined) {
-        scene.environment.rotation = radians;
+      if (scene.environment) {
+        scene.environment.rotation = rotation * (Math.PI / 180);
+      }
+      // Adjust light positions to match HDR rotation if HDR is active
+      if (scene.environment) {
+        const radians = THREE.MathUtils.degToRad(rotation);
+        // Example: rotate directional lights to follow the environment
+        mainLight.position.set(
+          5 * Math.cos(radians) - 7 * Math.sin(radians),
+          10,
+          5 * Math.sin(radians) + 7 * Math.cos(radians)
+        );
+        fillLight.position.set(
+          -5 * Math.cos(radians) + 5 * Math.sin(radians),
+          5,
+          -5 * Math.sin(radians) - 5 * Math.cos(radians)
+        );
+        rimLight.position.set(
+          -10 * Math.sin(radians),
+          5,
+          -10 * Math.cos(radians)
+        );
       }
     });
 
-    // Slider: Exposición
-    hdrExposureSlider.addEventListener('input', (e) => {
-      baseExposure = parseFloat(e.target.value);
-      document.getElementById('exposure-value').textContent = baseExposure.toFixed(1);
-      renderer.toneMappingExposure = baseExposure;
+    const exposureSlider = document.getElementById('hdr-exposure');
+    const exposureValue = document.getElementById('exposure-value');
+    
+    exposureSlider.addEventListener('input', (e) => {
+      const exposure = parseFloat(e.target.value);
+      exposureValue.textContent = exposure.toFixed(1);
+      renderer.toneMappingExposure = exposure;
     });
 
-    // Slider: Intensidad de luz principal
+    const lightIntensitySlider = document.getElementById('light-intensity');
+    const intensityValue = document.getElementById('intensity-value');
+    
     lightIntensitySlider.addEventListener('input', (e) => {
-      baseLightIntensity = parseFloat(e.target.value);
-      document.getElementById('intensity-value').textContent = baseLightIntensity.toFixed(1);
-      mainLight.intensity = 1.5 * baseLightIntensity;
-      fillLight.intensity = 0.5 * baseLightIntensity;
-      rimLight.intensity = 0.8 * baseLightIntensity;
+      const intensity = parseFloat(e.target.value);
+      intensityValue.textContent = intensity.toFixed(1);
+      
+      // Apply intensity to non-ambient lights
+      if (defaultLights[1]) defaultLights[1].intensity = intensity * 1.5; // Main light multiplier
+      if (defaultLights[2]) defaultLights[2].intensity = intensity * 0.5; // Fill light multiplier
+      if (defaultLights[3]) defaultLights[3].intensity = intensity * 0.8; // Rim light multiplier
     });
 
-    // Slider: Intensidad ambiente
+    const ambientIntensitySlider = document.getElementById('ambient-intensity');
+    const ambientValue = document.getElementById('ambient-value');
+    
     ambientIntensitySlider.addEventListener('input', (e) => {
-      baseAmbientIntensity = parseFloat(e.target.value);
-      document.getElementById('ambient-value').textContent = baseAmbientIntensity.toFixed(1);
-      ambientLight.intensity = baseAmbientIntensity;
+      const intensity = parseFloat(e.target.value);
+      ambientValue.textContent = intensity.toFixed(1);
+      
+      if (defaultLights[0]) {
+        defaultLights[0].intensity = intensity;
+      }
     });
 
-    // Toggle: Sombras
+    const shadowToggle = document.getElementById('shadow-toggle');
+    const shadowSettings = document.getElementById('shadow-settings');
+    
     shadowToggle.addEventListener('click', () => {
-      shadowsEnabled = !shadowsEnabled;
-      shadowToggle.classList.toggle('active', shadowsEnabled);
+      shadowToggle.classList.toggle('active');
+      const isActive = shadowToggle.classList.contains('active');
       
-      renderer.shadowMap.enabled = shadowsEnabled;
-      mainLight.castShadow = shadowsEnabled;
+      renderer.shadowMap.enabled = isActive;
       
-      // Mostrar/ocultar slider de suavidad de sombra
-      document.getElementById('shadow-settings').style.display = shadowsEnabled ? 'block' : 'none';
-      
-      // Forzar actualización de sombras en todos los objetos
-      scene.traverse((obj) => {
-        if (obj.isMesh) {
-          obj.castShadow = shadowsEnabled;
-          obj.receiveShadow = shadowsEnabled;
+      // Apply shadow casting to lights and meshes
+      defaultLights.forEach(light => {
+        if (light.castShadow !== undefined) {
+          light.castShadow = isActive;
         }
       });
+      
+      if (currentModel) {
+        currentModel.traverse((child) => {
+          if (child.isMesh) {
+            child.castShadow = isActive;
+            child.receiveShadow = isActive;
+          }
+        });
+      }
+      
+      shadowSettings.style.display = isActive ? 'block' : 'none';
     });
 
-    // Slider: Suavidad de sombra
+    const shadowBlurSlider = document.getElementById('shadow-blur');
+    const shadowBlurValue = document.getElementById('shadow-blur-value');
+    
     shadowBlurSlider.addEventListener('input', (e) => {
-      shadowBlur = parseInt(e.target.value);
-      document.getElementById('shadow-blur-value').textContent = shadowBlur;
-      mainLight.shadow.radius = shadowBlur;
+      const blur = parseInt(e.target.value);
+      shadowBlurValue.textContent = blur;
+      
+      // Apply blur to the main light's shadow
+      if (defaultLights[1] && defaultLights[1].shadow) {
+        defaultLights[1].shadow.radius = blur;
+      }
     });
 
-    // Botón Reset
+    const hdrResetBtn = document.getElementById('hdr-reset');
     hdrResetBtn.addEventListener('click', () => {
-      // Restablecer valores
-      hdrRotation = 0;
-      baseExposure = 1;
-      baseLightIntensity = 1;
-      baseAmbientIntensity = 0.5;
-      shadowsEnabled = true;
-      shadowBlur = 2;
-
-      // Actualizar sliders
+      // Reset sliders and values
       hdrRotationSlider.value = 0;
-      hdrExposureSlider.value = 1;
+      rotationValue.textContent = '0°';
+      
+      exposureSlider.value = 1;
+      exposureValue.textContent = '1.0';
+      
       lightIntensitySlider.value = 1;
+      intensityValue.textContent = '1.0';
+      
       ambientIntensitySlider.value = 0.5;
+      ambientValue.textContent = '0.5';
+      
       shadowBlurSlider.value = 2;
-
-      // Actualizar labels
-      document.getElementById('rotation-value').textContent = '0°';
-      document.getElementById('exposure-value').textContent = '1.0';
-      document.getElementById('intensity-value').textContent = '1.0';
-      document.getElementById('ambient-value').textContent = '0.5';
-      document.getElementById('shadow-blur-value').textContent = '2';
-
-      // Aplicar valores
+      shadowBlurValue.textContent = '2';
+      
+      // Reset scene properties
+      if (scene.environment) scene.environment.rotation = 0;
       renderer.toneMappingExposure = 1;
+      
+      ambientLight.intensity = 0.5;
       mainLight.intensity = 1.5;
       fillLight.intensity = 0.5;
       rimLight.intensity = 0.8;
-      ambientLight.intensity = 0.5;
+      
+      // Reset light positions to default
       mainLight.position.set(5, 10, 7);
       fillLight.position.set(-5, 5, -5);
       rimLight.position.set(0, 5, -10);
-      mainLight.shadow.radius = 2;
       
-      // Restablecer sombras
+      // Reset shadow properties
+      if (defaultLights[1] && defaultLights[1].shadow) defaultLights[1].shadow.radius = 2;
+      
+      // Ensure shadows are enabled and visible
       shadowToggle.classList.add('active');
       renderer.shadowMap.enabled = true;
-      mainLight.castShadow = true;
-      document.getElementById('shadow-settings').style.display = 'block';
+      shadowSettings.style.display = 'block';
+
+      // Re-apply the active HDR or simulated lighting
+      const activeLightBtn = document.querySelector('.light-btn.active');
+      if (activeLightBtn) {
+        loadHDR(activeLightBtn.dataset.hdr);
+      } else {
+        loadHDR('studio'); // Default to studio if no button is active
+      }
     });
 
-    // ============================================================
-    // ============================================================
-
-    // ============================================================
-    // CARGA DE MODELOS
-    // ============================================================
-
-    const gltfLoader = new GLTFLoader();
 
     function loadModel(path) {
-      loading.style.display = 'block';
-      loading.innerHTML = `<div class="loading-spinner"></div>Cargando modelo...`;
-
-      // Limpiar modelo anterior
       if (currentModel) {
         scene.remove(currentModel);
         currentModel = null;
       }
-
-      // Limpiar animaciones anteriores
+      
+      originalMaterials.clear(); // Clear materials for the new model
+      
       if (mixer) {
         mixer.stopAllAction();
         mixer = null;
       }
+      
       animations = [];
       currentAction = null;
+      isPlaying = true;
 
-      gltfLoader.load(
+      loading.style.display = 'block';
+      loading.innerHTML = `<div class="loading-spinner"></div>Cargando modelo...`;
+
+      const loader = new GLTFLoader();
+      loader.load(
         path,
         (gltf) => {
           currentModel = gltf.scene;
           
-          // Centrar y escalar el modelo
+          // Center and scale the model
           const box = new THREE.Box3().setFromObject(currentModel);
           const center = box.getCenter(new THREE.Vector3());
           const size = box.getSize(new THREE.Vector3());
           
+          // Position the model at the origin and scale it down
+          currentModel.position.sub(center);
+          
           const maxDim = Math.max(size.x, size.y, size.z);
-          const scale = 2 / maxDim;
+          const scale = 2 / maxDim; // Scale to fit within a 2-unit bounding box
           currentModel.scale.multiplyScalar(scale);
           
-          currentModel.position.x = -center.x * scale;
-          currentModel.position.y = -center.y * scale + 0.5;
-          currentModel.position.z = -center.z * scale;
-          
+          // Adjust position slightly to center it vertically
+          currentModel.position.y += (size.y / 2) * scale; 
+
           currentModel.traverse((child) => {
             if (child.isMesh) {
-              child.castShadow = shadowsEnabled;
-              child.receiveShadow = shadowsEnabled;
+              // Enable shadows for the loaded model
+              child.castShadow = renderer.shadowMap.enabled;
+              child.receiveShadow = renderer.shadowMap.enabled;
+              
+              // Store original materials for view mode switching
+              if (!originalMaterials.has(child.uuid)) {
+                originalMaterials.set(child.uuid, child.material.clone());
+              }
             }
           });
           
           scene.add(currentModel);
-          loading.style.display = 'none';
-
-          // Configurar animaciones
-          animations = gltf.animations;
-          if (animations && animations.length > 0) {
+          
+          // Handle animations
+          if (gltf.animations && gltf.animations.length > 0) {
             mixer = new THREE.AnimationMixer(currentModel);
+            animations = gltf.animations;
             createAnimationControls(animations);
           } else {
-            animControls.innerHTML = '<span class="no-animations">Sin animaciones</span>';
+            createAnimationControls([]); // Show "no animations" message
           }
+          
+          // Apply the current view mode to the newly loaded model
+          setViewMode(currentViewMode);
+          
+          loading.style.display = 'none'; // Hide loading indicator
 
-          // Resetear cámara
-          camera.position.set(0, 1, 5);
-          controls.target.set(0, 0.5, 0);
+          // Reset camera and controls target
+          camera.position.set(0, 1, 5); // A sensible default position
+          controls.target.set(0, 0.5, 0); // Target a point slightly above the model's base
           controls.update();
         },
-        (progress) => {
-          if (progress.total > 0) {
-            const percent = (progress.loaded / progress.total * 100).toFixed(0);
-            loading.innerHTML = `<div class="loading-spinner"></div>Cargando... ${percent}%`;
-          }
+        (xhr) => {
+          // Update loading progress
+          const percent = (xhr.loaded / xhr.total) * 100;
+          loading.innerHTML = `<div class="loading-spinner"></div>Cargando... ${percent.toFixed(0)}%`;
         },
         (error) => {
-          console.error('Error cargando modelo:', error);
-          loading.innerHTML = 'Error al cargar el modelo<br><small>Verifica la ruta del archivo .glb</small>';
+          // Handle loading errors
+          console.error('Error cargando el modelo:', error);
+          loading.innerHTML = `Error al cargar el modelo<br><small>Verifica la ruta: ${path}</small>`;
         }
       );
     }
 
-    // ============================================================
-    // ============================================================
-
-    // ============================================================
-    // INICIALIZACIÓN
-    // ============================================================
-
-    createGalleryUI();
-    loadModelByIndex(0);
 
     function animate() {
       requestAnimationFrame(animate);
       
       const delta = clock.getDelta();
-      if (mixer) mixer.update(delta);
       
+      // Update animation mixer if it exists
+      if (mixer) {
+        mixer.update(delta);
+      }
+      
+      // Update orbit controls
       controls.update();
+      
+      // Render the scene
       renderer.render(scene, camera);
     }
-    animate();
 
-    // Resize handler
     window.addEventListener('resize', () => {
       camera.aspect = window.innerWidth / window.innerHeight;
       camera.updateProjectionMatrix();
       renderer.setSize(window.innerWidth, window.innerHeight);
     });
+
+    // Initial setup
+    createGalleryUI();
+    loadModelByIndex(0); // Load the first model in the gallery
+    animate(); // Start the animation loop
   </script>
 </body>
 </html>
