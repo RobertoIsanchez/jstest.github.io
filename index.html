@@ -20,11 +20,11 @@
     }
 
     body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      font-family: 'Inter', 'Segoe UI', sans-serif;
       width: 100vw;
       height: 100vh;
       overflow: hidden;
-      background: linear-gradient(180deg, #0a0a0a 0%, #2a2a2a 50%, #4a4a4a 100%);
+      background: #0a0a0a;
     }
 
     #canvas-container {
@@ -44,192 +44,246 @@
       height: 100%;
       z-index: 10;
       pointer-events: none;
+      padding: 24px 32px;
     }
 
-    /* Logo - Arriba Izquierda */
-    .logo-container {
+    /* ============================================
+       PANEL DE ILUMINACIÓN - ARRIBA IZQUIERDA
+    ============================================ */
+    .lighting-panel {
       position: absolute;
-      top: 30px;
-      left: 40px;
+      top: 24px;
+      left: 32px;
+      pointer-events: auto;
+      color: #fff;
+    }
+
+    .lighting-header {
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+      opacity: 0.7;
+    }
+
+    .light-type-selector {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .light-nav-btn {
+      width: 28px;
+      height: 28px;
+      background: transparent;
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 4px;
+      color: #fff;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+    }
+
+    .light-nav-btn:hover {
+      background: rgba(255,255,255,0.1);
+      border-color: rgba(255,255,255,0.4);
+    }
+
+    .light-nav-btn svg {
+      width: 14px;
+      height: 14px;
+      fill: currentColor;
+    }
+
+    .light-icon-container {
+      width: 56px;
+      height: 56px;
+      border-radius: 12px;
+      border: 2px solid rgba(255,255,255,0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(255,255,255,0.05);
+      transition: all 0.3s;
+    }
+
+    .light-icon-container svg {
+      width: 28px;
+      height: 28px;
+      fill: #fff;
+      opacity: 0.9;
+    }
+
+    .light-type-name {
+      font-size: 11px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      margin-bottom: 20px;
+      opacity: 0.6;
+      text-align: center;
+      width: 130px;
+    }
+
+    .slider-group {
+      margin-bottom: 14px;
+    }
+
+    .slider-label {
+      font-size: 9px;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      opacity: 0.5;
+      margin-bottom: 6px;
+      display: block;
+    }
+
+    .slider-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .slider {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 100px;
+      height: 3px;
+      background: rgba(255,255,255,0.15);
+      border-radius: 2px;
+      outline: none;
+      cursor: pointer;
+    }
+
+    .slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 10px;
+      height: 10px;
+      background: #fff;
+      border-radius: 50%;
+      cursor: pointer;
+    }
+
+    .slider::-moz-range-thumb {
+      width: 10px;
+      height: 10px;
+      background: #fff;
+      border-radius: 50%;
+      border: none;
+      cursor: pointer;
+    }
+
+    .shadow-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 16px;
+      padding-top: 14px;
+      border-top: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .shadow-label {
+      font-size: 9px;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      opacity: 0.5;
+    }
+
+    .toggle-switch {
+      position: relative;
+      width: 36px;
+      height: 18px;
+      background: rgba(255,255,255,0.1);
+      border-radius: 9px;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    .toggle-switch.active {
+      background: rgba(255,255,255,0.3);
+    }
+
+    .toggle-switch::after {
+      content: '';
+      position: absolute;
+      top: 2px;
+      left: 2px;
+      width: 14px;
+      height: 14px;
+      background: #fff;
+      border-radius: 50%;
+      transition: transform 0.3s;
+    }
+
+    .toggle-switch.active::after {
+      transform: translateX(18px);
+    }
+
+    /* ============================================
+       CONTROLES DE ANIMACIÓN - ARRIBA CENTRO
+    ============================================ */
+    .animation-panel {
+      position: absolute;
+      top: 24px;
+      left: 50%;
+      transform: translateX(-50%);
       display: flex;
       align-items: center;
       gap: 12px;
       pointer-events: auto;
     }
 
-    .logo-icon {
-      width: 50px;
-      height: 50px;
-      background: #fff;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 24px;
-    }
-
-    .logo-text {
-      color: #fff;
-    }
-
-    .logo-text h1 {
-      font-size: 18px;
-      font-weight: 700;
-      letter-spacing: 2px;
-    }
-
-    .logo-text p {
-      font-size: 10px;
-      letter-spacing: 3px;
-      opacity: 0.7;
-      text-transform: uppercase;
-    }
-
-    /* Iconos Software - Arriba Derecha */
-    .software-icons {
-      position: absolute;
-      top: 30px;
-      right: 40px;
-      display: flex;
-      gap: 15px;
-      pointer-events: auto;
-    }
-
-    .software-icon {
-      width: 40px;
-      height: 40px;
-      background: rgba(255, 255, 255, 0.1);
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      display: none;
-    }
-
-    .software-icon.visible {
-      display: flex;
-    }
-
-    .software-icon:hover {
-      background: rgba(255, 255, 255, 0.2);
-      transform: scale(1.1);
-    }
-
-    .software-icon svg {
-      width: 20px;
-      height: 20px;
-      fill: #fff;
-    }
-
-    /* Info Técnica - Abajo Izquierda */
-    .tech-info {
-      position: absolute;
-      bottom: 40px;
-      left: 40px;
-      color: #fff;
-      max-width: 350px;
-    }
-
-    .model-number {
-      font-size: 48px;
-      font-weight: 800;
-      margin-bottom: 5px;
-      background: linear-gradient(90deg, #fff, #888);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-    }
-
-    .model-name {
-      font-size: 14px;
-      letter-spacing: 2px;
-      text-transform: uppercase;
-      opacity: 0.8;
-      margin-bottom: 20px;
-    }
-
-    .tech-specs {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
-
-    .spec-row {
-      display: flex;
-      gap: 20px;
-      font-size: 11px;
-      opacity: 0.6;
-    }
-
-    .spec-label {
-      min-width: 80px;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-    }
-
-    .spec-value {
-      color: #aaa;
-    }
-
-    /* Controles de Animación */
-    .animation-controls {
-      margin-top: 25px;
-      display: flex;
-      gap: 10px;
-      align-items: center;
-      flex-wrap: wrap;
-    }
-
     .anim-btn {
       width: 36px;
       height: 36px;
-      background: rgba(255, 255, 255, 0.1);
-      border: 1px solid rgba(255, 255, 255, 0.2);
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.2);
       border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
       cursor: pointer;
-      transition: all 0.3s ease;
-      pointer-events: auto;
+      transition: all 0.2s;
+      color: #fff;
     }
 
     .anim-btn:hover {
-      background: rgba(255, 255, 255, 0.2);
-      transform: scale(1.1);
+      background: rgba(255,255,255,0.1);
+      border-color: rgba(255,255,255,0.4);
     }
 
     .anim-btn:disabled {
       opacity: 0.3;
       cursor: not-allowed;
-      transform: none;
     }
 
     .anim-btn svg {
-      width: 16px;
-      height: 16px;
-      fill: #fff;
+      width: 14px;
+      height: 14px;
+      fill: currentColor;
     }
 
     .anim-select {
-      padding: 8px 12px;
-      background: rgba(255, 255, 255, 0.1);
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      border-radius: 4px;
+      padding: 8px 32px 8px 14px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 6px;
       color: #fff;
-      font-size: 11px;
-      letter-spacing: 1px;
+      font-size: 12px;
       cursor: pointer;
-      pointer-events: auto;
-      min-width: 150px;
+      min-width: 140px;
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='white' viewBox='0 0 24 24'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 10px center;
     }
 
     .anim-select:focus {
       outline: none;
-      border-color: rgba(255, 255, 255, 0.4);
+      border-color: rgba(255,255,255,0.4);
     }
 
     .anim-select option {
@@ -237,328 +291,240 @@
       color: #fff;
     }
 
-    .anim-status {
-      font-size: 10px;
-      letter-spacing: 1px;
-      opacity: 0.5;
-      text-transform: uppercase;
+    .fps-display {
+      font-size: 12px;
+      color: rgba(255,255,255,0.5);
+      font-family: monospace;
+      min-width: 60px;
     }
 
-    .no-animations {
-      font-size: 10px;
-      letter-spacing: 1px;
-      opacity: 0.4;
-      font-style: italic;
-    }
-
-    /* Loading */
-    .loading {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
+    .fps-display span {
       color: #fff;
-      font-size: 14px;
-      letter-spacing: 3px;
-      text-transform: uppercase;
     }
 
-    .loading-spinner {
-      width: 40px;
-      height: 40px;
-      border: 2px solid rgba(255, 255, 255, 0.1);
-      border-top-color: #fff;
-      border-radius: 50%;
-      animation: spin 1s linear infinite;
-      margin: 0 auto 15px;
-    }
-
-    @keyframes spin {
-      to { transform: rotate(360deg); }
-    }
-
-    /* Controles */
-    .controls-hint {
+    /* ============================================
+       DROPDOWN DE RENDER MODE - ARRIBA DERECHA
+    ============================================ */
+    .render-dropdown-container {
       position: absolute;
-      bottom: 40px;
-      right: 40px;
-      color: rgba(255, 255, 255, 0.4);
-      font-size: 11px;
-      text-align: right;
-      letter-spacing: 1px;
+      top: 24px;
+      right: 32px;
+      pointer-events: auto;
     }
 
-    /* Controles de Iluminación HDR */
-    .lighting-controls {
+    .render-dropdown-btn {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 10px 16px;
+      min-width: 160px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 8px;
+      color: #fff;
+      font-size: 13px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .render-dropdown-btn:hover {
+      background: rgba(255,255,255,0.1);
+      border-color: rgba(255,255,255,0.3);
+    }
+
+    .render-dropdown-btn svg {
+      width: 16px;
+      height: 16px;
+      fill: currentColor;
+      transition: transform 0.2s;
+    }
+
+    .render-dropdown-btn.open svg {
+      transform: rotate(180deg);
+    }
+
+    .render-dropdown-menu {
       position: absolute;
-      right: 40px;
-      top: 50%;
-      transform: translateY(-50%);
+      top: calc(100% + 8px);
+      right: 0;
+      min-width: 160px;
+      background: rgba(20,20,20,0.95);
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 8px;
+      padding: 6px 0;
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(-10px);
+      transition: all 0.2s;
+      backdrop-filter: blur(10px);
+    }
+
+    .render-dropdown-menu.open {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
+    }
+
+    .render-option {
+      display: block;
+      width: 100%;
+      padding: 10px 16px;
+      background: transparent;
+      border: none;
+      color: rgba(255,255,255,0.7);
+      font-size: 13px;
+      text-align: left;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .render-option:hover {
+      background: rgba(255,255,255,0.1);
+      color: #fff;
+    }
+
+    .render-option.active {
+      color: #fff;
+      background: rgba(255,255,255,0.08);
+    }
+
+    /* ============================================
+       INFO DEL MODELO - ABAJO IZQUIERDA
+    ============================================ */
+    .model-info {
+      position: absolute;
+      bottom: 24px;
+      left: 32px;
+      color: #fff;
+      pointer-events: auto;
+    }
+
+    .tech-specs {
       display: flex;
       flex-direction: column;
+      gap: 2px;
+      margin-bottom: 8px;
+    }
+
+    .spec-row {
+      display: flex;
+      gap: 8px;
+      font-size: 9px;
+      opacity: 0.5;
+    }
+
+    .spec-label {
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .spec-value {
+      opacity: 0.8;
+    }
+
+    .model-name {
+      font-size: 28px;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+      margin-bottom: 12px;
+      text-transform: uppercase;
+    }
+
+    .software-icons {
+      display: flex;
+      gap: 10px;
+    }
+
+    .software-icon {
+      width: 24px;
+      height: 24px;
+      opacity: 0.5;
+      transition: opacity 0.2s;
+      display: none;
+    }
+
+    .software-icon.visible {
+      display: block;
+    }
+
+    .software-icon:hover {
+      opacity: 1;
+    }
+
+    .software-icon svg {
+      width: 100%;
+      height: 100%;
+      fill: #fff;
+    }
+
+    /* ============================================
+       GALERÍA DE MODELOS - ABAJO CENTRO
+    ============================================ */
+    .model-gallery {
+      position: absolute;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      align-items: center;
       gap: 12px;
       pointer-events: auto;
     }
 
-    .light-btn {
-      width: 44px;
-      height: 44px;
+    .gallery-nav {
+      width: 40px;
+      height: 40px;
       border-radius: 50%;
-      border: 2px solid rgba(255, 255, 255, 0.3);
+      border: 1px solid rgba(255,255,255,0.2);
+      background: transparent;
       cursor: pointer;
-      transition: all 0.3s ease;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .light-btn:hover {
-      transform: scale(1.15);
-      border-color: rgba(255, 255, 255, 0.6);
-    }
-
-    .light-btn.active {
-      border-color: #fff;
-      box-shadow: 0 0 15px rgba(255, 255, 255, 0.4);
-    }
-
-    .light-btn::after {
-      content: attr(data-name);
-      position: absolute;
-      right: 55px;
-      top: 50%;
-      transform: translateY(-50%);
-      background: rgba(0, 0, 0, 0.8);
-      color: #fff;
-      padding: 5px 10px;
-      border-radius: 4px;
-      font-size: 10px;
-      letter-spacing: 1px;
-      white-space: nowrap;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.3s ease;
-    }
-
-    .light-btn:hover::after {
-      opacity: 1;
-    }
-
-    /* Colores representativos de cada HDR */
-    .light-btn[data-hdr="studio"] {
-      background: linear-gradient(135deg, #3a3a3a 0%, #1a1a1a 100%);
-    }
-
-    .light-btn[data-hdr="sunset"] {
-      background: linear-gradient(135deg, #ff7e5f 0%, #feb47b 100%);
-    }
-
-    .light-btn[data-hdr="night"] {
-      background: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
-    }
-
-    .light-btn[data-hdr="forest"] {
-      background: linear-gradient(135deg, #134e5e 0%, #71b280 100%);
-    }
-
-    .light-btn[data-hdr="city"] {
-      background: linear-gradient(135deg, #4b6cb7 0%, #182848 100%);
-    }
-
-    .light-btn[data-hdr="warehouse"] {
-      background: linear-gradient(135deg, #8e9eab 0%, #eef2f3 100%);
-    }
-
-    /* Panel de ajustes avanzados de HDR */
-    .hdr-settings-panel {
-      position: absolute;
-      right: 100px;
-      top: 50%;
-      transform: translateY(-50%);
-      background: rgba(0, 0, 0, 0.7);
-      border: 1px solid rgba(255, 255, 255, 0.15);
-      border-radius: 12px;
-      padding: 20px;
-      pointer-events: auto;
-      min-width: 200px;
-      backdrop-filter: blur(10px);
-    }
-
-    .hdr-settings-panel h3 {
-      color: #fff;
-      font-size: 11px;
-      letter-spacing: 2px;
-      text-transform: uppercase;
-      margin-bottom: 20px;
-      opacity: 0.7;
-    }
-
-    .hdr-slider-group {
-      margin-bottom: 18px;
-    }
-
-    .hdr-slider-group:last-child {
-      margin-bottom: 0;
-    }
-
-    .hdr-slider-label {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 8px;
-    }
-
-    .hdr-slider-label span {
-      color: #fff;
-      font-size: 10px;
-      letter-spacing: 1px;
-      text-transform: uppercase;
-      opacity: 0.6;
-    }
-
-    .hdr-slider-label .value {
-      color: #fff;
-      font-size: 10px;
-      opacity: 0.8;
-      font-family: monospace;
-    }
-
-    .hdr-slider {
-      -webkit-appearance: none;
-      appearance: none;
-      width: 100%;
-      height: 4px;
-      background: rgba(255, 255, 255, 0.1);
-      border-radius: 2px;
-      outline: none;
-      cursor: pointer;
-    }
-
-    .hdr-slider::-webkit-slider-thumb {
-      -webkit-appearance: none;
-      appearance: none;
-      width: 14px;
-      height: 14px;
-      background: #fff;
-      border-radius: 50%;
-      cursor: pointer;
-      transition: transform 0.2s ease;
-    }
-
-    .hdr-slider::-webkit-slider-thumb:hover {
-      transform: scale(1.2);
-    }
-
-    .hdr-slider::-moz-range-thumb {
-      width: 14px;
-      height: 14px;
-      background: #fff;
-      border-radius: 50%;
-      cursor: pointer;
-      border: none;
-    }
-
-    /* Toggle de sombras */
-    .shadow-toggle {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-top: 15px;
-      padding-top: 15px;
-      border-top: 1px solid rgba(255, 255, 255, 0.1);
-    }
-
-    .shadow-toggle span {
-      color: #fff;
-      font-size: 10px;
-      letter-spacing: 1px;
-      text-transform: uppercase;
-      opacity: 0.6;
-    }
-
-    .toggle-switch {
-      position: relative;
-      width: 44px;
-      height: 24px;
-      background: rgba(255, 255, 255, 0.1);
-      border-radius: 12px;
-      cursor: pointer;
-      transition: background 0.3s ease;
-    }
-
-    .toggle-switch.active {
-      background: rgba(100, 200, 100, 0.5);
-    }
-
-    .toggle-switch::after {
-      content: '';
-      position: absolute;
-      top: 3px;
-      left: 3px;
-      width: 18px;
-      height: 18px;
-      background: #fff;
-      border-radius: 50%;
-      transition: transform 0.3s ease;
-    }
-
-    .toggle-switch.active::after {
-      transform: translateX(20px);
-    }
-
-    /* Botón reset */
-    .hdr-reset-btn {
-      width: 100%;
-      margin-top: 15px;
-      padding: 8px 12px;
-      background: rgba(255, 255, 255, 0.1);
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      border-radius: 6px;
-      color: #fff;
-      font-size: 10px;
-      letter-spacing: 1px;
-      text-transform: uppercase;
-      cursor: pointer;
-      transition: all 0.3s ease;
-    }
-
-    .hdr-reset-btn:hover {
-      background: rgba(255, 255, 255, 0.2);
-    }
-
-    /* Galería de modelos - Abajo Centro */
-    .model-gallery {
-      position: absolute;
-      bottom: 40px;
-      left: 50%;
-      transform: translateX(-50%);
-      display: flex;
-      gap: 15px;
-      pointer-events: auto;
-    }
-
-    .gallery-item {
-      width: 60px;
-      height: 60px;
-      border-radius: 12px;
-      border: 2px solid rgba(255, 255, 255, 0.2);
-      background: rgba(255, 255, 255, 0.05);
-      cursor: pointer;
-      transition: all 0.3s ease;
-      overflow: hidden;
       display: flex;
       align-items: center;
       justify-content: center;
-      position: relative;
+      color: #fff;
+      transition: all 0.2s;
+    }
+
+    .gallery-nav:hover {
+      background: rgba(255,255,255,0.1);
+      border-color: rgba(255,255,255,0.4);
+    }
+
+    .gallery-nav svg {
+      width: 16px;
+      height: 16px;
+      fill: currentColor;
+    }
+
+    .gallery-items {
+      display: flex;
+      gap: 10px;
+    }
+
+    .gallery-item {
+      width: 56px;
+      height: 56px;
+      border-radius: 10px;
+      border: 2px solid rgba(255,255,255,0.15);
+      background: rgba(255,255,255,0.03);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+      overflow: hidden;
     }
 
     .gallery-item:hover {
-      transform: scale(1.1);
-      border-color: rgba(255, 255, 255, 0.5);
+      border-color: rgba(255,255,255,0.4);
+      transform: scale(1.05);
     }
 
     .gallery-item.active {
       border-color: #fff;
-      box-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+      background: rgba(255,255,255,0.1);
     }
 
     .gallery-item img {
@@ -567,174 +533,62 @@
       object-fit: cover;
     }
 
-    .gallery-item .gallery-number {
-      font-size: 18px;
+    .gallery-number {
+      font-size: 16px;
       font-weight: 700;
-      color: rgba(255, 255, 255, 0.5);
+      color: rgba(255,255,255,0.4);
     }
 
-    .gallery-item::after {
-      content: attr(data-name);
-      position: absolute;
-      bottom: calc(100% + 10px);
-      left: 50%;
-      transform: translateX(-50%);
-      background: rgba(0, 0, 0, 0.9);
+    .gallery-item.active .gallery-number {
       color: #fff;
-      padding: 6px 12px;
-      border-radius: 4px;
-      font-size: 10px;
-      letter-spacing: 1px;
-      white-space: nowrap;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.3s ease;
     }
 
-    .gallery-item:hover::after {
-      opacity: 1;
-    }
-
-    /* Flechas de navegación */
-    .nav-arrow {
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      background: rgba(255, 255, 255, 0.05);
-      cursor: pointer;
-      transition: all 0.3s ease;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      pointer-events: auto;
-    }
-
-    .nav-arrow:hover {
-      background: rgba(255, 255, 255, 0.15);
-      transform: scale(1.1);
-    }
-
-    .nav-arrow svg {
-      width: 16px;
-      height: 16px;
-      fill: #fff;
-    }
-
-    /* Visor de mapas de textura - Arriba Centro */
-    .render-mode-panel {
+    /* ============================================
+       HINTS DE CONTROLES - ABAJO DERECHA
+    ============================================ */
+    .controls-hint {
       position: absolute;
-      top: 30px;
-      left: 50%;
-      transform: translateX(-50%);
-      display: flex;
-      gap: 8px;
-      pointer-events: auto;
-      background: rgba(0, 0, 0, 0.5);
-      padding: 8px 12px;
-      border-radius: 30px;
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      backdrop-filter: blur(10px);
-    }
-
-    .render-mode-btn {
-      width: 36px;
-      height: 36px;
-      border-radius: 50%;
-      border: 2px solid rgba(255, 255, 255, 0.2);
-      background: rgba(255, 255, 255, 0.05);
-      cursor: pointer;
-      transition: all 0.3s ease;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      position: relative;
-    }
-
-    .render-mode-btn:hover {
-      transform: scale(1.1);
-      border-color: rgba(255, 255, 255, 0.5);
-    }
-
-    .render-mode-btn.active {
-      border-color: #fff;
-      background: rgba(255, 255, 255, 0.15);
-      box-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
-    }
-
-    .render-mode-btn svg {
-      width: 16px;
-      height: 16px;
-      fill: #fff;
-    }
-
-    .render-mode-btn::after {
-      content: attr(data-name);
-      position: absolute;
-      top: calc(100% + 10px);
-      left: 50%;
-      transform: translateX(-50%);
-      background: rgba(0, 0, 0, 0.9);
-      color: #fff;
-      padding: 5px 10px;
-      border-radius: 4px;
-      font-size: 9px;
-      letter-spacing: 1px;
-      white-space: nowrap;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.3s ease;
-      text-transform: uppercase;
-    }
-
-    .render-mode-btn:hover::after {
-      opacity: 1;
-    }
-
-    /* Colores representativos de cada modo */
-    .render-mode-btn[data-mode="render"] {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    }
-
-    .render-mode-btn[data-mode="albedo"] {
-      background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-    }
-
-    .render-mode-btn[data-mode="roughness"] {
-      background: linear-gradient(135deg, #4a4a4a 0%, #8a8a8a 100%);
-    }
-
-    .render-mode-btn[data-mode="metallic"] {
-      background: linear-gradient(135deg, #c0c0c0 0%, #e8e8e8 100%);
-    }
-
-    .render-mode-btn[data-mode="normal"] {
-      background: linear-gradient(135deg, #8080ff 0%, #ff8080 100%);
-    }
-
-    .render-mode-btn[data-mode="ao"] {
-      background: linear-gradient(135deg, #1a1a1a 0%, #4a4a4a 100%);
-    }
-
-    .render-mode-btn[data-mode="emissive"] {
-      background: linear-gradient(135deg, #ff6b6b 0%, #feca57 100%);
-    }
-
-    .render-mode-btn[data-mode="wireframe"] {
-      background: linear-gradient(135deg, #00d2ff 0%, #3a7bd5 100%);
-    }
-
-    /* Label del modo actual */
-    .current-mode-label {
-      position: absolute;
-      top: 80px;
-      left: 50%;
-      transform: translateX(-50%);
-      color: rgba(255, 255, 255, 0.6);
+      bottom: 24px;
+      right: 32px;
+      text-align: right;
+      color: rgba(255,255,255,0.35);
       font-size: 11px;
+      line-height: 1.6;
+    }
+
+    /* ============================================
+       LOADING
+    ============================================ */
+    .loading {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      color: #fff;
+      font-size: 12px;
       letter-spacing: 2px;
       text-transform: uppercase;
-      pointer-events: none;
+      text-align: center;
+    }
+
+    .loading-spinner {
+      width: 32px;
+      height: 32px;
+      border: 2px solid rgba(255,255,255,0.1);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 12px;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .no-animations {
+      font-size: 11px;
+      opacity: 0.4;
+      font-style: italic;
     }
   </style>
 </head>
@@ -746,165 +600,143 @@
     </div>
   </div>
 
-  <!-- Eliminado el texto de fondo decorativo -->
-
   <div class="overlay">
-    <!-- Logo - Arriba Izquierda -->
-    <div class="logo-container">
-      <div class="logo-icon">🎨</div>
-      <div class="logo-text">
-        <h1>TU LOGO</h1>
-        <p>3D Artist Portfolio</p>
-      </div>
-    </div>
-
-    <!-- Visor de mapas de textura - Arriba Centro -->
-    <div class="render-mode-panel">
-      <button class="render-mode-btn active" data-mode="render" data-name="Render Completo" title="Render Completo">
-        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="12" r="4"/></svg>
-      </button>
-      <button class="render-mode-btn" data-mode="albedo" data-name="Albedo / Base Color" title="Albedo">
-        <svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="12" r="4"/></svg>
-      </button>
-      <button class="render-mode-btn" data-mode="roughness" data-name="Roughness Map" title="Roughness">
-        <svg viewBox="0 0 24 24"><path d="M4 4h16v16H4V4z" fill="none" stroke="currentColor" stroke-width="2"/><path d="M4 12h16M8 4v16M16 4v16" stroke="currentColor" stroke-width="1" opacity="0.5"/></svg>
-      </button>
-      <button class="render-mode-btn" data-mode="metallic" data-name="Metallic Map" title="Metallic">
-        <svg viewBox="0 0 24 24"><polygon points="12,2 22,12 12,22 2,12" fill="none" stroke="currentColor" stroke-width="2"/></svg>
-      </button>
-      <button class="render-mode-btn" data-mode="normal" data-name="Normal Map" title="Normal">
-        <svg viewBox="0 0 24 24"><path d="M12 2L2 22h20L12 2z" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 8v8M8 16h8" stroke="currentColor" stroke-width="2"/></svg>
-      </button>
-      <button class="render-mode-btn" data-mode="ao" data-name="Ambient Occlusion" title="AO">
-        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 2C6.48 2 2 6.48 2 12" stroke="currentColor" stroke-width="4" opacity="0.5"/></svg>
-      </button>
-      <button class="render-mode-btn" data-mode="emissive" data-name="Emissive Map" title="Emissive">
-        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="6"/><path d="M12 2v4M12 18v4M2 12h4M18 12h4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83" stroke="currentColor" stroke-width="2"/></svg>
-      </button>
-      <button class="render-mode-btn" data-mode="wireframe" data-name="Wireframe" title="Wireframe">
-        <svg viewBox="0 0 24 24"><path d="M12 2l10 6v8l-10 6-10-6V8l10-6z" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 2v20M2 8l10 4 10-4M2 16l10-4 10 4" stroke="currentColor" stroke-width=".08" opacity="0.5"/></svg>
-      </button>
-    </div>
-
-    <div class="current-mode-label" id="current-mode-label">Render Completo</div>
-
-    <!-- Iconos Software - Arriba Derecha -->
-    <div class="software-icons" id="software-icons">
-      <div class="software-icon" data-software="blender" title="Blender">
-        <svg viewBox="0 0 60 60"><path d="M19.45,34.6c-.31,1.51,0,3.44.4,4.83.39,1.39.96,2.59,1.67,3.78.71,1.19,1.38,2.11,2.34,3.11s1.84,1.75,2.97,2.53c1.12.78,2.23,1.36,3.54,1.91,1.31.55,2.74.98,4.21,1.24,1.47.26,3.56.4,5.1.31,1.54-.1,3.22-.42,4.62-.84,1.4-.42,2.63-.93,3.86-1.59s2.2-1.36,3.25-2.24c1.05-.88,1.83-1.71,2.66-2.79.83-1.08,1.46-2.12,2.04-3.41.59-1.29,1-2.79,1.24-4.25s.21-3.6-.04-5.05c-.25-1.45-.71-2.87-1.3-4.15-.59-1.27-1.26-2.34-2.09-3.4-.83-1.06-1.68-1.91-2.7-2.75-1.03-.83-2.04-1.57-3.08-2.37-1.03-.8-2.07-1.59-3.1-2.39-1.03-.8-2.05-1.57-3.1-2.35-1.04-.79-2.01-1.61-3.08-2.37-1.07-.76-1.99-1.66-3.1-2.4-1.11-.73-1.92-1.84-3.28-2.17-1.35-.34-3.06-.06-3.93,1.27-.87,1.33.42,2.65,1.52,3.38s1.95,1.68,3.01,2.44c1.06.76,1.94,1.7,3,2.45-1.45.09-2.99.03-4.48.04s-3.04-.01-4.53,0-3.07-.01-4.53,0-3.08-.03-4.48,0-3.17-.1-4.44.09c-1.26.19-2.09.75-2.8,1.73-.71.98-.62,2.38.44,3.14,1.06.76,2.56.58,3.94.58s3.1,0,4.53,0,3.03-.04,4.44.04c-1.69,1.22-3.34,2.52-5,3.79-1.66,1.27-3.29,2.51-4.97,3.78-1.67,1.27-3.28,2.55-4.97,3.82-1.69,1.28-3.25,2.49-4.97,3.78-1.72,1.29-2.63,4.37-.55,5.8,2.08,1.43,4.52.02,6.11-1.43s3.23-2.58,4.84-3.96c1.6-1.38,3.19-2.6,4.8-3.95M38.96,22.87c1.92.19,4.08.65,5.72,1.67,1.63,1.02,2.76,2,3.81,3.62,1.05,1.62,1.68,3.87,1.53,5.82.14-1.95.83-3.9,2.02-5.41,1.19-1.51,2.33-2.51,4.04-3.34,1.71-.84,4.12-1.48,6.14-1.29Z"/><path d="M37.95,39.66h.92c3.29,0,6.95-2.85,6.95-6.33v-.75c0-2.17-1.39-3.98-3.16-5.19-1.78-1.21-4.71-1.51-6.74-.8-2.03.71-3.51,1.93-4.41,3.9-.91,1.97-.53,4.77.9,6.42,1.43,1.64,3.39,2.76,5.55,2.76Z"/></svg>
-      </div>
-      <div class="software-icon" data-software="substance" title="Substance Painter">
-        <svg viewBox="0 0 60 60"><circle cx="26.93" cy="8.09" r="3.28"/><circle cx="50.99" cy="50.02" r="5.17"/><circle cx="6.12" cy="50.02" r="2.28"/><path d="M26.91,14.84c-11.06,0-20.01,8.95-20.01,20.01s8.95,20.01,20.01,20.01,20.01-8.95,20.01-20.01-8.95-20.01-20.01-20.01h0ZM13.36,27.08l13.52-7.81,13.48,7.81v7.06l-6.21-2v-1.46l-7.28-4.21-5.35,3.1,18.83,6.03v7.06l-13.52,7.81-13.52-7.78v-7.1l6.24,1.96v1.46l7.28,4.21,5.42-3.14-18.91-5.99v-7.03Z"/></svg>
-      </div>
-      <div class="software-icon" data-software="photoshop" title="Adobe Photoshop">
-        <svg viewBox="0 0 60 60"><path d="M23.57,21.41c-1.01,0-1.7.1-2.06.2v6.51c.43.1,1.66.13,1.66.13,2.65,0,4.28-1.34,4.28-3.6,0-2.02-1.41-3.24-3.89-3.24Z"/><path d="M47.55,10H12.45c-1.35,0-2.45,1.09-2.45,2.44v35.1c0,1.35,1.1,2.45,2.45,2.45h35.1c1.35,0,2.45-1.1,2.45-2.45V12.45c0-1.35-1.1-2.45-2.45-2.45ZM30.37,29.75c-1.7,1.6-4.22,2.32-7.16,2.32-.66,0-1.24-.03-1.7-.1v7.88h-4.94v-21.74c1.54-.26,3.69-.46,6.74-.46s5.26.59,6.73,1.77c1.41,1.11,2.36,2.94,2.36,5.1s-.72,3.98-2.03,5.23ZM37.81,40.18c-2.1,0-3.96-.45-5.17-1.11l.88-3.56c.92.55,2.81,1.21,4.29,1.21s2.12-.52,2.12-1.34-.49-1.21-2.35-1.83c-3.3-1.11-4.58-2.91-4.55-4.81,0-2.97,2.55-5.23,6.51-5.23,1.86,0,3.53.43,4.51.92l-.88,3.43c-.72-.39-2.09-.91-3.47-.91-1.21,0-1.89.49-1.89,1.31,0,.75.62,1.14,2.58,1.83,3.04,1.04,4.32,2.58,4.35,4.93,0,2.98-2.36,5.17-6.93,5.17Z"/></svg>
-      </div>
-      <div class="software-icon" data-software="maya" title="Maya">
-        <svg viewBox="0 0 24 24"><path d="M12 2L2 7v10l10 5 10-5V7L12 2zm0 2.18l6.9 3.45L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
-      </div>
-      <div class="software-icon" data-software="zbrush" title="ZBrush">
-        <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
-      </div>
-      <div class="software-icon" data-software="cinema4d" title="Cinema 4D">
-        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 6v12M6 12h12v12H6V12z"/></svg>
-      </div>
-      <div class="software-icon" data-software="3dsmax" title="3ds Max">
-        <svg viewBox="0 0 24 24"><path d="M3 3h18v18H3V3zm2 2v14h14V5H5z"/><path d="M7 7h4v4H7V7zm6 0h4v4h-4V7zm-6 6h4v4H7V13zm6 0h4v4h-4v-4z"/></svg>
-      </div>
-      <div class="software-icon" data-software="marvelous" title="Marvelous Designer">
-        <svg viewBox="0 0 24 24"><path d="M12 2l-2 7H4l6 4.5-2 7.5 6-4.5 6 4.5-2-7.5 6-4.5h-6L12 2z"/></svg>
-      </div>
-    </div>
-
-    <!-- Info Técnica - Abajo Izquierda -->
-    <div class="tech-info">
-      <div class="model-number" id="model-number">#01</div>
-      <div class="model-name" id="model-name">Nombre del Modelo*</div>
+    <!-- PANEL DE ILUMINACIÓN - ARRIBA IZQUIERDA -->
+    <div class="lighting-panel">
+      <div class="lighting-header">Light Type</div>
       
-      <div class="tech-specs" id="tech-specs">
-        <!-- Se genera dinámicamente -->
+      <div class="light-type-selector">
+        <button class="light-nav-btn" id="prev-light">
+          <svg viewBox="0 0 24 24"><path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></svg>
+        </button>
+        <div class="light-icon-container" id="light-icon">
+          <svg viewBox="0 0 24 24" id="light-svg">
+            <circle cx="12" cy="12" r="5"/>
+            <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
+          </svg>
+        </div>
+        <button class="light-nav-btn" id="next-light">
+          <svg viewBox="0 0 24 24"><path d="M8.59 16.59L10 18l6-6-6-6-1.41 1.41L13.17 12z"/></svg>
+        </button>
       </div>
 
-      <!-- Controles de Animación -->
-      <div class="animation-controls" id="animation-controls">
-        <span class="no-animations" id="no-anim-msg">Sin animaciones</span>
+      <div class="light-type-name" id="light-name">STUDIO</div>
+
+      <div class="slider-group">
+        <span class="slider-label">Rotation</span>
+        <div class="slider-row">
+          <input type="range" class="slider" id="hdr-rotation" min="0" max="360" value="0">
+        </div>
+      </div>
+
+      <div class="slider-group">
+        <span class="slider-label">Exposure</span>
+        <div class="slider-row">
+          <input type="range" class="slider" id="hdr-exposure" min="0.1" max="3" value="1" step="0.1">
+        </div>
+      </div>
+
+      <div class="slider-group">
+        <span class="slider-label">Intensity</span>
+        <div class="slider-row">
+          <input type="range" class="slider" id="light-intensity" min="0" max="3" value="1" step="0.1">
+        </div>
+      </div>
+
+      <div class="slider-group">
+        <span class="slider-label">Ambient</span>
+        <div class="slider-row">
+          <input type="range" class="slider" id="ambient-intensity" min="0" max="2" value="0.5" step="0.1">
+        </div>
+      </div>
+
+      <div class="shadow-row">
+        <span class="shadow-label">Shadows</span>
+        <div class="toggle-switch active" id="shadow-toggle"></div>
+      </div>
+
+      <div class="slider-group" id="shadow-settings" style="margin-top: 12px;">
+        <span class="slider-label">Softness</span>
+        <div class="slider-row">
+          <input type="range" class="slider" id="shadow-blur" min="0" max="10" value="2" step="1">
+        </div>
       </div>
     </div>
 
-    <!-- Galería de Modelos - Abajo Centro -->
-    <div class="model-gallery" id="model-gallery">
-      <button class="nav-arrow" id="prev-model" title="Anterior">
+    <!-- CONTROLES DE ANIMACIÓN - ARRIBA CENTRO -->
+    <div class="animation-panel" id="animation-panel">
+      <button class="anim-btn" id="play-btn" title="Play/Pause" disabled>
+        <svg viewBox="0 0 24 24" id="play-icon"><path d="M8 5v14l11-7z"/></svg>
+        <svg viewBox="0 0 24 24" id="pause-icon" style="display:none;"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
+      </button>
+      <button class="anim-btn" id="stop-btn" title="Stop" disabled>
+        <svg viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12"/></svg>
+      </button>
+      <button class="anim-btn" id="reset-btn" title="Reset" disabled>
+        <svg viewBox="0 0 24 24"><path d="M12 5V1L7 6l5 5V7c3.31 0 6 2.69 6 6s-2.69 6-6 6-6-2.69-6-6H4c0 4.42 3.58 8 8 8s8-3.58 8-8-3.58-8-8-8z"/></svg>
+      </button>
+      <select class="anim-select" id="anim-select" disabled>
+        <option>Sin animaciones</option>
+      </select>
+      <div class="fps-display">FPS <span id="fps-value">0</span></div>
+    </div>
+
+    <!-- DROPDOWN DE RENDER MODE - ARRIBA DERECHA -->
+    <div class="render-dropdown-container">
+      <button class="render-dropdown-btn" id="render-dropdown-btn">
+        <span id="current-render-mode">Composite</span>
+        <svg viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg>
+      </button>
+      <div class="render-dropdown-menu" id="render-dropdown-menu">
+        <button class="render-option active" data-mode="render">Composite</button>
+        <button class="render-option" data-mode="albedo">Albedo</button>
+        <button class="render-option" data-mode="metallic">Metallic</button>
+        <button class="render-option" data-mode="roughness">Roughness</button>
+        <button class="render-option" data-mode="normal">Normal</button>
+        <button class="render-option" data-mode="ao">Ambient Occlusion</button>
+        <button class="render-option" data-mode="emissive">Emissive</button>
+        <button class="render-option" data-mode="wireframe">Wireframe</button>
+      </div>
+    </div>
+
+    <!-- INFO DEL MODELO - ABAJO IZQUIERDA -->
+    <div class="model-info">
+      <div class="tech-specs" id="tech-specs"></div>
+      <div class="model-name" id="model-name">Character Name</div>
+      <div class="software-icons" id="software-icons">
+        <div class="software-icon" data-software="blender" title="Blender">
+          <svg viewBox="0 0 24 24"><path d="M12.51 13.214c.046-.8.438-1.506 1.03-2.006a3.424 3.424 0 0 1 2.212-.79c.85 0 1.631.3 2.211.79.592.5.983 1.206 1.028 2.005.045.823-.285 1.586-.865 2.153a3.389 3.389 0 0 1-2.374.938 3.393 3.393 0 0 1-2.376-.938c-.58-.567-.91-1.33-.865-2.152M7.35 14.831c.006.314.106.922.256 1.398a7.372 7.372 0 0 0 1.477 2.564 7.08 7.08 0 0 0 2.382 1.715 6.667 6.667 0 0 0 2.896.625 6.65 6.65 0 0 0 2.894-.625 7.07 7.07 0 0 0 2.382-1.715 7.333 7.333 0 0 0 1.477-2.564c.15-.476.25-1.084.256-1.398.018-.99-.127-1.665-.478-2.622-.396-1.078-.943-2.008-1.614-2.84a7.916 7.916 0 0 0-1.21-1.192L12.361 1 4.5 7.236h4.582l-2.7 2.31c-.415.326-.71.582-1.077.988-.473.53-.874 1.133-1.192 1.79-.478 1.01-.699 2.014-.699 3.107z"/></svg>
+        </div>
+        <div class="software-icon" data-software="substance" title="Substance Painter">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="4" r="2"/><circle cx="20" cy="20" r="3"/><circle cx="4" cy="20" r="1.5"/><path d="M12 8c-5.5 0-10 4.5-10 10s4.5 10 10 10 10-4.5 10-10-4.5-10-10-10zm-5.5 6l5.5-3 5.5 3v3l-2.5-.8v-.6l-3-1.7-2.2 1.3 7.7 2.5v3l-5.5 3-5.5-3v-3l2.5.8v.6l3 1.7 2.2-1.3-7.7-2.5v-3z"/></svg>
+        </div>
+        <div class="software-icon" data-software="photoshop" title="Adobe Photoshop">
+          <svg viewBox="0 0 24 24"><path d="M9.85 8.42c-.37-.15-.77-.21-1.18-.2-.26 0-.49 0-.68.01v2.96c.2.01.38.01.53.01 1.16 0 1.88-.58 1.88-1.47 0-.63-.19-1.07-.55-1.31zM19.75 4H4.25C3.01 4 2 5.01 2 6.25v11.5C2 18.99 3.01 20 4.25 20h15.5c1.24 0 2.25-1.01 2.25-2.25V6.25C22 5.01 20.99 4 19.75 4zM12.33 12.72c-.81.67-1.98 1-3.48 1-.32 0-.58-.01-.82-.03V17H6V6.66c.67-.1 1.62-.18 2.94-.18 1.32 0 2.27.22 2.92.65.62.4 1.04 1.1 1.04 1.91 0 .81-.26 1.47-.78 1.93-.24.19-.54.36-.79.48v.03c.28.12.51.3.68.52.37.46.56 1.05.56 1.81 0 .66-.17 1.25-.24 1.65zm5.64 3.12c-.34.54-1.02 1.04-2.15 1.04-.92 0-1.7-.2-2.12-.44l.34-1.51c.44.23 1.07.45 1.74.45.63 0 .98-.26.98-.65 0-.37-.29-.58-1.04-.84-1.35-.46-1.98-1.2-1.98-2.08 0-1.22 1.02-2.17 2.68-2.17.79 0 1.37.16 1.79.34l-.35 1.47c-.28-.14-.79-.33-1.43-.33-.53 0-.82.24-.82.56 0 .36.36.52 1.17.82 1.23.45 1.84 1.1 1.84 2.14 0 1.14-.86 2.1-2.65 2.2z"/></svg>
+        </div>
+        <div class="software-icon" data-software="zbrush" title="ZBrush">
+          <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1-13h2v6h-2zm0 8h2v2h-2z"/></svg>
+        </div>
+        <div class="software-icon" data-software="maya" title="Maya">
+          <svg viewBox="0 0 24 24"><path d="M12 2L2 7v10l10 5 10-5V7L12 2zm0 2.18l6.9 3.45L12 11.09 5.1 7.63 12 4.18z"/></svg>
+        </div>
+        <div class="software-icon" data-software="marvelous" title="Marvelous Designer">
+          <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- GALERÍA DE MODELOS - ABAJO CENTRO -->
+    <div class="model-gallery">
+      <button class="gallery-nav" id="prev-model">
         <svg viewBox="0 0 24 24"><path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></svg>
       </button>
-      <div id="gallery-items" style="display: flex; gap: 15px;"></div>
-      <button class="nav-arrow" id="next-model" title="Siguiente">
+      <div class="gallery-items" id="gallery-items"></div>
+      <button class="gallery-nav" id="next-model">
         <svg viewBox="0 0 24 24"><path d="M8.59 16.59L10 18l6-6-6-6-1.41 1.41L13.17 12z"/></svg>
       </button>
     </div>
 
-    <!-- Controles de Iluminación HDR -->
-    <div class="lighting-controls">
-      <button class="light-btn active" data-hdr="studio" data-name="STUDIO" title="Studio"></button>
-      <button class="light-btn" data-hdr="sunset" data-name="SUNSET" title="Sunset"></button>
-      <button class="light-btn" data-hdr="night" data-name="NIGHT" title="Night"></button>
-      <button class="light-btn" data-hdr="forest" data-name="FOREST" title="Forest"></button>
-      <button class="light-btn" data-hdr="city" data-name="CITY" title="City"></button>
-      <button class="light-btn" data-hdr="warehouse" data-name="WAREHOUSE" title="Warehouse"></button>
-    </div>
-
-    <!-- Panel de ajustes avanzados de HDR -->
-    <div class="hdr-settings-panel">
-      <h3>Ajustes de Luz</h3>
-      
-      <div class="hdr-slider-group">
-        <div class="hdr-slider-label">
-          <span>Rotación HDR</span>
-          <span class="value" id="rotation-value">0°</span>
-        </div>
-        <input type="range" class="hdr-slider" id="hdr-rotation" min="0" max="360" value="0" step="1">
-      </div>
-
-      <div class="hdr-slider-group">
-        <div class="hdr-slider-label">
-          <span>Exposición</span>
-          <span class="value" id="exposure-value">1.0</span>
-        </div>
-        <input type="range" class="hdr-slider" id="hdr-exposure" min="0.1" max="3" value="1" step="0.1">
-      </div>
-
-      <div class="hdr-slider-group">
-        <div class="hdr-slider-label">
-          <span>Intensidad Luz</span>
-          <span class="value" id="intensity-value">1.0</span>
-        </div>
-        <input type="range" class="hdr-slider" id="light-intensity" min="0" max="3" value="1" step="0.1">
-      </div>
-
-      <div class="hdr-slider-group">
-        <div class="hdr-slider-label">
-          <span>Intensidad Ambiente</span>
-          <span class="value" id="ambient-value">0.5</span>
-        </div>
-        <input type="range" class="hdr-slider" id="ambient-intensity" min="0" max="2" value="0.5" step="0.1">
-      </div>
-
-      <div class="shadow-toggle">
-        <span>Sombras</span>
-        <div class="toggle-switch active" id="shadow-toggle"></div>
-      </div>
-
-      <div class="hdr-slider-group" id="shadow-settings" style="margin-top: 15px;">
-        <div class="hdr-slider-label">
-          <span>Suavidad Sombra</span>
-          <span class="value" id="shadow-blur-value">2</span>
-        </div>
-        <input type="range" class="hdr-slider" id="shadow-blur" min="0" max="10" value="2" step="1">
-      </div>
-
-      <button class="hdr-reset-btn" id="hdr-reset">Restablecer</button>
-    </div>
-
-    <!-- Controles -->
+    <!-- HINTS DE CONTROLES - ABAJO DERECHA -->
     <div class="controls-hint">
       Arrastra para rotar<br>
       Scroll para zoom
@@ -918,21 +750,19 @@
     import { RGBELoader } from 'three/addons/loaders/RGBELoader.js';
 
     // ============================================================
-    // Edita este array para añadir tus propios modelos
+    // CONFIGURACIÓN DE MODELOS - Edita este array
     // ============================================================
     const modelsGallery = [
       {
         id: 1,
-        name: "Rubber Duck",
+        name: "OWL",
         path: "./owl.glb",
         thumbnail: "",
         software: ["blender", "substance"],
         specs: {
-          "Polígonos": "12,000 tris",
-          "Texturas": "2K PBR",
-          "Software": "Blender, Substance Painter",
-          "Tiempo": "~8 horas",
-          "Año": "2024"
+          "Polygon Count": "12,000 tris",
+          "Concept": "Original",
+          "Time": "~8 hrs"
         }
       },
       {
@@ -942,11 +772,9 @@
         thumbnail: "",
         software: ["blender", "zbrush", "substance", "photoshop"],
         specs: {
-          "Polígonos": "85,000 tris",
-          "Texturas": "4K PBR",
-          "Software": "Blender, ZBrush, Substance",
-          "Rigging": "Sí, completo",
-          "Tiempo": "~120 horas"
+          "Polygon Count": "85,000 tris",
+          "Concept": "Artist",
+          "Time": "~120 hrs"
         }
       },
       {
@@ -956,11 +784,9 @@
         thumbnail: "",
         software: ["blender", "photoshop"],
         specs: {
-          "Polígonos": "5,200 tris",
-          "Texturas": "2K Diffuse",
-          "Software": "Blender, Photoshop",
-          "LODs": "3 niveles",
-          "Tiempo": "~15 horas"
+          "Polygon Count": "5,200 tris",
+          "Concept": "Original",
+          "Time": "~15 hrs"
         }
       },
       {
@@ -970,17 +796,35 @@
         thumbnail: "",
         software: ["blender", "substance", "maya"],
         specs: {
-          "Polígonos": "45,000 tris",
-          "Texturas": "4K PBR",
-          "Software": "Blender, Maya, Substance",
-          "Interior": "Detallado",
-          "Tiempo": "~80 horas"
+          "Polygon Count": "45,000 tris",
+          "Concept": "Commission",
+          "Time": "~80 hrs"
         }
       }
     ];
-    // ============================================================
 
-    // Variables globales
+    // Tipos de luz
+    const lightTypes = [
+      { id: 'studio', name: 'STUDIO', icon: 'studio' },
+      { id: 'sunset', name: 'SUNSET', icon: 'sunset' },
+      { id: 'night', name: 'NIGHT', icon: 'night' },
+      { id: 'forest', name: 'FOREST', icon: 'forest' },
+      { id: 'city', name: 'CITY', icon: 'city' },
+      { id: 'warehouse', name: 'WAREHOUSE', icon: 'warehouse' }
+    ];
+
+    const lightIcons = {
+      studio: `<circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" stroke="currentColor" stroke-width="2"/>`,
+      sunset: `<circle cx="12" cy="17" r="5"/><path d="M12 12V2M4 17h16" stroke="currentColor" stroke-width="2"/><path d="M5.64 11.64l1.42 1.42M18.36 11.64l-1.42 1.42" stroke="currentColor" stroke-width="2"/>`,
+      night: `<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/><circle cx="17" cy="5" r="1"/><circle cx="19" cy="9" r="0.5"/>`,
+      forest: `<path d="M12 2L7 9h3v4H7l5 9 5-9h-3V9h3L12 2z"/><rect x="11" y="18" width="2" height="4"/>`,
+      city: `<rect x="3" y="10" width="4" height="12"/><rect x="10" y="6" width="4" height="16"/><rect x="17" y="12" width="4" height="10"/><path d="M5 12h0M12 8h0M12 11h0M19 14h0" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>`,
+      warehouse: `<rect x="2" y="8" width="20" height="14" rx="1"/><path d="M6 8V4h12v4" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="15" r="3" fill="none" stroke="currentColor" stroke-width="2"/>`
+    };
+
+    // ============================================================
+    // VARIABLES GLOBALES
+    // ============================================================
     let currentModelIndex = 0;
     let currentModel = null;
     let mixer = null;
@@ -991,21 +835,25 @@
 
     let currentRenderMode = 'render';
     let originalMaterials = new Map();
+    let currentLightIndex = 0;
 
-    // Setup
+    // FPS counter
+    let frameCount = 0;
+    let lastTime = performance.now();
+    let fps = 0;
+
+    // ============================================================
+    // SETUP ESCENA
+    // ============================================================
     const container = document.getElementById('canvas-container');
     const loading = document.getElementById('loading');
-    const animControls = document.getElementById('animation-controls');
     const galleryItems = document.getElementById('gallery-items');
 
-    // Scene
     const scene = new THREE.Scene();
 
-    // Camera
     const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
     camera.position.set(0, 1, 5);
 
-    // Renderer
     const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
     renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
@@ -1016,7 +864,6 @@
     renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     container.appendChild(renderer.domElement);
 
-    // Controls
     const controls = new OrbitControls(camera, renderer.domElement);
     controls.enableDamping = true;
     controls.dampingFactor = 0.05;
@@ -1027,29 +874,18 @@
     // ============================================================
     // GRID 3D
     // ============================================================
-    
     const gridGroup = new THREE.Group();
     scene.add(gridGroup);
 
     const gridSize = 20;
     const gridDivisions = 20;
-    const gridHelper = new THREE.GridHelper(
-      gridSize, 
-      gridDivisions, 
-      0x444444,
-      0x2a2a2a
-    );
+    const gridHelper = new THREE.GridHelper(gridSize, gridDivisions, 0x444444, 0x2a2a2a);
     gridHelper.position.y = 0;
     gridHelper.material.opacity = 0.4;
     gridHelper.material.transparent = true;
     gridGroup.add(gridHelper);
 
-    const gridHelperFine = new THREE.GridHelper(
-      gridSize, 
-      gridDivisions * 4,
-      0x333333, 
-      0x1a1a1a
-    );
+    const gridHelperFine = new THREE.GridHelper(gridSize, gridDivisions * 4, 0x333333, 0x1a1a1a);
     gridHelperFine.position.y = 0;
     gridHelperFine.material.opacity = 0.2;
     gridHelperFine.material.transparent = true;
@@ -1061,11 +897,7 @@
       new THREE.Vector3(-axisLength, 0.01, 0),
       new THREE.Vector3(axisLength, 0.01, 0)
     ]);
-    const xAxisMaterial = new THREE.LineBasicMaterial({ 
-      color: 0xff4444, 
-      opacity: 0.6, 
-      transparent: true 
-    });
+    const xAxisMaterial = new THREE.LineBasicMaterial({ color: 0xff4444, opacity: 0.6, transparent: true });
     const xAxis = new THREE.Line(xAxisGeometry, xAxisMaterial);
     gridGroup.add(xAxis);
 
@@ -1073,11 +905,7 @@
       new THREE.Vector3(0, 0.01, -axisLength),
       new THREE.Vector3(0, 0.01, axisLength)
     ]);
-    const zAxisMaterial = new THREE.LineBasicMaterial({ 
-      color: 0x4444ff, 
-      opacity: 0.6, 
-      transparent: true 
-    });
+    const zAxisMaterial = new THREE.LineBasicMaterial({ color: 0x4444ff, opacity: 0.6, transparent: true });
     const zAxis = new THREE.Line(zAxisGeometry, zAxisMaterial);
     gridGroup.add(zAxis);
 
@@ -1100,7 +928,6 @@
         uniform float uOpacity;
         uniform float uFadeRadius;
         varying vec2 vUv;
-        
         void main() {
           vec2 center = vUv - 0.5;
           float dist = length(center) * 2.0;
@@ -1118,13 +945,11 @@
     groundPlane.receiveShadow = true;
     gridGroup.add(groundPlane);
 
-    let gridVisible = true;
     let gridOpacity = 1;
 
     // ============================================================
     // LUCES
     // ============================================================
-
     const hdrPaths = {
       studio: 'studio.hdr',
       sunset: 'sunset.hdr',
@@ -1137,11 +962,8 @@
     const hdrCache = {};
     const rgbeLoader = new RGBELoader();
 
-    const defaultLights = [];
-
     const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
     scene.add(ambientLight);
-    defaultLights.push(ambientLight);
 
     const mainLight = new THREE.DirectionalLight(0xffffff, 1.5);
     mainLight.position.set(5, 10, 7);
@@ -1157,35 +979,223 @@
     mainLight.shadow.radius = 2;
     mainLight.shadow.bias = -0.0001;
     scene.add(mainLight);
-    defaultLights.push(mainLight);
 
     const fillLight = new THREE.DirectionalLight(0x8888ff, 0.5);
     fillLight.position.set(-5, 5, -5);
     scene.add(fillLight);
-    defaultLights.push(fillLight);
 
     const rimLight = new THREE.DirectionalLight(0xffffff, 0.8);
     rimLight.position.set(0, 5, -10);
     scene.add(rimLight);
-    defaultLights.push(rimLight);
 
     // ============================================================
+    // CONFIGURACIÓN HDR
     // ============================================================
+    const lightConfigs = {
+      studio: {
+        ambient: { color: 0xffffff, intensity: 0.6 },
+        main: { color: 0xffffff, intensity: 1.5, pos: [5, 10, 7] },
+        fill: { color: 0xcccccc, intensity: 0.4, pos: [-5, 5, -5] },
+        rim: { color: 0xffffff, intensity: 0.8, pos: [0, 5, -10] }
+      },
+      sunset: {
+        ambient: { color: 0xffa07a, intensity: 0.4 },
+        main: { color: 0xff8c00, intensity: 2.0, pos: [-8, 3, 5] },
+        fill: { color: 0xff6347, intensity: 0.6, pos: [5, 2, -5] },
+        rim: { color: 0xffd700, intensity: 1.0, pos: [0, 8, -8] }
+      },
+      night: {
+        ambient: { color: 0x1a1a2e, intensity: 0.3 },
+        main: { color: 0x4a69bd, intensity: 1.0, pos: [5, 10, 7] },
+        fill: { color: 0x6c5ce7, intensity: 0.5, pos: [-5, 5, -5] },
+        rim: { color: 0x00cec9, intensity: 0.6, pos: [0, 5, -10] }
+      },
+      forest: {
+        ambient: { color: 0x2d5016, intensity: 0.5 },
+        main: { color: 0x90EE90, intensity: 1.2, pos: [3, 12, 5] },
+        fill: { color: 0x228B22, intensity: 0.4, pos: [-5, 5, -5] },
+        rim: { color: 0xADFF2F, intensity: 0.7, pos: [0, 5, -10] }
+      },
+      city: {
+        ambient: { color: 0x2c3e50, intensity: 0.4 },
+        main: { color: 0x3498db, intensity: 1.3, pos: [5, 10, 7] },
+        fill: { color: 0x9b59b6, intensity: 0.5, pos: [-5, 5, -5] },
+        rim: { color: 0xe74c3c, intensity: 0.6, pos: [0, 5, -10] }
+      },
+      warehouse: {
+        ambient: { color: 0xffffff, intensity: 0.8 },
+        main: { color: 0xffffff, intensity: 1.8, pos: [0, 15, 0] },
+        fill: { color: 0xeeeeee, intensity: 0.6, pos: [-5, 5, -5] },
+        rim: { color: 0xffffff, intensity: 0.4, pos: [0, 5, -10] }
+      }
+    };
+
+    function loadHDR(hdrName) {
+      const path = hdrPaths[hdrName];
+      
+      if (hdrCache[hdrName]) {
+        applyEnvironment(hdrCache[hdrName]);
+        return;
+      }
+
+      rgbeLoader.load(
+        path,
+        (texture) => {
+          texture.mapping = THREE.EquirectangularReflectionMapping;
+          hdrCache[hdrName] = texture;
+          applyEnvironment(texture);
+        },
+        undefined,
+        () => {
+          applySimulatedLighting(hdrName);
+        }
+      );
+    }
+
+    function applyEnvironment(texture) {
+      scene.environment = texture;
+    }
+
+    function applySimulatedLighting(hdrName) {
+      scene.environment = null;
+      const config = lightConfigs[hdrName] || lightConfigs.studio;
+
+      ambientLight.color.setHex(config.ambient.color);
+      ambientLight.intensity = config.ambient.intensity;
+
+      mainLight.color.setHex(config.main.color);
+      mainLight.intensity = config.main.intensity;
+      mainLight.position.set(...config.main.pos);
+
+      fillLight.color.setHex(config.fill.color);
+      fillLight.intensity = config.fill.intensity;
+      fillLight.position.set(...config.fill.pos);
+
+      rimLight.color.setHex(config.rim.color);
+      rimLight.intensity = config.rim.intensity;
+      rimLight.position.set(...config.rim.pos);
+    }
+
+    function updateLightUI() {
+      const light = lightTypes[currentLightIndex];
+      document.getElementById('light-name').textContent = light.name;
+      document.getElementById('light-svg').innerHTML = lightIcons[light.id];
+      loadHDR(light.id);
+    }
+
+    // Light navigation
+    document.getElementById('prev-light').addEventListener('click', () => {
+      currentLightIndex = (currentLightIndex - 1 + lightTypes.length) % lightTypes.length;
+      updateLightUI();
+    });
+
+    document.getElementById('next-light').addEventListener('click', () => {
+      currentLightIndex = (currentLightIndex + 1) % lightTypes.length;
+      updateLightUI();
+    });
+
+    // ============================================================
+    // AJUSTES HDR
+    // ============================================================
+    const hdrRotationSlider = document.getElementById('hdr-rotation');
+    const hdrExposureSlider = document.getElementById('hdr-exposure');
+    const lightIntensitySlider = document.getElementById('light-intensity');
+    const ambientIntensitySlider = document.getElementById('ambient-intensity');
+    const shadowToggle = document.getElementById('shadow-toggle');
+    const shadowBlurSlider = document.getElementById('shadow-blur');
+
+    let shadowsEnabled = true;
+
+    hdrRotationSlider.addEventListener('input', (e) => {
+      const hdrRotation = parseFloat(e.target.value);
+      const radians = THREE.MathUtils.degToRad(hdrRotation);
+      mainLight.position.set(
+        5 * Math.cos(radians) - 7 * Math.sin(radians),
+        10,
+        5 * Math.sin(radians) + 7 * Math.cos(radians)
+      );
+      fillLight.position.set(
+        -5 * Math.cos(radians) + 5 * Math.sin(radians),
+        5,
+        -5 * Math.sin(radians) - 5 * Math.cos(radians)
+      );
+      rimLight.position.set(
+        -10 * Math.sin(radians),
+        5,
+        -10 * Math.cos(radians)
+      );
+    });
+
+    hdrExposureSlider.addEventListener('input', (e) => {
+      renderer.toneMappingExposure = parseFloat(e.target.value);
+    });
+
+    lightIntensitySlider.addEventListener('input', (e) => {
+      const intensity = parseFloat(e.target.value);
+      mainLight.intensity = 1.5 * intensity;
+      fillLight.intensity = 0.5 * intensity;
+      rimLight.intensity = 0.8 * intensity;
+    });
+
+    ambientIntensitySlider.addEventListener('input', (e) => {
+      ambientLight.intensity = parseFloat(e.target.value);
+    });
+
+    shadowToggle.addEventListener('click', () => {
+      shadowsEnabled = !shadowsEnabled;
+      shadowToggle.classList.toggle('active', shadowsEnabled);
+      renderer.shadowMap.enabled = shadowsEnabled;
+      mainLight.castShadow = shadowsEnabled;
+      document.getElementById('shadow-settings').style.display = shadowsEnabled ? 'block' : 'none';
+      
+      scene.traverse((obj) => {
+        if (obj.isMesh) {
+          obj.castShadow = shadowsEnabled;
+          obj.receiveShadow = shadowsEnabled;
+        }
+      });
+    });
+
+    shadowBlurSlider.addEventListener('input', (e) => {
+      mainLight.shadow.radius = parseInt(e.target.value);
+    });
+
+    // ============================================================
+    // RENDER MODE DROPDOWN
+    // ============================================================
+    const renderDropdownBtn = document.getElementById('render-dropdown-btn');
+    const renderDropdownMenu = document.getElementById('render-dropdown-menu');
+
+    renderDropdownBtn.addEventListener('click', () => {
+      renderDropdownBtn.classList.toggle('open');
+      renderDropdownMenu.classList.toggle('open');
+    });
+
+    document.addEventListener('click', (e) => {
+      if (!renderDropdownBtn.contains(e.target) && !renderDropdownMenu.contains(e.target)) {
+        renderDropdownBtn.classList.remove('open');
+        renderDropdownMenu.classList.remove('open');
+      }
+    });
+
+    document.querySelectorAll('.render-option').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const mode = btn.dataset.mode;
+        setRenderMode(mode);
+        document.getElementById('current-render-mode').textContent = btn.textContent;
+        document.querySelectorAll('.render-option').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        renderDropdownBtn.classList.remove('open');
+        renderDropdownMenu.classList.remove('open');
+      });
+    });
 
     function setRenderMode(mode) {
       if (!currentModel) return;
-      
       currentRenderMode = mode;
-      document.getElementById('current-mode-label').textContent = getModeLabel(mode);
-
-      // Actualizar botones activos
-      document.querySelectorAll('.render-mode-btn').forEach(btn => {
-        btn.classList.toggle('active', btn.dataset.mode === mode);
-      });
 
       currentModel.traverse((child) => {
         if (child.isMesh) {
-          // Restaurar material original primero
           if (originalMaterials.has(child.uuid)) {
             child.material = originalMaterials.get(child.uuid);
           }
@@ -1194,101 +1204,54 @@
 
           switch (mode) {
             case 'render':
-              // Ya restaurado arriba
               child.material.wireframe = false;
               break;
-
             case 'albedo':
               if (originalMat.map) {
-                child.material = new THREE.MeshBasicMaterial({
-                  map: originalMat.map,
-                  side: originalMat.side
-                });
+                child.material = new THREE.MeshBasicMaterial({ map: originalMat.map, side: originalMat.side });
               } else if (originalMat.color) {
-                child.material = new THREE.MeshBasicMaterial({
-                  color: originalMat.color,
-                  side: originalMat.side
-                });
+                child.material = new THREE.MeshBasicMaterial({ color: originalMat.color, side: originalMat.side });
               }
               break;
-
             case 'roughness':
               if (originalMat.roughnessMap) {
-                child.material = new THREE.MeshBasicMaterial({
-                  map: originalMat.roughnessMap,
-                  side: originalMat.side
-                });
+                child.material = new THREE.MeshBasicMaterial({ map: originalMat.roughnessMap, side: originalMat.side });
               } else {
                 const roughnessValue = originalMat.roughness !== undefined ? originalMat.roughness : 0.5;
-                child.material = new THREE.MeshBasicMaterial({
-                  color: new THREE.Color(roughnessValue, roughnessValue, roughnessValue),
-                  side: originalMat.side
-                });
+                child.material = new THREE.MeshBasicMaterial({ color: new THREE.Color(roughnessValue, roughnessValue, roughnessValue), side: originalMat.side });
               }
               break;
-
             case 'metallic':
               if (originalMat.metalnessMap) {
-                child.material = new THREE.MeshBasicMaterial({
-                  map: originalMat.metalnessMap,
-                  side: originalMat.side
-                });
+                child.material = new THREE.MeshBasicMaterial({ map: originalMat.metalnessMap, side: originalMat.side });
               } else {
                 const metalnessValue = originalMat.metalness !== undefined ? originalMat.metalness : 0;
-                child.material = new THREE.MeshBasicMaterial({
-                  color: new THREE.Color(metalnessValue, metalnessValue, metalnessValue),
-                  side: originalMat.side
-                });
+                child.material = new THREE.MeshBasicMaterial({ color: new THREE.Color(metalnessValue, metalnessValue, metalnessValue), side: originalMat.side });
               }
               break;
-
             case 'normal':
               if (originalMat.normalMap) {
-                child.material = new THREE.MeshBasicMaterial({
-                  map: originalMat.normalMap,
-                  side: originalMat.side
-                });
+                child.material = new THREE.MeshBasicMaterial({ map: originalMat.normalMap, side: originalMat.side });
               } else {
-                child.material = new THREE.MeshBasicMaterial({
-                  color: 0x8080ff, // Color azul típico de normal map plano
-                  side: originalMat.side
-                });
+                child.material = new THREE.MeshBasicMaterial({ color: 0x8080ff, side: originalMat.side });
               }
               break;
-
             case 'ao':
               if (originalMat.aoMap) {
-                child.material = new THREE.MeshBasicMaterial({
-                  map: originalMat.aoMap,
-                  side: originalMat.side
-                });
+                child.material = new THREE.MeshBasicMaterial({ map: originalMat.aoMap, side: originalMat.side });
               } else {
-                child.material = new THREE.MeshBasicMaterial({
-                  color: 0xffffff,
-                  side: originalMat.side
-                });
+                child.material = new THREE.MeshBasicMaterial({ color: 0xffffff, side: originalMat.side });
               }
               break;
-
             case 'emissive':
               if (originalMat.emissiveMap) {
-                child.material = new THREE.MeshBasicMaterial({
-                  map: originalMat.emissiveMap,
-                  side: originalMat.side
-                });
+                child.material = new THREE.MeshBasicMaterial({ map: originalMat.emissiveMap, side: originalMat.side });
               } else if (originalMat.emissive) {
-                child.material = new THREE.MeshBasicMaterial({
-                  color: originalMat.emissive,
-                  side: originalMat.side
-                });
+                child.material = new THREE.MeshBasicMaterial({ color: originalMat.emissive, side: originalMat.side });
               } else {
-                child.material = new THREE.MeshBasicMaterial({
-                  color: 0x000000,
-                  side: originalMat.side
-                });
+                child.material = new THREE.MeshBasicMaterial({ color: 0x000000, side: originalMat.side });
               }
               break;
-
             case 'wireframe':
               child.material = originalMaterials.get(child.uuid).clone();
               child.material.wireframe = true;
@@ -1298,31 +1261,9 @@
       });
     }
 
-    function getModeLabel(mode) {
-      const labels = {
-        'render': 'Render Completo',
-        'albedo': 'Albedo / Base Color',
-        'roughness': 'Roughness Map',
-        'metallic': 'Metallic Map',
-        'normal': 'Normal Map',
-        'ao': 'Ambient Occlusion',
-        'emissive': 'Emissive Map',
-        'wireframe': 'Wireframe'
-      };
-      return labels[mode] || mode;
-    }
-
-    // Event listeners para botones de modo
-    document.querySelectorAll('.render-mode-btn').forEach(btn => {
-      btn.addEventListener('click', () => {
-        setRenderMode(btn.dataset.mode);
-      });
-    });
-
     // ============================================================
     // GALERÍA Y UI
     // ============================================================
-
     function createGalleryUI() {
       galleryItems.innerHTML = '';
       
@@ -1330,7 +1271,6 @@
         const item = document.createElement('div');
         item.className = `gallery-item ${index === currentModelIndex ? 'active' : ''}`;
         item.dataset.index = index;
-        item.dataset.name = model.name;
         
         if (model.thumbnail) {
           item.innerHTML = `<img src="${model.thumbnail}" alt="${model.name}">`;
@@ -1344,14 +1284,9 @@
     }
 
     function updateSoftwareIcons(softwareList) {
-      const allIcons = document.querySelectorAll('.software-icon');
-      allIcons.forEach(icon => {
+      document.querySelectorAll('.software-icon').forEach(icon => {
         const software = icon.dataset.software;
-        if (softwareList.includes(software)) {
-          icon.classList.add('visible');
-        } else {
-          icon.classList.remove('visible');
-        }
+        icon.classList.toggle('visible', softwareList.includes(software));
       });
     }
 
@@ -1362,18 +1297,13 @@
       Object.entries(specs).forEach(([label, value]) => {
         const row = document.createElement('div');
         row.className = 'spec-row';
-        row.innerHTML = `
-          <span class="spec-label">${label}</span>
-          <span class="spec-value">${value}</span>
-        `;
+        row.innerHTML = `<span class="spec-label">${label}</span><span class="spec-value">${value}</span>`;
         techSpecs.appendChild(row);
       });
     }
 
     function updateModelInfo(modelData) {
-      document.getElementById('model-number').textContent = `#${String(modelData.id).padStart(2, '0')}`;
-      document.getElementById('model-name').textContent = modelData.name + '*';
-      
+      document.getElementById('model-name').textContent = modelData.name;
       updateTechSpecs(modelData.specs);
       updateSoftwareIcons(modelData.software);
       
@@ -1385,13 +1315,11 @@
     function loadModelByIndex(index) {
       if (index < 0 || index >= modelsGallery.length) return;
       currentModelIndex = index;
-      
       const modelData = modelsGallery[index];
       updateModelInfo(modelData);
       loadModel(modelData.path);
     }
 
-    // Navegación
     document.getElementById('prev-model').addEventListener('click', () => {
       const newIndex = (currentModelIndex - 1 + modelsGallery.length) % modelsGallery.length;
       loadModelByIndex(newIndex);
@@ -1413,62 +1341,37 @@
     });
 
     // ============================================================
-    // FUNCIONES DE ANIMACIÓN
+    // CONTROLES DE ANIMACIÓN
     // ============================================================
+    const playBtn = document.getElementById('play-btn');
+    const stopBtn = document.getElementById('stop-btn');
+    const resetBtn = document.getElementById('reset-btn');
+    const animSelect = document.getElementById('anim-select');
 
-    function createAnimationControls(clips) {
-      animControls.innerHTML = '';
-      
+    function setupAnimationControls(clips) {
       if (clips.length === 0) {
-        animControls.innerHTML = '<span class="no-animations">Sin animaciones</span>';
+        playBtn.disabled = true;
+        stopBtn.disabled = true;
+        resetBtn.disabled = true;
+        animSelect.disabled = true;
+        animSelect.innerHTML = '<option>Sin animaciones</option>';
         return;
       }
 
-      const playBtn = document.createElement('button');
-      playBtn.className = 'anim-btn';
-      playBtn.id = 'play-btn';
-      playBtn.title = 'Reproducir/Pausar';
-      playBtn.innerHTML = `
-        <svg viewBox="0 0 24 24" id="play-icon">
-          <path d="M6 4l12 8-12 8V4z"/>
-        </svg>
-        <svg viewBox="0 0 24 24" id="pause-icon" style="display:none;">
-          <path d="M6 4h4v16H6V4zm8 0h4v16h-4V4z"/>
-        </svg>
-      `;
-      
-      const stopBtn = document.createElement('button');
-      stopBtn.className = 'anim-btn';
-      stopBtn.title = 'Detener';
-      stopBtn.innerHTML = `<svg viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12"/></svg>`;
+      playBtn.disabled = false;
+      stopBtn.disabled = false;
+      resetBtn.disabled = false;
+      animSelect.disabled = false;
 
-      const select = document.createElement('select');
-      select.className = 'anim-select';
-      select.id = 'anim-select';
-      
+      animSelect.innerHTML = '';
       clips.forEach((clip, index) => {
         const option = document.createElement('option');
         option.value = index;
-        option.textContent = clip.name || `Animación ${index + 1}`;
-        select.appendChild(option);
+        option.textContent = clip.name || `Animation ${index + 1}`;
+        animSelect.appendChild(option);
       });
 
-      const status = document.createElement('span');
-      status.className = 'anim-status';
-      status.id = 'anim-status';
-      status.textContent = 'Reproduciendo';
-
-      animControls.appendChild(playBtn);
-      animControls.appendChild(stopBtn);
-      animControls.appendChild(select);
-      animControls.appendChild(status);
-
-      playBtn.addEventListener('click', togglePlay);
-      stopBtn.addEventListener('click', stopAnimation);
-      select.addEventListener('change', (e) => playAnimation(parseInt(e.target.value)));
-
       playAnimation(0);
-      updatePlayButton();
     }
 
     function playAnimation(index) {
@@ -1485,7 +1388,6 @@
       
       isPlaying = true;
       updatePlayButton();
-      updateStatus('Reproduciendo');
     }
 
     function togglePlay() {
@@ -1494,277 +1396,44 @@
       if (isPlaying) {
         currentAction.paused = true;
         isPlaying = false;
-        updateStatus('Pausado');
       } else {
         currentAction.paused = false;
         isPlaying = true;
-        updateStatus('Reproduciendo');
       }
       updatePlayButton();
     }
 
     function stopAnimation() {
       if (!currentAction) return;
-
       currentAction.stop();
       currentAction.reset();
       isPlaying = false;
       updatePlayButton();
-      updateStatus('Detenido');
+    }
+
+    function resetAnimation() {
+      if (!currentAction) return;
+      currentAction.reset();
+      currentAction.play();
+      isPlaying = true;
+      updatePlayButton();
     }
 
     function updatePlayButton() {
       const playIcon = document.getElementById('play-icon');
       const pauseIcon = document.getElementById('pause-icon');
-      if (playIcon && pauseIcon) {
-        playIcon.style.display = isPlaying ? 'none' : 'block';
-        pauseIcon.style.display = isPlaying ? 'block' : 'none';
-      }
+      playIcon.style.display = isPlaying ? 'none' : 'block';
+      pauseIcon.style.display = isPlaying ? 'block' : 'none';
     }
 
-    function updateStatus(text) {
-      const status = document.getElementById('anim-status');
-      if (status) status.textContent = text;
-    }
-
-    // ============================================================
-    // FUNCIONES DE ILUMINACIÓN HDR
-    // ============================================================
-
-    function loadHDR(hdrName) {
-      const path = hdrPaths[hdrName];
-      
-      if (hdrCache[hdrName]) {
-        applyEnvironment(hdrCache[hdrName]);
-        return;
-      }
-
-      rgbeLoader.load(
-        path,
-        (texture) => {
-          texture.mapping = THREE.EquirectangularReflectionMapping;
-          hdrCache[hdrName] = texture;
-          applyEnvironment(texture);
-        },
-        undefined,
-        (error) => {
-          console.warn(`HDR ${hdrName} no encontrado, usando iluminación simulada`);
-          applySimulatedLighting(hdrName);
-        }
-      );
-    }
-
-    function applyEnvironment(texture) {
-      scene.environment = texture;
-    }
-
-    function applySimulatedLighting(hdrName) {
-      defaultLights.forEach(light => {
-        light.intensity = 0;
-      });
-
-      scene.environment = null;
-
-      const lightConfigs = {
-        studio: {
-          ambient: { color: 0xffffff, intensity: 0.6 },
-          main: { color: 0xffffff, intensity: 1.5, pos: [5, 10, 7] },
-          fill: { color: 0xcccccc, intensity: 0.4, pos: [-5, 5, -5] },
-          rim: { color: 0xffffff, intensity: 0.8, pos: [0, 5, -10] }
-        },
-        sunset: {
-          ambient: { color: 0xffa07a, intensity: 0.4 },
-          main: { color: 0xff8c00, intensity: 2.0, pos: [-8, 3, 5] },
-          fill: { color: 0xff6347, intensity: 0.6, pos: [5, 2, -5] },
-          rim: { color: 0xffd700, intensity: 1.0, pos: [0, 8, -8] }
-        },
-        night: {
-          ambient: { color: 0x1a1a2e, intensity: 0.3 },
-          main: { color: 0x4a69bd, intensity: 1.0, pos: [5, 10, 7] },
-          fill: { color: 0x6c5ce7, intensity: 0.5, pos: [-5, 5, -5] },
-          rim: { color: 0x00cec9, intensity: 0.6, pos: [0, 5, -10] }
-        },
-        forest: {
-          ambient: { color: 0x2d5016, intensity: 0.5 },
-          main: { color: 0x90EE90, intensity: 1.2, pos: [3, 12, 5] },
-          fill: { color: 0x228B22, intensity: 0.4, pos: [-5, 5, -5] },
-          rim: { color: 0xADFF2F, intensity: 0.7, pos: [0, 5, -10] }
-        },
-        city: {
-          ambient: { color: 0x2c3e50, intensity: 0.4 },
-          main: { color: 0x3498db, intensity: 1.3, pos: [5, 10, 7] },
-          fill: { color: 0x9b59b6, intensity: 0.5, pos: [-5, 5, -5] },
-          rim: { color: 0xe74c3c, intensity: 0.6, pos: [0, 5, -10] }
-        },
-        warehouse: {
-          ambient: { color: 0xffffff, intensity: 0.8 },
-          main: { color: 0xffffff, intensity: 1.8, pos: [0, 15, 0] },
-          fill: { color: 0xeeeeee, intensity: 0.6, pos: [-5, 5, -5] },
-          rim: { color: 0xffffff, intensity: 0.4, pos: [0, 5, -10] }
-        }
-      };
-
-      const config = lightConfigs[hdrName] || lightConfigs.studio;
-
-      ambientLight.color.setHex(config.ambient.color);
-      ambientLight.intensity = config.ambient.intensity;
-
-      mainLight.color.setHex(config.main.color);
-      mainLight.intensity = config.main.intensity;
-      mainLight.position.set(...config.main.pos);
-
-      fillLight.color.setHex(config.fill.color);
-      fillLight.intensity = config.fill.intensity;
-      fillLight.position.set(...config.fill.pos);
-
-      rimLight.color.setHex(config.rim.color);
-      rimLight.intensity = config.rim.intensity;
-      rimLight.position.set(...config.rim.pos);
-    }
-
-    const lightButtons = document.querySelectorAll('.light-btn');
-    lightButtons.forEach(btn => {
-      btn.addEventListener('click', () => {
-        lightButtons.forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        const hdrName = btn.dataset.hdr;
-        loadHDR(hdrName);
-      });
-    });
-
-    applySimulatedLighting('studio');
-
-    // ============================================================
-    // AJUSTES HDR AVANZADOS
-    // ============================================================
-
-    const hdrRotationSlider = document.getElementById('hdr-rotation');
-    const hdrExposureSlider = document.getElementById('hdr-exposure');
-    const lightIntensitySlider = document.getElementById('light-intensity');
-    const ambientIntensitySlider = document.getElementById('ambient-intensity');
-    const shadowToggle = document.getElementById('shadow-toggle');
-    const shadowBlurSlider = document.getElementById('shadow-blur');
-    const hdrResetBtn = document.getElementById('hdr-reset');
-
-    let hdrRotation = 0;
-    let baseExposure = 1;
-    let baseLightIntensity = 1;
-    let baseAmbientIntensity = 0.5;
-    let shadowsEnabled = true;
-    let shadowBlur = 2;
-
-    const envRotationPivot = new THREE.Group();
-    scene.add(envRotationPivot);
-
-    hdrRotationSlider.addEventListener('input', (e) => {
-      hdrRotation = parseFloat(e.target.value);
-      document.getElementById('rotation-value').textContent = `${Math.round(hdrRotation)}°`;
-      
-      const radians = THREE.MathUtils.degToRad(hdrRotation);
-      mainLight.position.set(
-        5 * Math.cos(radians) - 7 * Math.sin(radians),
-        10,
-        5 * Math.sin(radians) + 7 * Math.cos(radians)
-      );
-      fillLight.position.set(
-        -5 * Math.cos(radians) + 5 * Math.sin(radians),
-        5,
-        -5 * Math.sin(radians) - 5 * Math.cos(radians)
-      );
-      rimLight.position.set(
-        -10 * Math.sin(radians),
-        5,
-        -10 * Math.cos(radians)
-      );
-
-      if (scene.environment && scene.environment.rotation !== undefined) {
-        scene.environment.rotation = radians;
-      }
-    });
-
-    hdrExposureSlider.addEventListener('input', (e) => {
-      baseExposure = parseFloat(e.target.value);
-      document.getElementById('exposure-value').textContent = baseExposure.toFixed(1);
-      renderer.toneMappingExposure = baseExposure;
-    });
-
-    lightIntensitySlider.addEventListener('input', (e) => {
-      baseLightIntensity = parseFloat(e.target.value);
-      document.getElementById('intensity-value').textContent = baseLightIntensity.toFixed(1);
-      mainLight.intensity = 1.5 * baseLightIntensity;
-      fillLight.intensity = 0.5 * baseLightIntensity;
-      rimLight.intensity = 0.8 * baseLightIntensity;
-    });
-
-    ambientIntensitySlider.addEventListener('input', (e) => {
-      baseAmbientIntensity = parseFloat(e.target.value);
-      document.getElementById('ambient-value').textContent = baseAmbientIntensity.toFixed(1);
-      ambientLight.intensity = baseAmbientIntensity;
-    });
-
-    shadowToggle.addEventListener('click', () => {
-      shadowsEnabled = !shadowsEnabled;
-      shadowToggle.classList.toggle('active', shadowsEnabled);
-      
-      renderer.shadowMap.enabled = shadowsEnabled;
-      mainLight.castShadow = shadowsEnabled;
-      
-      document.getElementById('shadow-settings').style.display = shadowsEnabled ? 'block' : 'none';
-      
-      scene.traverse((obj) => {
-        if (obj.isMesh) {
-          obj.castShadow = shadowsEnabled;
-          obj.receiveShadow = shadowsEnabled;
-        }
-      });
-    });
-
-    shadowBlurSlider.addEventListener('input', (e) => {
-      shadowBlur = parseInt(e.target.value);
-      document.getElementById('shadow-blur-value').textContent = shadowBlur;
-      mainLight.shadow.radius = shadowBlur;
-    });
-
-    hdrResetBtn.addEventListener('click', () => {
-      hdrRotation = 0;
-      baseExposure = 1;
-      baseLightIntensity = 1;
-      baseAmbientIntensity = 0.5;
-      shadowsEnabled = true;
-      shadowBlur = 2;
-
-      hdrRotationSlider.value = 0;
-      hdrExposureSlider.value = 1;
-      lightIntensitySlider.value = 1;
-      ambientIntensitySlider.value = 0.5;
-      shadowBlurSlider.value = 2;
-
-      document.getElementById('rotation-value').textContent = '0°';
-      document.getElementById('exposure-value').textContent = '1.0';
-      document.getElementById('intensity-value').textContent = '1.0';
-      document.getElementById('ambient-value').textContent = '0.5';
-      document.getElementById('shadow-blur-value').textContent = '2';
-
-      renderer.toneMappingExposure = 1;
-      mainLight.intensity = 1.5;
-      fillLight.intensity = 0.5;
-      rimLight.intensity = 0.8;
-      ambientLight.intensity = 0.5;
-      mainLight.position.set(5, 10, 7);
-      fillLight.position.set(-5, 5, -5);
-      rimLight.position.set(0, 5, -10);
-      mainLight.shadow.radius = 2;
-      
-      shadowToggle.classList.add('active');
-      renderer.shadowMap.enabled = true;
-      mainLight.castShadow = true;
-      document.getElementById('shadow-settings').style.display = 'block';
-    });
+    playBtn.addEventListener('click', togglePlay);
+    stopBtn.addEventListener('click', stopAnimation);
+    resetBtn.addEventListener('click', resetAnimation);
+    animSelect.addEventListener('change', (e) => playAnimation(parseInt(e.target.value)));
 
     // ============================================================
     // CARGA DE MODELOS
     // ============================================================
-
     const gltfLoader = new GLTFLoader();
 
     function loadModel(path) {
@@ -1782,7 +1451,6 @@
       }
       animations = [];
       currentAction = null;
-      
       originalMaterials.clear();
 
       gltfLoader.load(
@@ -1816,16 +1484,16 @@
           animations = gltf.animations;
           if (animations && animations.length > 0) {
             mixer = new THREE.AnimationMixer(currentModel);
-            createAnimationControls(animations);
+            setupAnimationControls(animations);
           } else {
-            animControls.innerHTML = '<span class="no-animations">Sin animaciones</span>';
+            setupAnimationControls([]);
           }
 
           currentRenderMode = 'render';
-          document.querySelectorAll('.render-mode-btn').forEach(btn => {
+          document.getElementById('current-render-mode').textContent = 'Composite';
+          document.querySelectorAll('.render-option').forEach(btn => {
             btn.classList.toggle('active', btn.dataset.mode === 'render');
           });
-          document.getElementById('current-mode-label').textContent = 'Render Completo';
 
           camera.position.set(0, 1, 5);
           controls.target.set(0, 0.5, 0);
@@ -1847,8 +1515,8 @@
     // ============================================================
     // INICIALIZACIÓN
     // ============================================================
-
     createGalleryUI();
+    updateLightUI();
     loadModelByIndex(0);
 
     function animate() {
@@ -1856,10 +1524,20 @@
       
       const delta = clock.getDelta();
       if (mixer) mixer.update(delta);
+
+      // FPS counter
+      frameCount++;
+      const currentTime = performance.now();
+      if (currentTime - lastTime >= 1000) {
+        fps = Math.round(frameCount * 1000 / (currentTime - lastTime));
+        document.getElementById('fps-value').textContent = fps;
+        frameCount = 0;
+        lastTime = currentTime;
+      }
       
+      // Grid fade when camera goes below floor
       const cameraY = camera.position.y;
       const targetOpacity = cameraY > 0 ? 1 : 0;
-      
       gridOpacity += (targetOpacity - gridOpacity) * 0.1;
       
       gridHelper.material.opacity = 0.4 * gridOpacity;
@@ -1867,7 +1545,6 @@
       xAxisMaterial.opacity = 0.6 * gridOpacity;
       zAxisMaterial.opacity = 0.6 * gridOpacity;
       groundMaterial.uniforms.uOpacity.value = 0.3 * gridOpacity;
-      
       gridGroup.visible = gridOpacity > 0.01;
       
       controls.update();
