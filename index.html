@@ -36,8 +36,6 @@
       z-index: 1;
     }
 
-    /* Removido el grid overlay CSS, ahora es 3D en Three.js */
-
     .overlay {
       position: absolute;
       top: 0;
@@ -251,21 +249,6 @@
       letter-spacing: 1px;
       opacity: 0.4;
       font-style: italic;
-    }
-
-    /* Título Central Decorativo */
-    .background-text {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      font-size: 180px;
-      font-weight: 900;
-      color: rgba(255, 255, 255, 0.03);
-      letter-spacing: 20px;
-      white-space: nowrap;
-      z-index: 0;
-      user-select: none;
     }
 
     /* Loading */
@@ -637,6 +620,122 @@
       height: 16px;
       fill: #fff;
     }
+
+    /* Visor de mapas de textura - Arriba Centro */
+    .render-mode-panel {
+      position: absolute;
+      top: 30px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 8px;
+      pointer-events: auto;
+      background: rgba(0, 0, 0, 0.5);
+      padding: 8px 12px;
+      border-radius: 30px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+    }
+
+    .render-mode-btn {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      border: 2px solid rgba(255, 255, 255, 0.2);
+      background: rgba(255, 255, 255, 0.05);
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+
+    .render-mode-btn:hover {
+      transform: scale(1.1);
+      border-color: rgba(255, 255, 255, 0.5);
+    }
+
+    .render-mode-btn.active {
+      border-color: #fff;
+      background: rgba(255, 255, 255, 0.15);
+      box-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+    }
+
+    .render-mode-btn svg {
+      width: 16px;
+      height: 16px;
+      fill: #fff;
+    }
+
+    .render-mode-btn::after {
+      content: attr(data-name);
+      position: absolute;
+      top: calc(100% + 10px);
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(0, 0, 0, 0.9);
+      color: #fff;
+      padding: 5px 10px;
+      border-radius: 4px;
+      font-size: 9px;
+      letter-spacing: 1px;
+      white-space: nowrap;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+      text-transform: uppercase;
+    }
+
+    .render-mode-btn:hover::after {
+      opacity: 1;
+    }
+
+    /* Colores representativos de cada modo */
+    .render-mode-btn[data-mode="render"] {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+
+    .render-mode-btn[data-mode="albedo"] {
+      background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    }
+
+    .render-mode-btn[data-mode="roughness"] {
+      background: linear-gradient(135deg, #4a4a4a 0%, #8a8a8a 100%);
+    }
+
+    .render-mode-btn[data-mode="metallic"] {
+      background: linear-gradient(135deg, #c0c0c0 0%, #e8e8e8 100%);
+    }
+
+    .render-mode-btn[data-mode="normal"] {
+      background: linear-gradient(135deg, #8080ff 0%, #ff8080 100%);
+    }
+
+    .render-mode-btn[data-mode="ao"] {
+      background: linear-gradient(135deg, #1a1a1a 0%, #4a4a4a 100%);
+    }
+
+    .render-mode-btn[data-mode="emissive"] {
+      background: linear-gradient(135deg, #ff6b6b 0%, #feca57 100%);
+    }
+
+    .render-mode-btn[data-mode="wireframe"] {
+      background: linear-gradient(135deg, #00d2ff 0%, #3a7bd5 100%);
+    }
+
+    /* Label del modo actual */
+    .current-mode-label {
+      position: absolute;
+      top: 80px;
+      left: 50%;
+      transform: translateX(-50%);
+      color: rgba(255, 255, 255, 0.6);
+      font-size: 11px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      pointer-events: none;
+    }
   </style>
 </head>
 <body>
@@ -645,10 +744,9 @@
       <div class="loading-spinner"></div>
       Cargando modelo...
     </div>
-    <!-- Removido grid overlay HTML, ahora es 3D en la escena -->
   </div>
 
-  <div class="background-text" id="background-text">MODEL</div>
+  <!-- Eliminado el texto de fondo decorativo -->
 
   <div class="overlay">
     <!-- Logo - Arriba Izquierda -->
@@ -659,6 +757,36 @@
         <p>3D Artist Portfolio</p>
       </div>
     </div>
+
+    <!-- Visor de mapas de textura - Arriba Centro -->
+    <div class="render-mode-panel">
+      <button class="render-mode-btn active" data-mode="render" data-name="Render Completo" title="Render Completo">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="12" r="4"/></svg>
+      </button>
+      <button class="render-mode-btn" data-mode="albedo" data-name="Albedo / Base Color" title="Albedo">
+        <svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="12" r="4"/></svg>
+      </button>
+      <button class="render-mode-btn" data-mode="roughness" data-name="Roughness Map" title="Roughness">
+        <svg viewBox="0 0 24 24"><path d="M4 4h16v16H4V4z" fill="none" stroke="currentColor" stroke-width="2"/><path d="M4 12h16M8 4v16M16 4v16" stroke="currentColor" stroke-width="1" opacity="0.5"/></svg>
+      </button>
+      <button class="render-mode-btn" data-mode="metallic" data-name="Metallic Map" title="Metallic">
+        <svg viewBox="0 0 24 24"><polygon points="12,2 22,12 12,22 2,12" fill="none" stroke="currentColor" stroke-width="2"/></svg>
+      </button>
+      <button class="render-mode-btn" data-mode="normal" data-name="Normal Map" title="Normal">
+        <svg viewBox="0 0 24 24"><path d="M12 2L2 22h20L12 2z" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 8v8M8 16h8" stroke="currentColor" stroke-width="2"/></svg>
+      </button>
+      <button class="render-mode-btn" data-mode="ao" data-name="Ambient Occlusion" title="AO">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 2C6.48 2 2 6.48 2 12" stroke="currentColor" stroke-width="4" opacity="0.5"/></svg>
+      </button>
+      <button class="render-mode-btn" data-mode="emissive" data-name="Emissive Map" title="Emissive">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="6"/><path d="M12 2v4M12 18v4M2 12h4M18 12h4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83" stroke="currentColor" stroke-width="2"/></svg>
+      </button>
+      <button class="render-mode-btn" data-mode="wireframe" data-name="Wireframe" title="Wireframe">
+        <svg viewBox="0 0 24 24"><path d="M12 2l10 6v8l-10 6-10-6V8l10-6z" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 2v20M2 8l10 4 10-4M2 16l10-4 10 4" stroke="currentColor" stroke-width="1" opacity="0.5"/></svg>
+      </button>
+    </div>
+
+    <div class="current-mode-label" id="current-mode-label">Render Completo</div>
 
     <!-- Iconos Software - Arriba Derecha -->
     <div class="software-icons" id="software-icons">
@@ -708,7 +836,6 @@
       <button class="nav-arrow" id="prev-model" title="Anterior">
         <svg viewBox="0 0 24 24"><path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></svg>
       </button>
-      <!-- Los items de la galería se generan dinámicamente -->
       <div id="gallery-items" style="display: flex; gap: 15px;"></div>
       <button class="nav-arrow" id="next-model" title="Siguiente">
         <svg viewBox="0 0 24 24"><path d="M8.59 16.59L10 18l6-6-6-6-1.41 1.41L13.17 12z"/></svg>
@@ -798,9 +925,8 @@
         id: 1,
         name: "Rubber Duck",
         path: "./owl.glb",
-        thumbnail: "", // Ruta a imagen de preview (opcional)
-        backgroundText: "OWL",
-        software: ["blender", "substance"], // IDs de software usados
+        thumbnail: "",
+        software: ["blender", "substance"],
         specs: {
           "Polígonos": "12,000 tris",
           "Texturas": "2K PBR",
@@ -812,9 +938,8 @@
       {
         id: 2,
         name: "Character Model",
-        path: "./miles.glb", // Cambia a tu modelo
+        path: "./miles.glb",
         thumbnail: "",
-        backgroundText: "CHARACTER",
         software: ["blender", "zbrush", "substance", "photoshop"],
         specs: {
           "Polígonos": "85,000 tris",
@@ -827,9 +952,8 @@
       {
         id: 3,
         name: "Environment Prop",
-        path: "./ixo.glb", // Cambia a tu modelo
+        path: "./ixo.glb",
         thumbnail: "",
-        backgroundText: "PROP",
         software: ["blender", "photoshop"],
         specs: {
           "Polígonos": "5,200 tris",
@@ -842,9 +966,8 @@
       {
         id: 4,
         name: "Vehicle",
-        path: "/models/vehicle.glb", // Cambia a tu modelo
+        path: "/models/vehicle.glb",
         thumbnail: "",
-        backgroundText: "VEHICLE",
         software: ["blender", "substance", "maya"],
         specs: {
           "Polígonos": "45,000 tris",
@@ -866,12 +989,14 @@
     let isPlaying = true;
     const clock = new THREE.Clock();
 
+    let currentRenderMode = 'render';
+    let originalMaterials = new Map();
+
     // Setup
     const container = document.getElementById('canvas-container');
     const loading = document.getElementById('loading');
     const animControls = document.getElementById('animation-controls');
     const galleryItems = document.getElementById('gallery-items');
-    const backgroundText = document.getElementById('background-text');
 
     // Scene
     const scene = new THREE.Scene();
@@ -900,30 +1025,28 @@
     controls.target.set(0, 0.5, 0);
 
     // ============================================================
+    // GRID 3D
     // ============================================================
     
-    // Grupo contenedor del grid para fácil control de visibilidad
     const gridGroup = new THREE.Group();
     scene.add(gridGroup);
 
-    // Grid principal - líneas finas
     const gridSize = 20;
     const gridDivisions = 20;
     const gridHelper = new THREE.GridHelper(
       gridSize, 
       gridDivisions, 
-      0x444444,  // Color de líneas centrales
-      0x2a2a2a   // Color de líneas secundarias
+      0x444444,
+      0x2a2a2a
     );
     gridHelper.position.y = 0;
     gridHelper.material.opacity = 0.4;
     gridHelper.material.transparent = true;
     gridGroup.add(gridHelper);
 
-    // Grid secundario más fino
     const gridHelperFine = new THREE.GridHelper(
       gridSize, 
-      gridDivisions * 4,  // 4x más divisiones 
+      gridDivisions * 4,
       0x333333, 
       0x1a1a1a
     );
@@ -932,10 +1055,8 @@
     gridHelperFine.material.transparent = true;
     gridGroup.add(gridHelperFine);
 
-    // Ejes de coordenadas (X rojo, Z azul)
     const axisLength = gridSize / 2;
     
-    // Eje X (rojo)
     const xAxisGeometry = new THREE.BufferGeometry().setFromPoints([
       new THREE.Vector3(-axisLength, 0.01, 0),
       new THREE.Vector3(axisLength, 0.01, 0)
@@ -948,7 +1069,6 @@
     const xAxis = new THREE.Line(xAxisGeometry, xAxisMaterial);
     gridGroup.add(xAxis);
 
-    // Eje Z (azul)
     const zAxisGeometry = new THREE.BufferGeometry().setFromPoints([
       new THREE.Vector3(0, 0.01, -axisLength),
       new THREE.Vector3(0, 0.01, axisLength)
@@ -961,7 +1081,6 @@
     const zAxis = new THREE.Line(zAxisGeometry, zAxisMaterial);
     gridGroup.add(zAxis);
 
-    // Plano de suelo semi-transparente con fade radial
     const groundGeometry = new THREE.PlaneGeometry(gridSize, gridSize, 1, 1);
     const groundMaterial = new THREE.ShaderMaterial({
       uniforms: {
@@ -995,19 +1114,17 @@
     });
     const groundPlane = new THREE.Mesh(groundGeometry, groundMaterial);
     groundPlane.rotation.x = -Math.PI / 2;
-    groundPlane.position.y = 0;
+    groundPlane.position.y = -0.01;
     groundPlane.receiveShadow = true;
     gridGroup.add(groundPlane);
 
-    // Variable para controlar la visibilidad del grid
     let gridVisible = true;
     let gridOpacity = 1;
 
     // ============================================================
-    // FIN GRID 3D
+    // LUCES
     // ============================================================
 
-    // HDR paths
     const hdrPaths = {
       studio: 'studio.hdr',
       sunset: 'sunset.hdr',
@@ -1020,7 +1137,6 @@
     const hdrCache = {};
     const rgbeLoader = new RGBELoader();
 
-    // Luces por defecto
     const defaultLights = [];
 
     const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
@@ -1054,6 +1170,157 @@
     defaultLights.push(rimLight);
 
     // ============================================================
+    // ============================================================
+
+    function setRenderMode(mode) {
+      if (!currentModel) return;
+      
+      currentRenderMode = mode;
+      document.getElementById('current-mode-label').textContent = getModeLabel(mode);
+
+      // Actualizar botones activos
+      document.querySelectorAll('.render-mode-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.mode === mode);
+      });
+
+      currentModel.traverse((child) => {
+        if (child.isMesh) {
+          // Restaurar material original primero
+          if (originalMaterials.has(child.uuid)) {
+            child.material = originalMaterials.get(child.uuid);
+          }
+
+          const originalMat = child.material;
+
+          switch (mode) {
+            case 'render':
+              // Ya restaurado arriba
+              child.material.wireframe = false;
+              break;
+
+            case 'albedo':
+              if (originalMat.map) {
+                child.material = new THREE.MeshBasicMaterial({
+                  map: originalMat.map,
+                  side: originalMat.side
+                });
+              } else if (originalMat.color) {
+                child.material = new THREE.MeshBasicMaterial({
+                  color: originalMat.color,
+                  side: originalMat.side
+                });
+              }
+              break;
+
+            case 'roughness':
+              if (originalMat.roughnessMap) {
+                child.material = new THREE.MeshBasicMaterial({
+                  map: originalMat.roughnessMap,
+                  side: originalMat.side
+                });
+              } else {
+                const roughnessValue = originalMat.roughness !== undefined ? originalMat.roughness : 0.5;
+                child.material = new THREE.MeshBasicMaterial({
+                  color: new THREE.Color(roughnessValue, roughnessValue, roughnessValue),
+                  side: originalMat.side
+                });
+              }
+              break;
+
+            case 'metallic':
+              if (originalMat.metalnessMap) {
+                child.material = new THREE.MeshBasicMaterial({
+                  map: originalMat.metalnessMap,
+                  side: originalMat.side
+                });
+              } else {
+                const metalnessValue = originalMat.metalness !== undefined ? originalMat.metalness : 0;
+                child.material = new THREE.MeshBasicMaterial({
+                  color: new THREE.Color(metalnessValue, metalnessValue, metalnessValue),
+                  side: originalMat.side
+                });
+              }
+              break;
+
+            case 'normal':
+              if (originalMat.normalMap) {
+                child.material = new THREE.MeshBasicMaterial({
+                  map: originalMat.normalMap,
+                  side: originalMat.side
+                });
+              } else {
+                child.material = new THREE.MeshBasicMaterial({
+                  color: 0x8080ff, // Color azul típico de normal map plano
+                  side: originalMat.side
+                });
+              }
+              break;
+
+            case 'ao':
+              if (originalMat.aoMap) {
+                child.material = new THREE.MeshBasicMaterial({
+                  map: originalMat.aoMap,
+                  side: originalMat.side
+                });
+              } else {
+                child.material = new THREE.MeshBasicMaterial({
+                  color: 0xffffff,
+                  side: originalMat.side
+                });
+              }
+              break;
+
+            case 'emissive':
+              if (originalMat.emissiveMap) {
+                child.material = new THREE.MeshBasicMaterial({
+                  map: originalMat.emissiveMap,
+                  side: originalMat.side
+                });
+              } else if (originalMat.emissive) {
+                child.material = new THREE.MeshBasicMaterial({
+                  color: originalMat.emissive,
+                  side: originalMat.side
+                });
+              } else {
+                child.material = new THREE.MeshBasicMaterial({
+                  color: 0x000000,
+                  side: originalMat.side
+                });
+              }
+              break;
+
+            case 'wireframe':
+              child.material = originalMaterials.get(child.uuid).clone();
+              child.material.wireframe = true;
+              break;
+          }
+        }
+      });
+    }
+
+    function getModeLabel(mode) {
+      const labels = {
+        'render': 'Render Completo',
+        'albedo': 'Albedo / Base Color',
+        'roughness': 'Roughness Map',
+        'metallic': 'Metallic Map',
+        'normal': 'Normal Map',
+        'ao': 'Ambient Occlusion',
+        'emissive': 'Emissive Map',
+        'wireframe': 'Wireframe'
+      };
+      return labels[mode] || mode;
+    }
+
+    // Event listeners para botones de modo
+    document.querySelectorAll('.render-mode-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        setRenderMode(btn.dataset.mode);
+      });
+    });
+
+    // ============================================================
+    // GALERÍA Y UI
     // ============================================================
 
     function createGalleryUI() {
@@ -1106,12 +1373,10 @@
     function updateModelInfo(modelData) {
       document.getElementById('model-number').textContent = `#${String(modelData.id).padStart(2, '0')}`;
       document.getElementById('model-name').textContent = modelData.name + '*';
-      backgroundText.textContent = modelData.backgroundText || 'MODEL';
       
       updateTechSpecs(modelData.specs);
       updateSoftwareIcons(modelData.software);
       
-      // Actualizar galería activa
       document.querySelectorAll('.gallery-item').forEach((item, index) => {
         item.classList.toggle('active', index === currentModelIndex);
       });
@@ -1137,7 +1402,6 @@
       loadModelByIndex(newIndex);
     });
 
-    // Atajos de teclado
     document.addEventListener('keydown', (e) => {
       if (e.key === 'ArrowLeft') {
         const newIndex = (currentModelIndex - 1 + modelsGallery.length) % modelsGallery.length;
@@ -1371,9 +1635,7 @@
     applySimulatedLighting('studio');
 
     // ============================================================
-    // ============================================================
-
-    // ============================================================
+    // AJUSTES HDR AVANZADOS
     // ============================================================
 
     const hdrRotationSlider = document.getElementById('hdr-rotation');
@@ -1384,7 +1646,6 @@
     const shadowBlurSlider = document.getElementById('shadow-blur');
     const hdrResetBtn = document.getElementById('hdr-reset');
 
-    // Variables de estado HDR
     let hdrRotation = 0;
     let baseExposure = 1;
     let baseLightIntensity = 1;
@@ -1392,16 +1653,13 @@
     let shadowsEnabled = true;
     let shadowBlur = 2;
 
-    // Pivot para rotar el HDR environment
     const envRotationPivot = new THREE.Group();
     scene.add(envRotationPivot);
 
-    // Slider: Rotación HDR
     hdrRotationSlider.addEventListener('input', (e) => {
       hdrRotation = parseFloat(e.target.value);
       document.getElementById('rotation-value').textContent = `${Math.round(hdrRotation)}°`;
       
-      // Rotar las luces para simular rotación del HDR
       const radians = THREE.MathUtils.degToRad(hdrRotation);
       mainLight.position.set(
         5 * Math.cos(radians) - 7 * Math.sin(radians),
@@ -1419,20 +1677,17 @@
         -10 * Math.cos(radians)
       );
 
-      // Si hay un HDR real cargado, rotar su mapeo
       if (scene.environment && scene.environment.rotation !== undefined) {
         scene.environment.rotation = radians;
       }
     });
 
-    // Slider: Exposición
     hdrExposureSlider.addEventListener('input', (e) => {
       baseExposure = parseFloat(e.target.value);
       document.getElementById('exposure-value').textContent = baseExposure.toFixed(1);
       renderer.toneMappingExposure = baseExposure;
     });
 
-    // Slider: Intensidad de luz principal
     lightIntensitySlider.addEventListener('input', (e) => {
       baseLightIntensity = parseFloat(e.target.value);
       document.getElementById('intensity-value').textContent = baseLightIntensity.toFixed(1);
@@ -1441,14 +1696,12 @@
       rimLight.intensity = 0.8 * baseLightIntensity;
     });
 
-    // Slider: Intensidad ambiente
     ambientIntensitySlider.addEventListener('input', (e) => {
       baseAmbientIntensity = parseFloat(e.target.value);
       document.getElementById('ambient-value').textContent = baseAmbientIntensity.toFixed(1);
       ambientLight.intensity = baseAmbientIntensity;
     });
 
-    // Toggle: Sombras
     shadowToggle.addEventListener('click', () => {
       shadowsEnabled = !shadowsEnabled;
       shadowToggle.classList.toggle('active', shadowsEnabled);
@@ -1456,10 +1709,8 @@
       renderer.shadowMap.enabled = shadowsEnabled;
       mainLight.castShadow = shadowsEnabled;
       
-      // Mostrar/ocultar slider de suavidad de sombra
       document.getElementById('shadow-settings').style.display = shadowsEnabled ? 'block' : 'none';
       
-      // Forzar actualización de sombras en todos los objetos
       scene.traverse((obj) => {
         if (obj.isMesh) {
           obj.castShadow = shadowsEnabled;
@@ -1468,16 +1719,13 @@
       });
     });
 
-    // Slider: Suavidad de sombra
     shadowBlurSlider.addEventListener('input', (e) => {
       shadowBlur = parseInt(e.target.value);
       document.getElementById('shadow-blur-value').textContent = shadowBlur;
       mainLight.shadow.radius = shadowBlur;
     });
 
-    // Botón Reset
     hdrResetBtn.addEventListener('click', () => {
-      // Restablecer valores
       hdrRotation = 0;
       baseExposure = 1;
       baseLightIntensity = 1;
@@ -1485,21 +1733,18 @@
       shadowsEnabled = true;
       shadowBlur = 2;
 
-      // Actualizar sliders
       hdrRotationSlider.value = 0;
       hdrExposureSlider.value = 1;
       lightIntensitySlider.value = 1;
       ambientIntensitySlider.value = 0.5;
       shadowBlurSlider.value = 2;
 
-      // Actualizar labels
       document.getElementById('rotation-value').textContent = '0°';
       document.getElementById('exposure-value').textContent = '1.0';
       document.getElementById('intensity-value').textContent = '1.0';
       document.getElementById('ambient-value').textContent = '0.5';
       document.getElementById('shadow-blur-value').textContent = '2';
 
-      // Aplicar valores
       renderer.toneMappingExposure = 1;
       mainLight.intensity = 1.5;
       fillLight.intensity = 0.5;
@@ -1510,15 +1755,11 @@
       rimLight.position.set(0, 5, -10);
       mainLight.shadow.radius = 2;
       
-      // Restablecer sombras
       shadowToggle.classList.add('active');
       renderer.shadowMap.enabled = true;
       mainLight.castShadow = true;
       document.getElementById('shadow-settings').style.display = 'block';
     });
-
-    // ============================================================
-    // ============================================================
 
     // ============================================================
     // CARGA DE MODELOS
@@ -1530,26 +1771,25 @@
       loading.style.display = 'block';
       loading.innerHTML = `<div class="loading-spinner"></div>Cargando modelo...`;
 
-      // Limpiar modelo anterior
       if (currentModel) {
         scene.remove(currentModel);
         currentModel = null;
       }
 
-      // Limpiar animaciones anteriores
       if (mixer) {
         mixer.stopAllAction();
         mixer = null;
       }
       animations = [];
       currentAction = null;
+      
+      originalMaterials.clear();
 
       gltfLoader.load(
         path,
         (gltf) => {
           currentModel = gltf.scene;
           
-          // Centrar y escalar el modelo
           const box = new THREE.Box3().setFromObject(currentModel);
           const center = box.getCenter(new THREE.Vector3());
           const size = box.getSize(new THREE.Vector3());
@@ -1566,13 +1806,13 @@
             if (child.isMesh) {
               child.castShadow = shadowsEnabled;
               child.receiveShadow = shadowsEnabled;
+              originalMaterials.set(child.uuid, child.material.clone());
             }
           });
           
           scene.add(currentModel);
           loading.style.display = 'none';
 
-          // Configurar animaciones
           animations = gltf.animations;
           if (animations && animations.length > 0) {
             mixer = new THREE.AnimationMixer(currentModel);
@@ -1581,7 +1821,12 @@
             animControls.innerHTML = '<span class="no-animations">Sin animaciones</span>';
           }
 
-          // Resetear cámara
+          currentRenderMode = 'render';
+          document.querySelectorAll('.render-mode-btn').forEach(btn => {
+            btn.classList.toggle('active', btn.dataset.mode === 'render');
+          });
+          document.getElementById('current-mode-label').textContent = 'Render Completo';
+
           camera.position.set(0, 1, 5);
           controls.target.set(0, 0.5, 0);
           controls.update();
@@ -1600,9 +1845,6 @@
     }
 
     // ============================================================
-    // ============================================================
-
-    // ============================================================
     // INICIALIZACIÓN
     // ============================================================
 
@@ -1615,21 +1857,17 @@
       const delta = clock.getDelta();
       if (mixer) mixer.update(delta);
       
-      // El grid desaparece cuando la cámara está por debajo del nivel del suelo (y=0)
       const cameraY = camera.position.y;
       const targetOpacity = cameraY > 0 ? 1 : 0;
       
-      // Transición suave de opacidad
       gridOpacity += (targetOpacity - gridOpacity) * 0.1;
       
-      // Aplicar opacidad a todos los elementos del grid
       gridHelper.material.opacity = 0.4 * gridOpacity;
       gridHelperFine.material.opacity = 0.2 * gridOpacity;
       xAxisMaterial.opacity = 0.6 * gridOpacity;
       zAxisMaterial.opacity = 0.6 * gridOpacity;
       groundMaterial.uniforms.uOpacity.value = 0.3 * gridOpacity;
       
-      // Ocultar completamente si la opacidad es muy baja
       gridGroup.visible = gridOpacity > 0.01;
       
       controls.update();
@@ -1637,7 +1875,6 @@
     }
     animate();
 
-    // Resize handler
     window.addEventListener('resize', () => {
       camera.aspect = window.innerWidth / window.innerHeight;
       camera.updateProjectionMatrix();
