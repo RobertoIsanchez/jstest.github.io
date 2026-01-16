@@ -590,6 +590,286 @@
       opacity: 0.4;
       font-style: italic;
     }
+
+    /* ============================================
+       RESPONSIVE MOBILE STYLES
+    ============================================ */
+    @media (max-width: 768px) {
+      .overlay {
+        padding: 16px;
+      }
+
+      /* Model info - Top left on mobile */
+      .model-info {
+        position: absolute;
+        top: 16px;
+        left: 16px;
+        bottom: auto;
+      }
+
+      .model-name {
+        font-size: 20px;
+        margin-bottom: 6px;
+        order: -1;
+      }
+
+      .software-icons {
+        margin-bottom: 10px;
+      }
+
+      .tech-specs {
+        margin-bottom: 12px;
+      }
+
+      /* Controls hint - Below model info on mobile */
+      .controls-hint {
+        position: absolute;
+        top: auto;
+        bottom: auto;
+        top: 130px;
+        left: 16px;
+        right: auto;
+        text-align: left;
+        font-size: 10px;
+      }
+
+      /* Render dropdown - Top right */
+      .render-dropdown-container {
+        top: 16px;
+        right: 16px;
+      }
+
+      .render-dropdown-btn {
+        min-width: 120px;
+        padding: 8px 12px;
+        font-size: 12px;
+      }
+
+      .render-dropdown-menu {
+        min-width: 120px;
+      }
+
+      .render-option {
+        padding: 8px 12px;
+        font-size: 12px;
+      }
+
+      /* Animation panel - Below the 3D model */
+      .animation-panel {
+        top: auto;
+        bottom: 200px;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 8px;
+      }
+
+      .anim-btn {
+        width: 32px;
+        height: 32px;
+      }
+
+      .anim-btn svg {
+        width: 12px;
+        height: 12px;
+      }
+
+      .anim-select {
+        min-width: 120px;
+        padding: 6px 28px 6px 10px;
+        font-size: 11px;
+      }
+
+      .fps-display {
+        font-size: 11px;
+        min-width: 50px;
+      }
+
+      /* Lighting panel - Bottom horizontal layout */
+      .lighting-panel {
+        position: absolute;
+        top: auto;
+        bottom: 100px;
+        left: 16px;
+        right: 16px;
+        display: flex;
+        align-items: flex-start;
+        gap: 16px;
+        background: rgba(0,0,0,0.4);
+        border-radius: 12px;
+        padding: 12px;
+        backdrop-filter: blur(10px);
+      }
+
+      .lighting-header {
+        display: none;
+      }
+
+      .light-type-selector {
+        flex-direction: column;
+        gap: 6px;
+        margin-bottom: 0;
+        flex-shrink: 0;
+      }
+
+      .light-nav-btn {
+        width: 24px;
+        height: 24px;
+      }
+
+      .light-nav-btn svg {
+        width: 12px;
+        height: 12px;
+      }
+
+      .light-icon-container {
+        width: 48px;
+        height: 48px;
+      }
+
+      .light-icon-container svg {
+        width: 24px;
+        height: 24px;
+      }
+
+      .light-type-name {
+        font-size: 9px;
+        letter-spacing: 2px;
+        margin-bottom: 0;
+        width: auto;
+        text-align: center;
+      }
+
+      /* Mobile light type with arrows on sides */
+      .light-type-mobile {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 4px;
+      }
+
+      .light-arrows-mobile {
+        display: flex;
+        gap: 4px;
+      }
+
+      /* Sliders in grid layout */
+      .sliders-container {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 8px 16px;
+        flex: 1;
+      }
+
+      .slider-group {
+        margin-bottom: 0;
+      }
+
+      .slider-label {
+        font-size: 8px;
+        margin-bottom: 4px;
+      }
+
+      .slider {
+        width: 100%;
+      }
+
+      /* Shadow controls on right */
+      .shadow-container {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        flex-shrink: 0;
+      }
+
+      .shadow-row {
+        margin-top: 0;
+        padding-top: 0;
+        border-top: none;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 4px;
+      }
+
+      .shadow-label {
+        font-size: 8px;
+      }
+
+      #shadow-settings {
+        margin-top: 0 !important;
+      }
+
+      #shadow-settings .slider-label {
+        font-size: 8px;
+      }
+
+      /* Gallery - Bottom center */
+      .model-gallery {
+        bottom: 16px;
+        gap: 8px;
+      }
+
+      .gallery-nav {
+        width: 32px;
+        height: 32px;
+      }
+
+      .gallery-nav svg {
+        width: 14px;
+        height: 14px;
+      }
+
+      .gallery-item {
+        width: 48px;
+        height: 48px;
+      }
+
+      .gallery-number {
+        font-size: 14px;
+      }
+    }
+
+    /* Very small screens */
+    @media (max-width: 480px) {
+      .model-name {
+        font-size: 18px;
+      }
+
+      .gallery-item {
+        width: 40px;
+        height: 40px;
+      }
+
+      .gallery-number {
+        font-size: 12px;
+      }
+
+      .lighting-panel {
+        padding: 10px;
+        gap: 12px;
+      }
+
+      .light-icon-container {
+        width: 40px;
+        height: 40px;
+      }
+
+      .light-icon-container svg {
+        width: 20px;
+        height: 20px;
+      }
+
+      .sliders-container {
+        gap: 6px 12px;
+      }
+
+      .animation-panel {
+        bottom: 180px;
+      }
+
+      .anim-select {
+        min-width: 100px;
+      }
+    }
   </style>
 </head>
 <body>
@@ -601,64 +881,73 @@
   </div>
 
   <div class="overlay">
-    <!-- PANEL DE ILUMINACIÓN - ARRIBA IZQUIERDA -->
+    <!-- PANEL DE ILUMINACIÓN - ARRIBA IZQUIERDA (ABAJO EN MOBILE) -->
+    <!-- Restructured for mobile horizontal layout -->
     <div class="lighting-panel">
       <div class="lighting-header">Light Type</div>
       
-      <div class="light-type-selector">
-        <button class="light-nav-btn" id="prev-light">
-          <svg viewBox="0 0 24 24"><path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></svg>
-        </button>
-        <div class="light-icon-container" id="light-icon">
-          <svg viewBox="0 0 24 24" id="light-svg">
-            <circle cx="12" cy="12" r="5"/>
-            <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
-          </svg>
+      <!-- Light type selector with icon -->
+      <div class="light-type-mobile">
+        <div class="light-type-selector">
+          <button class="light-nav-btn" id="prev-light">
+            <svg viewBox="0 0 24 24"><path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></svg>
+          </button>
+          <div class="light-icon-container" id="light-icon">
+            <svg viewBox="0 0 24 24" id="light-svg">
+              <circle cx="12" cy="12" r="5"/>
+              <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
+            </svg>
+          </div>
+          <button class="light-nav-btn" id="next-light">
+            <svg viewBox="0 0 24 24"><path d="M8.59 16.59L10 18l6-6-6-6-1.41 1.41L13.17 12z"/></svg>
+          </button>
         </div>
-        <button class="light-nav-btn" id="next-light">
-          <svg viewBox="0 0 24 24"><path d="M8.59 16.59L10 18l6-6-6-6-1.41 1.41L13.17 12z"/></svg>
-        </button>
+        <div class="light-type-name" id="light-name">STUDIO</div>
       </div>
 
-      <div class="light-type-name" id="light-name">STUDIO</div>
+      <!-- Sliders container for grid layout on mobile -->
+      <div class="sliders-container">
+        <div class="slider-group">
+          <span class="slider-label">Rotation</span>
+          <div class="slider-row">
+            <input type="range" class="slider" id="hdr-rotation" min="0" max="360" value="0">
+          </div>
+        </div>
 
-      <div class="slider-group">
-        <span class="slider-label">Rotation</span>
-        <div class="slider-row">
-          <input type="range" class="slider" id="hdr-rotation" min="0" max="360" value="0">
+        <div class="slider-group">
+          <span class="slider-label">Exposure</span>
+          <div class="slider-row">
+            <input type="range" class="slider" id="hdr-exposure" min="0.1" max="3" value="1" step="0.1">
+          </div>
+        </div>
+
+        <div class="slider-group">
+          <span class="slider-label">Intensity</span>
+          <div class="slider-row">
+            <input type="range" class="slider" id="light-intensity" min="0" max="3" value="1" step="0.1">
+          </div>
+        </div>
+
+        <div class="slider-group">
+          <span class="slider-label">Ambient</span>
+          <div class="slider-row">
+            <input type="range" class="slider" id="ambient-intensity" min="0" max="2" value="0.5" step="0.1">
+          </div>
         </div>
       </div>
 
-      <div class="slider-group">
-        <span class="slider-label">Exposure</span>
-        <div class="slider-row">
-          <input type="range" class="slider" id="hdr-exposure" min="0.1" max="3" value="1" step="0.1">
+      <!-- Shadow controls container -->
+      <div class="shadow-container">
+        <div class="shadow-row">
+          <span class="shadow-label">Shadows</span>
+          <div class="toggle-switch active" id="shadow-toggle"></div>
         </div>
-      </div>
 
-      <div class="slider-group">
-        <span class="slider-label">Intensity</span>
-        <div class="slider-row">
-          <input type="range" class="slider" id="light-intensity" min="0" max="3" value="1" step="0.1">
-        </div>
-      </div>
-
-      <div class="slider-group">
-        <span class="slider-label">Ambient</span>
-        <div class="slider-row">
-          <input type="range" class="slider" id="ambient-intensity" min="0" max="2" value="0.5" step="0.1">
-        </div>
-      </div>
-
-      <div class="shadow-row">
-        <span class="shadow-label">Shadows</span>
-        <div class="toggle-switch active" id="shadow-toggle"></div>
-      </div>
-
-      <div class="slider-group" id="shadow-settings" style="margin-top: 12px;">
-        <span class="slider-label">Softness</span>
-        <div class="slider-row">
-          <input type="range" class="slider" id="shadow-blur" min="0" max="10" value="2" step="1">
+        <div class="slider-group" id="shadow-settings">
+          <span class="slider-label">Softness</span>
+          <div class="slider-row">
+            <input type="range" class="slider" id="shadow-blur" min="0" max="10" value="2" step="1">
+          </div>
         </div>
       </div>
     </div>
@@ -693,13 +982,13 @@
         <button class="render-option" data-mode="metallic">Metallic</button>
         <button class="render-option" data-mode="roughness">Roughness</button>
         <button class="render-option" data-mode="normal">Normal</button>
-        <button class="render-option" data-mode="ao">Ambient Occlusion</button>
+        <button class="render-option" data-mode="ao">AO</button>
         <button class="render-option" data-mode="emissive">Emissive</button>
         <button class="render-option" data-mode="wireframe">Wireframe</button>
       </div>
     </div>
 
-    <!-- INFO DEL MODELO - ABAJO IZQUIERDA -->
+    <!-- INFO DEL MODELO - ABAJO IZQUIERDA (ARRIBA EN MOBILE) -->
     <div class="model-info">
       <div class="tech-specs" id="tech-specs"></div>
       <div class="model-name" id="model-name">Character Name</div>
@@ -736,7 +1025,7 @@
       </button>
     </div>
 
-    <!-- HINTS DE CONTROLES - ABAJO DERECHA -->
+    <!-- HINTS DE CONTROLES - ABAJO DERECHA (ARRIBA EN MOBILE) -->
     <div class="controls-hint">
       Arrastra para rotar<br>
       Scroll para zoom
@@ -755,7 +1044,7 @@
     const modelsGallery = [
       {
         id: 1,
-        name: "OWL",
+        name: "Rubber Duck",
         path: "./owl.glb",
         thumbnail: "",
         software: ["blender", "substance"],
