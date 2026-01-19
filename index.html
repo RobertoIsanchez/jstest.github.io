@@ -1814,6 +1814,7 @@
       const delta = clock.getDelta();
       if (mixer) mixer.update(delta);
 
+      /*
       // FPS counter
       frameCount++;
       const currentTime = performance.now();
@@ -1823,6 +1824,7 @@
         frameCount = 0;
         lastTime = currentTime;
       }
+      */
       
       // Grid fade when camera goes below floor
       const cameraY = camera.position.y;
