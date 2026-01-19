@@ -684,7 +684,10 @@
         min-width: 50px;
       }
 
-      /* Lighting panel - Bottom controls (sliders/shadows) */
+      /* Lighting panel - Bottom controls (sliders/shadows)
+         Nota: en algunos móviles (Safari/Chrome iOS) un ancestro con backdrop-filter
+         puede hacer que los hijos con position: fixed se comporten como absolute.
+         Para evitarlo (sin cambiar el look), movemos el blur a un ::before. */
       .lighting-panel {
         position: absolute;
         top: auto;
@@ -694,10 +697,30 @@
         display: flex;
         align-items: flex-start;
         gap: 16px;
-        background: rgba(0,0,0,0.4);
         border-radius: 12px;
         padding: 12px;
+        background: transparent;
+        backdrop-filter: none;
+        -webkit-backdrop-filter: none;
+      }
+
+      .lighting-panel::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: rgba(0,0,0,0.4);
+        border-radius: 12px;
         backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        pointer-events: none;
+        z-index: 0;
+      }
+
+      /* Asegura que sliders/shadow queden por encima del fondo */
+      .sliders-container,
+      .shadow-container {
+        position: relative;
+        z-index: 1;
       }
 
       /* Render dropdown debe quedar por encima cuando esté abierto */
@@ -1066,7 +1089,7 @@
     const modelsGallery = [
       {
         id: 1,
-        name: "OWL",
+        name: "Rubber Duck",
         path: "./owl.glb",
         thumbnail: "",
         software: ["blender", "substance"],
