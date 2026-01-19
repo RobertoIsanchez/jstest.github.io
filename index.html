@@ -290,18 +290,6 @@
       background: #1a1a1a;
       color: #fff;
     }
-
-    .fps-display {
-      font-size: 12px;
-      color: rgba(255,255,255,0.5);
-      font-family: monospace;
-      min-width: 60px;
-    }
-
-    .fps-display span {
-      color: #fff;
-    }
-
     /* ============================================
        DROPDOWN DE RENDER MODE - ARRIBA DERECHA
     ============================================ */
@@ -678,12 +666,6 @@
         padding: 6px 28px 6px 10px;
         font-size: 11px;
       }
-
-      .fps-display {
-        font-size: 11px;
-        min-width: 50px;
-      }
-
       /* Lighting panel - Bottom controls (sliders/shadows)
          Nota: en algunos móviles (Safari/Chrome iOS) un ancestro con backdrop-filter
          puede hacer que los hijos con position: fixed se comporten como absolute.
@@ -1012,7 +994,6 @@
       <select class="anim-select" id="anim-select" disabled>
         <option>Sin animaciones</option>
       </select>
-      <div class="fps-display">FPS <span id="fps-value">0</span></div>
     </div>
 
     <!-- DROPDOWN DE RENDER MODE - ARRIBA DERECHA -->
@@ -1081,6 +1062,7 @@
     import * as THREE from 'three';
     import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
     import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+    import { SkeletonUtils } from 'three/addons/utils/SkeletonUtils.js';
     import { RGBELoader } from 'three/addons/loaders/RGBELoader.js';
 
     // ============================================================
@@ -1170,11 +1152,6 @@
     let currentRenderMode = 'composite';
     let originalMaterials = new Map();
     let currentLightIndex = 0;
-
-    // FPS counter
-    let frameCount = 0;
-    let lastTime = performance.now();
-    let fps = 0;
 
     // ============================================================
     // SETUP ESCENA
@@ -1774,11 +1751,93 @@
     animSelect.addEventListener('change', (e) => playAnimation(parseInt(e.target.value)));
 
     // ============================================================
-    // CARGA DE MODELOS
+    // CARGA DE MODELOS (CACHE + PRECARGA)
     // ============================================================
     const gltfLoader = new GLTFLoader();
 
-    function loadModel(path) {
+    // Cache de GLTF por ruta para que el cambio de modelo sea mucho más inmediato
+    // path -> { promise: Promise<GLTF>, listeners: Set<(progress) => void> }
+    const gltfCache = new Map();
+
+    // Token para ignorar cargas antiguas si el usuario cambia rápido de modelo
+    let modelLoadToken = 0;
+
+    // Precarga en cadena (1 a la vez) para evitar tirones en móviles
+    let preloadChain = Promise.resolve();
+
+    function requestIdle(fn) {
+      if ('requestIdleCallback' in window) {
+        window.requestIdleCallback(fn, { timeout: 1200 });
+      } else {
+        setTimeout(fn, 250);
+      }
+    }
+
+    function getOrCreateGLTFEntry(path) {
+      if (gltfCache.has(path)) return gltfCache.get(path);
+
+      const entry = {
+        listeners: new Set(),
+        promise: null
+      };
+
+      entry.promise = new Promise((resolve, reject) => {
+        gltfLoader.load(
+          path,
+          (gltf) => resolve(gltf),
+          (progress) => {
+            entry.listeners.forEach((fn) => {
+              try { fn(progress); } catch (_) {}
+            });
+          },
+          (err) => {
+            // Si falla, borramos del cache para permitir reintento
+            gltfCache.delete(path);
+            reject(err);
+          }
+        );
+      });
+
+      gltfCache.set(path, entry);
+      return entry;
+    }
+
+    function loadGLTFCached(path, onProgress) {
+      const entry = getOrCreateGLTFEntry(path);
+
+      if (typeof onProgress === 'function') {
+        entry.listeners.add(onProgress);
+        entry.promise.finally(() => entry.listeners.delete(onProgress));
+      }
+
+      return entry.promise;
+    }
+
+    function schedulePreload(path) {
+      if (!path) return;
+      preloadChain = preloadChain.then(() => loadGLTFCached(path).catch(() => {}));
+      return preloadChain;
+    }
+
+    function preloadNeighborModels(index) {
+      if (!modelsGallery.length) return;
+
+      const nextIndex = (index + 1) % modelsGallery.length;
+      const prevIndex = (index - 1 + modelsGallery.length) % modelsGallery.length;
+
+      const nextPath = modelsGallery[nextIndex]?.path;
+      const prevPath = modelsGallery[prevIndex]?.path;
+
+      requestIdle(() => {
+        // Precarga suave: siguiente y anterior (en ese orden)
+        schedulePreload(nextPath);
+        schedulePreload(prevPath);
+      });
+    }
+
+    async function loadModel(path) {
+      const token = ++modelLoadToken;
+
       loading.style.display = 'block';
       loading.innerHTML = `<div class="loading-spinner"></div>Cargando modelo...`;
 
@@ -1795,63 +1854,71 @@
       currentAction = null;
       originalMaterials.clear();
 
-      gltfLoader.load(
-        path,
-        (gltf) => {
-          currentModel = gltf.scene;
-          
-          const box = new THREE.Box3().setFromObject(currentModel);
-          const center = box.getCenter(new THREE.Vector3());
-          const size = box.getSize(new THREE.Vector3());
-          
-          const maxDim = Math.max(size.x, size.y, size.z);
-          const scale = 2 / maxDim;
-          currentModel.scale.multiplyScalar(scale);
-          
-          currentModel.position.x = -center.x * scale;
-          currentModel.position.y = -center.y * scale + 0.5;
-          currentModel.position.z = -center.z * scale;
-          
-          currentModel.traverse((child) => {
-            if (child.isMesh) {
-              child.castShadow = shadowsEnabled;
-              child.receiveShadow = shadowsEnabled;
-              originalMaterials.set(child.uuid, child.material.clone());
-            }
-          });
-          
-          scene.add(currentModel);
-          loading.style.display = 'none';
-
-          animations = gltf.animations;
-          if (animations && animations.length > 0) {
-            mixer = new THREE.AnimationMixer(currentModel);
-            setupAnimationControls(animations);
-          } else {
-            setupAnimationControls([]);
-          }
-
-          currentRenderMode = 'composite';
-          document.getElementById('current-render-mode').textContent = 'Composite';
-          document.querySelectorAll('.render-option').forEach(btn => {
-            btn.classList.toggle('active', btn.dataset.mode === 'composite');
-          });
-
-          camera.position.set(0, 1, 5);
-          controls.target.set(0, 0.5, 0);
-          controls.update();
-        },
-        (progress) => {
-          if (progress.total > 0) {
+      try {
+        const gltf = await loadGLTFCached(path, (progress) => {
+          if (token !== modelLoadToken) return;
+          if (progress && progress.total > 0) {
             const percent = (progress.loaded / progress.total * 100).toFixed(0);
             loading.innerHTML = `<div class="loading-spinner"></div>Cargando... ${percent}%`;
           }
-        },
-        (error) => {
-          console.error('Error cargando modelo:', error);
-          loading.innerHTML = 'Error al cargar el modelo<br><small>Verifica la ruta del archivo .glb</small>';
+        });
+
+        // Si el usuario ya pidió otro modelo, ignoramos este resultado
+        if (token !== modelLoadToken) return;
+
+        // Clonamos para no "contaminar" el cache (render modes/wireframe)
+        // y para soportar SkinnedMesh.
+        currentModel = SkeletonUtils.clone(gltf.scene);
+
+        const box = new THREE.Box3().setFromObject(currentModel);
+        const center = box.getCenter(new THREE.Vector3());
+        const size = box.getSize(new THREE.Vector3());
+
+        const maxDim = Math.max(size.x, size.y, size.z);
+        const scale = 2 / maxDim;
+        currentModel.scale.multiplyScalar(scale);
+
+        currentModel.position.x = -center.x * scale;
+        currentModel.position.y = -center.y * scale + 0.5;
+        currentModel.position.z = -center.z * scale;
+
+        currentModel.traverse((child) => {
+          if (child.isMesh) {
+            child.castShadow = shadowsEnabled;
+            child.receiveShadow = shadowsEnabled;
+            originalMaterials.set(child.uuid, child.material.clone());
+          }
+        });
+
+        scene.add(currentModel);
+        loading.style.display = 'none';
+
+        animations = gltf.animations;
+        if (animations && animations.length > 0) {
+          mixer = new THREE.AnimationMixer(currentModel);
+          setupAnimationControls(animations);
+        } else {
+          setupAnimationControls([]);
         }
-      );
+
+        currentRenderMode = 'composite';
+        document.getElementById('current-render-mode').textContent = 'Composite';
+        document.querySelectorAll('.render-option').forEach(btn => {
+          btn.classList.toggle('active', btn.dataset.mode === 'composite');
+        });
+
+        camera.position.set(0, 1, 5);
+        controls.target.set(0, 0.5, 0);
+        controls.update();
+
+        // Precarga del siguiente/anterior para que el cambio sea más inmediato
+        preloadNeighborModels(currentModelIndex);
+
+      } catch (error) {
+        if (token !== modelLoadToken) return;
+        console.error('Error cargando modelo:', error);
+        loading.innerHTML = 'Error al cargar el modelo<br><small>Verifica la ruta del archivo .glb</small>';
+      }
     }
 
     // ============================================================
@@ -1866,16 +1933,6 @@
       
       const delta = clock.getDelta();
       if (mixer) mixer.update(delta);
-
-      // FPS counter
-      frameCount++;
-      const currentTime = performance.now();
-      if (currentTime - lastTime >= 1000) {
-        fps = Math.round(frameCount * 1000 / (currentTime - lastTime));
-        document.getElementById('fps-value').textContent = fps;
-        frameCount = 0;
-        lastTime = currentTime;
-      }
       
       // Grid fade when camera goes below floor
       const cameraY = camera.position.y;
