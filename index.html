@@ -291,6 +291,7 @@
       color: #fff;
     }
 
+/*
     .fps-display {
       font-size: 12px;
       color: rgba(255,255,255,0.5);
@@ -301,6 +302,8 @@
     .fps-display span {
       color: #fff;
     }
+
+  */
 
     /* ============================================
        DROPDOWN DE RENDER MODE - ARRIBA DERECHA
@@ -1126,10 +1129,12 @@
     let originalMaterials = new Map();
     let currentLightIndex = 0;
 
+/*
     // FPS counter
     let frameCount = 0;
     let lastTime = performance.now();
     let fps = 0;
+*/
 
     // ============================================================
     // SETUP ESCENA
@@ -1814,7 +1819,8 @@
       const delta = clock.getDelta();
       if (mixer) mixer.update(delta);
 
-      /*
+/*
+//
       // FPS counter
       frameCount++;
       const currentTime = performance.now();
@@ -1824,7 +1830,8 @@
         frameCount = 0;
         lastTime = currentTime;
       }
-      */
+
+    */
       
       // Grid fade when camera goes below floor
       const cameraY = camera.position.y;
