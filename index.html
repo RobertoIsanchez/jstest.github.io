@@ -176,21 +176,7 @@
       cursor: pointer;
     }
 
-    .shadow-row {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      margin-top: 16px;
-      padding-top: 14px;
-      border-top: 1px solid rgba(255,255,255,0.1);
-    }
 
-    .shadow-label {
-      font-size: 9px;
-      letter-spacing: 1.5px;
-      text-transform: uppercase;
-      opacity: 0.5;
-    }
 
     .toggle-switch {
       position: relative;
@@ -234,6 +220,18 @@
       align-items: center;
       gap: 12px;
       pointer-events: auto;
+    }
+
+    /* Layout interno del reproductor (desktop/tablet) */
+    .anim-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .anim-right {
+      display: flex;
+      align-items: center;
     }
 
     .anim-btn {
@@ -642,13 +640,41 @@
         font-size: 12px;
       }
 
-      /* Animation panel - Below the 3D model */
+      /* Animation panel - Bottom bar (like reference) */
       .animation-panel {
+        position: fixed;
         top: auto;
-        bottom: 200px;
-        flex-wrap: wrap;
-        justify-content: center;
+        left: 16px;
+        right: 16px;
+        bottom: 220px;
+        transform: none;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        flex-wrap: nowrap;
+        padding: 10px 12px;
+        border: 1px solid rgba(255,255,255,0.15);
+        border-radius: 14px;
+        background: rgba(0,0,0,0.35);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        z-index: 30;
+      }
+
+      .anim-left {
+        display: flex;
+        align-items: center;
         gap: 8px;
+        min-width: 0;
+        flex: 1;
+      }
+
+      .anim-right {
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        flex-shrink: 0;
       }
 
       .anim-btn {
@@ -662,9 +688,25 @@
       }
 
       .anim-select {
-        min-width: 120px;
+        min-width: 0;
+        width: auto;
+        flex: 1;
         padding: 6px 28px 6px 10px;
         font-size: 11px;
+      }
+
+      /* Toggles a la derecha, sin “caja” extra en mobile */
+      .animation-panel .visibility-panel {
+        border: none;
+        padding: 0;
+        background: transparent;
+        backdrop-filter: none;
+        -webkit-backdrop-filter: none;
+        gap: 12px;
+      }
+
+      .animation-panel .visibility-row {
+        gap: 8px;
       }
 
       .fps-display {
@@ -672,19 +714,14 @@
         min-width: 50px;
       }
 
-      /* Lighting panel - Bottom controls (sliders/shadows)
-         Nota: en algunos móviles (Safari/Chrome iOS) un ancestro con backdrop-filter
-         puede hacer que los hijos con position: fixed se comporten como absolute.
-         Para evitarlo (sin cambiar el look), movemos el blur a un ::before. */
+      /* Lighting panel - Sliders below animation bar (remove Shadows UI) */
       .lighting-panel {
-        position: absolute;
+        position: fixed;
         top: auto;
-        bottom: 100px;
+        bottom: 120px;
         left: 16px;
         right: 16px;
-        display: flex;
-        align-items: flex-start;
-        gap: 16px;
+        display: block;
         border-radius: 12px;
         padding: 12px;
         background: transparent;
@@ -704,9 +741,8 @@
         z-index: 0;
       }
 
-      /* Asegura que sliders/shadow queden por encima del fondo */
-      .sliders-container,
-      .shadow-container {
+      /* Asegura que sliders queden por encima del fondo */
+      .sliders-container {
         position: relative;
         z-index: 1;
       }
@@ -806,34 +842,7 @@
         width: 100%;
       }
 
-      /* Shadow controls on right */
-      .shadow-container {
-        display: flex;
-        flex-direction: column;
-        gap: 8px;
-        flex-shrink: 0;
-      }
-
-      .shadow-row {
-        margin-top: 0;
-        padding-top: 0;
-        border-top: none;
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 4px;
-      }
-
-      .shadow-label {
-        font-size: 8px;
-      }
-
-      #shadow-settings {
-        margin-top: 0 !important;
-      }
-
-      #shadow-settings .slider-label {
-        font-size: 8px;
-      }
+      /* No shadow UI in mobile */
 
       /* Gallery - Bottom center */
       .model-gallery {
@@ -896,7 +905,7 @@
       }
 
       .animation-panel {
-        bottom: 180px;
+        bottom: 200px;
       }
 
       .anim-select {
@@ -1049,48 +1058,37 @@
           </div>
         </div>
       </div>
-
-      <!-- Shadow controls container -->
-      <div class="shadow-container">
-        <div class="shadow-row">
-          <span class="shadow-label">Shadows</span>
-          <div class="toggle-switch active" id="shadow-toggle"></div>
-        </div>
-
-        <div class="slider-group" id="shadow-settings">
-          <span class="slider-label">Softness</span>
-          <div class="slider-row">
-            <input type="range" class="slider" id="shadow-blur" min="0" max="10" value="2" step="1">
-          </div>
-        </div>
-      </div>
     </div>
 
     <!-- CONTROLES DE ANIMACIÓN - ARRIBA CENTRO -->
     <div class="animation-panel" id="animation-panel">
-      <button class="anim-btn" id="play-btn" title="Play/Pause" disabled>
-        <svg viewBox="0 0 24 24" id="play-icon"><path d="M8 5v14l11-7z"/></svg>
-        <svg viewBox="0 0 24 24" id="pause-icon" style="display:none;"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
-      </button>
-      <button class="anim-btn" id="stop-btn" title="Stop" disabled>
-        <svg viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12"/></svg>
-      </button>
-      <button class="anim-btn" id="reset-btn" title="Reset" disabled>
-        <svg viewBox="0 0 24 24"><path d="M12 5V1L7 6l5 5V7c3.31 0 6 2.69 6 6s-2.69 6-6 6-6-2.69-6-6H4c0 4.42 3.58 8 8 8s8-3.58 8-8-3.58-8-8-8z"/></svg>
-      </button>
-      <select class="anim-select" id="anim-select" disabled>
-        <option>Sin animaciones</option>
-      </select>
+      <div class="anim-left">
+        <button class="anim-btn" id="play-btn" title="Play/Pause" disabled>
+          <svg viewBox="0 0 24 24" id="play-icon"><path d="M8 5v14l11-7z"/></svg>
+          <svg viewBox="0 0 24 24" id="pause-icon" style="display:none;"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
+        </button>
+        <button class="anim-btn" id="stop-btn" title="Stop" disabled>
+          <svg viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12"/></svg>
+        </button>
+        <button class="anim-btn" id="reset-btn" title="Reset" disabled>
+          <svg viewBox="0 0 24 24"><path d="M12 5V1L7 6l5 5V7c3.31 0 6 2.69 6 6s-2.69 6-6 6-6-2.69-6-6H4c0 4.42 3.58 8 8 8s8-3.58 8-8-3.58-8-8-8z"/></svg>
+        </button>
+        <select class="anim-select" id="anim-select" disabled>
+          <option>Sin animaciones</option>
+        </select>
+      </div>
 
-      <!-- VISIBILITY TOGGLES (GRID / UI) - RIGHT OF ANIMATION SELECT -->
-      <div class="visibility-panel" id="visibility-panel">
-        <div class="visibility-row">
-          <span class="visibility-label">Grid</span>
-          <div class="toggle-switch active" id="grid-toggle" title="Mostrar/Ocultar grid"></div>
-        </div>
-        <div class="visibility-row">
-          <span class="visibility-label">UI</span>
-          <div class="toggle-switch active" id="ui-toggle" title="Mostrar/Ocultar interfaz"></div>
+      <div class="anim-right">
+        <!-- VISIBILITY TOGGLES (GRID / UI) - RIGHT SIDE -->
+        <div class="visibility-panel" id="visibility-panel">
+          <div class="visibility-row">
+            <span class="visibility-label">Grid</span>
+            <div class="toggle-switch active" id="grid-toggle" title="Mostrar/Ocultar grid"></div>
+          </div>
+          <div class="visibility-row">
+            <span class="visibility-label">UI</span>
+            <div class="toggle-switch active" id="ui-toggle" title="Mostrar/Ocultar interfaz"></div>
+          </div>
         </div>
       </div>
     </div>
@@ -1527,10 +1525,8 @@
     const hdrExposureSlider = document.getElementById('hdr-exposure');
     const lightIntensitySlider = document.getElementById('light-intensity');
     const ambientIntensitySlider = document.getElementById('ambient-intensity');
-    const shadowToggle = document.getElementById('shadow-toggle');
-    const shadowBlurSlider = document.getElementById('shadow-blur');
-
-    let shadowsEnabled = true;
+    // Shadows se mantienen activas (UI de "Shadows" eliminada)
+    const shadowsEnabled = true;
 
     hdrRotationSlider.addEventListener('input', (e) => {
       const hdrRotation = parseFloat(e.target.value);
@@ -1567,24 +1563,8 @@
       ambientLight.intensity = parseFloat(e.target.value);
     });
 
-    shadowToggle.addEventListener('click', () => {
-      shadowsEnabled = !shadowsEnabled;
-      shadowToggle.classList.toggle('active', shadowsEnabled);
-      renderer.shadowMap.enabled = shadowsEnabled;
-      mainLight.castShadow = shadowsEnabled;
-      document.getElementById('shadow-settings').style.display = shadowsEnabled ? 'block' : 'none';
-      
-      scene.traverse((obj) => {
-        if (obj.isMesh) {
-          obj.castShadow = shadowsEnabled;
-          obj.receiveShadow = shadowsEnabled;
-        }
-      });
-    });
-
-    shadowBlurSlider.addEventListener('input', (e) => {
-      mainLight.shadow.radius = parseInt(e.target.value);
-    });
+    // Shadow blur se deja fijo por código (antes era UI)
+    mainLight.shadow.radius = 2;
 
 
     // ============================================================
