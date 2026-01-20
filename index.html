@@ -274,7 +274,7 @@
       color: #fff;
       font-size: 12px;
       cursor: pointer;
-      min-width: 140px;
+      min-width: 0;
       appearance: none;
       background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='white' viewBox='0 0 24 24'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
       background-repeat: no-repeat;
@@ -290,18 +290,6 @@
       background: #1a1a1a;
       color: #fff;
     }
-
-    .fps-display {
-      font-size: 12px;
-      color: rgba(255,255,255,0.5);
-      font-family: monospace;
-      min-width: 60px;
-    }
-
-    .fps-display span {
-      color: #fff;
-    }
-
     /* ============================================
        DROPDOWN DE RENDER MODE - ARRIBA DERECHA
     ============================================ */
@@ -915,6 +903,87 @@
         min-width: 100px;
       }
     }
+  
+
+    /* ============================================
+       VISIBILITY TOGGLES (GRID / UI)
+    ============================================ */
+    .visibility-panel {
+      position: static;
+      pointer-events: auto;
+      color: #fff;
+      display: flex;
+      flex-direction: row;
+      gap: 10px;
+      padding: 8px 10px;
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 10px;
+      background: rgba(0,0,0,0.35);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+    }
+
+    .visibility-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .visibility-label {
+      font-size: 9px;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      opacity: 0.55;
+    }
+
+    .ui-restore {
+      position: fixed;
+      top: 24px;
+      right: 32px;
+      z-index: 999;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 10px 12px;
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 10px;
+      background: rgba(0,0,0,0.45);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      /*
+        Toggle flotante para restaurar la UI:
+        - Cuando la UI está activa: invisible y sin interacción (evita superposición con el dropdown)
+        - Cuando la UI está oculta: visible e interactivo
+      */
+      pointer-events: none;
+      color: #fff;
+      min-width: 140px;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 200ms ease;
+    }
+
+    body.ui-hidden .overlay {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+
+    body.ui-hidden .ui-restore {
+      opacity: 1;
+      visibility: visible;
+      pointer-events: auto;
+    }
+
+    @media (max-width: 768px) {
+      .ui-restore {
+        top: 16px;
+        right: 16px;
+      }
+    }
+
   </style>
 </head>
 <body>
@@ -1012,7 +1081,18 @@
       <select class="anim-select" id="anim-select" disabled>
         <option>Sin animaciones</option>
       </select>
-      <div class="fps-display">FPS <span id="fps-value">0</span></div>
+
+      <!-- VISIBILITY TOGGLES (GRID / UI) - RIGHT OF ANIMATION SELECT -->
+      <div class="visibility-panel" id="visibility-panel">
+        <div class="visibility-row">
+          <span class="visibility-label">Grid</span>
+          <div class="toggle-switch active" id="grid-toggle" title="Mostrar/Ocultar grid"></div>
+        </div>
+        <div class="visibility-row">
+          <span class="visibility-label">UI</span>
+          <div class="toggle-switch active" id="ui-toggle" title="Mostrar/Ocultar interfaz"></div>
+        </div>
+      </div>
     </div>
 
     <!-- DROPDOWN DE RENDER MODE - ARRIBA DERECHA -->
@@ -1075,9 +1155,19 @@
       Arrastra para rotar<br>
       Scroll para zoom
     </div>
+</div>
+
+  <!-- UI RESTORE (visible only when UI is hidden) -->
+  <div class="ui-restore" id="ui-restore" aria-label="Restaurar interfaz">
+    <span class="visibility-label">UI</span>
+    <div class="toggle-switch" id="ui-restore-toggle" title="Volver a mostrar la interfaz"></div>
   </div>
 
-  <script type="module">
+
+  
+
+
+<script type="module">
     import * as THREE from 'three';
     import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
     import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
@@ -1280,6 +1370,8 @@
     gridGroup.add(groundPlane);
 
     let gridOpacity = 1;
+
+    let gridEnabled = true;
 
     // ============================================================
     // LUCES
@@ -1493,6 +1585,57 @@
     shadowBlurSlider.addEventListener('input', (e) => {
       mainLight.shadow.radius = parseInt(e.target.value);
     });
+
+
+    // ============================================================
+    // VISIBILITY TOGGLES (GRID / UI)
+    // ============================================================
+    const gridToggle = document.getElementById('grid-toggle');
+    const uiToggle = document.getElementById('ui-toggle');
+    const uiRestore = document.getElementById('ui-restore');
+    const uiRestoreToggle = document.getElementById('ui-restore-toggle');
+
+    let uiEnabled = true;
+
+    function setGridEnabled(enabled) {
+      gridEnabled = enabled;
+      if (gridToggle) gridToggle.classList.toggle('active', gridEnabled);
+      // Force hide when disabled (animate loop keeps fade behavior when enabled)
+      if (!gridEnabled) {
+        gridGroup.visible = false;
+      }
+    }
+
+    function setUIEnabled(enabled) {
+      uiEnabled = enabled;
+      document.body.classList.toggle('ui-hidden', !uiEnabled);
+
+      if (uiToggle) uiToggle.classList.toggle('active', uiEnabled);
+      // Floating toggle is always visible: active when UI is visible
+      if (uiRestoreToggle) uiRestoreToggle.classList.toggle('active', uiEnabled);
+    }
+
+    if (gridToggle) {
+      gridToggle.addEventListener('click', () => {
+        setGridEnabled(!gridEnabled);
+      });
+    }
+
+    if (uiToggle) {
+      uiToggle.addEventListener('click', () => {
+        setUIEnabled(!uiEnabled);
+      });
+    }
+
+    if (uiRestore) {
+      uiRestore.addEventListener('click', () => {
+        setUIEnabled(!uiEnabled);
+      });
+    }
+
+    // Init
+    setGridEnabled(true);
+    setUIEnabled(true);
 
     // ============================================================
     // RENDER MODE DROPDOWN
@@ -1872,7 +2015,8 @@
       const currentTime = performance.now();
       if (currentTime - lastTime >= 1000) {
         fps = Math.round(frameCount * 1000 / (currentTime - lastTime));
-        document.getElementById('fps-value').textContent = fps;
+        const fpsEl = document.getElementById("fps-value");
+        if (fpsEl) fpsEl.textContent = fps;
         frameCount = 0;
         lastTime = currentTime;
       }
@@ -1881,13 +2025,17 @@
       const cameraY = camera.position.y;
       const targetOpacity = cameraY > 0 ? 1 : 0;
       gridOpacity += (targetOpacity - gridOpacity) * 0.1;
-      
-      gridHelper.material.opacity = 0.4 * gridOpacity;
-      gridHelperFine.material.opacity = 0.2 * gridOpacity;
-      xAxisMaterial.opacity = 0.6 * gridOpacity;
-      zAxisMaterial.opacity = 0.6 * gridOpacity;
-      groundMaterial.uniforms.uOpacity.value = 0.3 * gridOpacity;
-      gridGroup.visible = gridOpacity > 0.01;
+
+      if (gridEnabled) {
+        gridHelper.material.opacity = 0.4 * gridOpacity;
+        gridHelperFine.material.opacity = 0.2 * gridOpacity;
+        xAxisMaterial.opacity = 0.6 * gridOpacity;
+        zAxisMaterial.opacity = 0.6 * gridOpacity;
+        groundMaterial.uniforms.uOpacity.value = 0.3 * gridOpacity;
+        gridGroup.visible = gridOpacity > 0.01;
+      } else {
+        gridGroup.visible = false;
+      }
       
       controls.update();
       renderer.render(scene, camera);
